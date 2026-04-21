@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    container_name: smartfarm-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: smartfarm_dev
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev123
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  emqx:
+    image: emqx/emqx:5.6
+    container_name: smartfarm-emqx
+    ports:
+      - "1883:1883"
+      - "8883:8883"
+      - "18083:18083"
+    environment:
+      EMQX_ALLOW_ANONYMOUS: "true"
+      EMQX_DASHBOARD__DEFAULT_USERNAME: admin
+      EMQX_DASHBOARD__DEFAULT_PASSWORD: public
+    volumes:
+      - emqx_data:/opt/emqx/data
+    healthcheck:
+      test: ["CMD", "emqx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: smartfarm-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  adminer:
+    image: adminer:latest
+    container_name: smartfarm-adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+
+  device-simulator:
+    build: ./tools/device-simulator
+    container_name: smartfarm-simulator
+    environment:
+      MQTT_BROKER: emqx
+      MQTT_PORT: "1883"
+      TENANT_ID: t001
+      SENSOR_COUNT: "5"
+      REPORT_INTERVAL_SEC: "10"
+    depends_on:
+      emqx:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  emqx_data:
+  redis_data:

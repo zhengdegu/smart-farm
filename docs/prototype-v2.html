@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>智灌通 - 智慧农业灌溉平台</title>
+<style>
+:root{--primary:#2E7D32;--primary-light:#4CAF50;--primary-dark:#1B5E20;--primary-bg:rgba(46,125,50,0.08);--bg:#F5F5F5;--white:#FFF;--alert-red:#D32F2F;--alert-orange:#F57C00;--alert-blue:#1976D2;--text-primary:#212121;--text-secondary:#757575;--text-hint:#BDBDBD;--border:#E0E0E0;--shadow:0 2px 12px rgba(0,0,0,0.08);--shadow-lg:0 4px 24px rgba(0,0,0,0.12);--radius:14px;--radius-sm:10px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#1a1a2e;display:flex;justify-content:center;align-items:center;min-height:100vh;color:var(--text-primary);font-size:16px;line-height:1.5}
+.device-frame{width:375px;height:812px;background:var(--bg);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 0 0 8px #1a1a2e,0 0 0 10px #333,var(--shadow-lg)}
+.status-bar{height:44px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:13px;font-weight:600;color:#fff;position:relative;z-index:100}
+.app-container{height:calc(812px - 44px - 76px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.app-container::-webkit-scrollbar{display:none}
+.page{display:none;min-height:100%;padding-bottom:16px}
+.page.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes checkDraw{to{stroke-dashoffset:0}}
+@keyframes modalIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.tab-bar{position:absolute;bottom:0;left:0;right:0;height:76px;background:var(--white);display:flex;align-items:flex-start;padding-top:8px;border-top:1px solid var(--border);z-index:200}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;transition:all .2s;position:relative}
+.tab-item svg{width:26px;height:26px;transition:all .2s}
+.tab-item .tab-icon{color:var(--text-hint)}
+.tab-item span{font-size:11px;color:var(--text-hint);transition:color .2s;font-weight:500}
+.tab-item.active .tab-icon{color:var(--primary)}
+.tab-item.active span{color:var(--primary);font-weight:600}
+.tab-badge{position:absolute;top:-2px;right:50%;transform:translateX(18px);background:var(--alert-red);color:#fff;font-size:10px;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:600;padding:0 4px}
+.card{background:var(--white);border-radius:var(--radius);padding:16px;margin:0 16px 12px;box-shadow:var(--shadow);transition:transform .2s}
+.card:active{transform:scale(.98)}
+.section-title{font-size:18px;font-weight:700;padding:16px 16px 12px;color:var(--text-primary)}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.badge-l1{background:rgba(211,47,47,.1);color:var(--alert-red)}
+.badge-l2{background:rgba(245,124,0,.1);color:var(--alert-orange)}
+.badge-l3{background:rgba(25,118,210,.1);color:var(--alert-blue)}
+.badge-online{background:rgba(46,125,50,.1);color:var(--primary)}
+.badge-offline{background:rgba(117,117,117,.1);color:var(--text-secondary)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 28px;border-radius:var(--radius-sm);font-size:17px;font-weight:600;border:none;cursor:pointer;transition:all .2s;gap:8px;position:relative;overflow:hidden}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-danger{background:var(--alert-red);color:#fff}
+.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn-outline-danger{background:transparent;border:2px solid var(--alert-red);color:var(--alert-red)}
+.btn-block{width:100%}
+.btn-sm{min-height:44px;padding:0 20px;font-size:15px}
+.btn-group{display:flex;gap:12px}
+.btn-group .btn{flex:1}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;justify-content:center;align-items:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--white);border-radius:20px;padding:32px 24px;width:320px;text-align:center;animation:modalIn .3s ease}
+.modal h3{font-size:20px;margin-bottom:8px}
+.modal p{font-size:15px;color:var(--text-secondary);margin-bottom:24px;line-height:1.6}
+.modal-actions{display:flex;gap:12px}
+.modal-actions .btn{flex:1;min-height:48px}
+.spinner{width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:16px auto}
+.check-circle{width:56px;height:56px;margin:16px auto;display:block}
+.page-header{padding:16px;display:flex;align-items:center;gap:12px}
+.page-header h2{font-size:20px;font-weight:700}
+.back-btn{width:36px;height:36px;border-radius:50%;background:var(--white);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.back-btn svg{width:20px;height:20px;color:var(--text-primary)}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px;margin-bottom:12px}
+.metric-card{background:var(--white);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.metric-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.metric-icon.green{background:rgba(46,125,50,.1)}
+.metric-icon.orange{background:rgba(245,124,0,.1)}
+.metric-icon.blue{background:rgba(25,118,210,.1)}
+.metric-icon.red{background:rgba(211,47,47,.1)}
+.metric-icon svg{width:20px;height:20px}
+.metric-label{font-size:13px;color:var(--text-secondary);margin-bottom:4px}
+.metric-value{font-size:32px;font-weight:800;line-height:1.1}
+.metric-value .unit{font-size:16px;font-weight:500;color:var(--text-secondary)}
+.greeting-section{padding:20px 16px 8px}
+.greeting-text{font-size:22px;font-weight:700;margin-bottom:4px}
+.greeting-sub{font-size:14px;color:var(--text-secondary);display:flex;align-items:center;gap:6px}
+.quick-actions{display:flex;gap:12px;padding:0 16px;margin-bottom:16px;overflow-x:auto}
+.quick-action{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 20px;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);cursor:pointer;min-width:88px;transition:transform .2s}
+.quick-action:active{transform:scale(.95)}
+.quick-action-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.quick-action-icon svg{width:22px;height:22px;color:#fff}
+.quick-action span{font-size:13px;font-weight:500;color:var(--text-primary)}
+.alarm-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #f0f0f0;align-items:flex-start}
+.alarm-item:last-child{border-bottom:none}
+.alarm-dot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.alarm-dot.l1{background:var(--alert-red)}
+.alarm-dot.l2{background:var(--alert-orange)}
+.alarm-dot.l3{background:var(--alert-blue)}
+.alarm-content{flex:1;min-width:0}
+.alarm-msg{font-size:15px;font-weight:500;margin-bottom:2px}
+.alarm-meta{font-size:12px;color:var(--text-secondary)}
+.device-card{display:flex;align-items:center;gap:14px;cursor:pointer}
+.device-avatar{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.device-avatar svg{width:24px;height:24px;color:#fff}
+.device-info{flex:1;min-width:0}
+.device-name{font-size:16px;font-weight:600;margin-bottom:2px}
+.device-location{font-size:13px;color:var(--text-secondary)}
+.device-status{text-align:right}
+.device-reading{font-size:13px;color:var(--text-secondary);margin-top:4px}
+.sensor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px;margin-bottom:16px}
+.sensor-card{background:var(--white);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);text-align:center}
+.sensor-label{font-size:13px;color:var(--text-secondary);margin-bottom:6px}
+.sensor-value{font-size:28px;font-weight:800;color:var(--primary)}
+.sensor-value .unit{font-size:14px;font-weight:500;color:var(--text-secondary)}
+.sensor-bar{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.sensor-bar-fill{height:100%;border-radius:2px;transition:width .6s ease}
+.detail-header{padding:20px 16px;display:flex;align-items:center;gap:14px}
+.detail-avatar{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center}
+.detail-avatar svg{width:28px;height:28px;color:#fff}
+.detail-info h3{font-size:20px;font-weight:700}
+.detail-info p{font-size:14px;color:var(--text-secondary)}
+.chart-placeholder{background:var(--white);border-radius:var(--radius);margin:0 16px 16px;padding:20px;box-shadow:var(--shadow);height:180px;display:flex;flex-direction:column}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 10px;width:100%;margin-top:auto}
+.chart-bar{flex:1;background:linear-gradient(to top,var(--primary),var(--primary-light));border-radius:4px 4px 0 0;transition:height .6s ease;min-width:0}
+.zone-selector{display:flex;gap:10px;padding:0 16px;margin-bottom:16px;overflow-x:auto}
+.zone-btn{padding:10px 20px;border-radius:24px;border:2px solid var(--border);background:var(--white);font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s}
+.zone-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.mode-toggle{display:flex;background:var(--border);border-radius:12px;padding:4px;margin:0 16px 16px}
+.mode-option{flex:1;padding:12px;text-align:center;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s}
+.mode-option.active{background:var(--white);box-shadow:var(--shadow)}
+.valve-card{background:var(--white);border-radius:var(--radius);padding:16px;margin:0 16px 12px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between}
+.valve-info{display:flex;align-items:center;gap:12px}
+.valve-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.valve-icon svg{width:22px;height:22px;color:#fff}
+.valve-name{font-size:16px;font-weight:600}
+.valve-status{font-size:13px;color:var(--text-secondary)}
+.valve-toggle{width:60px;height:34px;border-radius:17px;border:none;cursor:pointer;position:relative;transition:background .3s}
+.valve-toggle.off{background:var(--border)}
+.valve-toggle.on{background:var(--primary)}
+.valve-toggle::after{content:"";position:absolute;width:28px;height:28px;border-radius:50%;background:#fff;top:3px;transition:left .3s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.valve-toggle.off::after{left:3px}
+.valve-toggle.on::after{left:29px}
+.schedule-card{background:var(--white);border-radius:var(--radius);padding:16px;margin:0 16px 12px;box-shadow:var(--shadow)}
+.schedule-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.schedule-title{font-size:16px;font-weight:600}
+.schedule-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5}
+.schedule-row:last-child{border-bottom:none}
+.schedule-time{font-size:15px;font-weight:600}
+.schedule-days{font-size:13px;color:var(--text-secondary)}
+.schedule-duration{font-size:13px;color:var(--primary);font-weight:500}
+.filter-bar{display:flex;gap:8px;padding:0 16px;margin-bottom:12px;overflow-x:auto}
+.filter-btn{padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s}
+.filter-btn.active{border-color:var(--primary);background:var(--primary-bg);color:var(--primary)}
+.alarm-card{background:var(--white);border-radius:var(--radius);padding:16px;margin:0 16px 10px;box-shadow:var(--shadow)}
+.alarm-card-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.alarm-card-msg{font-size:16px;font-weight:600;margin-bottom:6px}
+.alarm-card-detail{font-size:14px;color:var(--text-secondary);margin-bottom:12px;line-height:1.5}
+.alarm-card-footer{display:flex;justify-content:space-between;align-items:center}
+.alarm-card-time{font-size:12px;color:var(--text-hint)}
+.alarm-ack-btn{padding:8px 16px;border-radius:8px;border:1.5px solid var(--primary);background:transparent;color:var(--primary);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.alarm-ack-btn:active{background:var(--primary);color:#fff}
+.alarm-ack-btn.acked{background:var(--border);border-color:var(--border);color:var(--text-hint);cursor:default}
+.profile-header{text-align:center;padding:24px 16px;background:linear-gradient(135deg,var(--primary),var(--primary-light));margin-bottom:16px;border-radius:0 0 24px 24px}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;border:3px solid rgba(255,255,255,.4)}
+.profile-avatar svg{width:40px;height:40px;color:#fff}
+.profile-name{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+.profile-farm{font-size:14px;color:rgba(255,255,255,.8)}
+.menu-list{padding:0 16px}
+.menu-item{display:flex;align-items:center;gap:14px;padding:16px;background:var(--white);border-radius:var(--radius);margin-bottom:10px;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
+.menu-item:active{transform:scale(.98)}
+.menu-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.menu-icon svg{width:20px;height:20px;color:#fff}
+.menu-text{flex:1;font-size:16px;font-weight:500}
+.menu-arrow svg{width:16px;height:16px;color:var(--text-hint)}
+</style>
+</head>
+<body>
+<div class="device-frame">
+<div class="status-bar" id="statusBar"><span id="statusTime">9:41</span><span style="display:flex;gap:6px;align-items:center"><svg width="16" height="12" viewBox="0 0 16 12" fill="white"><rect x="0" y="6" width="3" height="6" rx="1"/><rect x="4.5" y="4" width="3" height="8" rx="1"/><rect x="9" y="1.5" width="3" height="10.5" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1"/></svg><svg width="22" height="12" viewBox="0 0 22 12" fill="none"><rect x=".5" y=".5" width="19" height="11" rx="2" stroke="white"/><rect x="2" y="2" width="14" height="8" rx="1" fill="white"/><rect x="20.5" y="3.5" width="1.5" height="5" rx=".75" fill="white"/></svg></span></div>
+<div class="app-container" id="appContainer">
+<div class="page active" id="page-home"></div>
+<div class="page" id="page-devices"></div>
+<div class="page" id="page-device-detail"></div>
+<div class="page" id="page-irrigation"></div>
+<div class="page" id="page-alarms"></div>
+<div class="page" id="page-profile"></div>
+</div>
+<div class="tab-bar" id="tabBar"></div>
+</div>
+<div class="modal-overlay" id="modalOverlay"><div class="modal" id="modalContent"></div></div>
+<script>
+"use strict";
+
+const ICONS = {
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+  device: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+  alarm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>',
+  profile: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>',
+  chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  droplet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>',
+  thermometer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>',
+  zap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/></svg>',
+  settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',
+  help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+  logout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>',
+  valve: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/><path d="M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>',
+  water: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+};
+
+// ===== DATA =====
+const devices = [
+  {id:1,name:'土壤监测站-A1',location:'1号大棚东区',online:true,type:'soil',moisture:67,temp:22.5,lastUpdate:'2分钟前'},
+  {id:2,name:'气象监测站-B1',location:'露天种植区',online:true,type:'weather',airTemp:28.3,humidity:62,lastUpdate:'1分钟前'},
+  {id:3,name:'灌溉控制器-C1',location:'1号大棚',online:true,type:'irrigation',pressure:0.35,flow:5.2,lastUpdate:'刚刚'},
+  {id:4,name:'土壤监测站-A2',location:'2号大棚西区',online:true,type:'soil',moisture:52,temp:24.1,lastUpdate:'3分钟前'},
+  {id:5,name:'水质监测站-D1',location:'蓄水池',online:false,type:'water',ph:6.8,ec:1.9,lastUpdate:'2小时前'},
+  {id:6,name:'灌溉控制器-C2',location:'2号大棚',online:true,type:'irrigation',pressure:0.28,flow:3.8,lastUpdate:'1分钟前'},
+  {id:7,name:'气象监测站-B2',location:'果园区',online:true,type:'weather',airTemp:30.1,humidity:55,lastUpdate:'5分钟前'},
+  {id:8,name:'土壤监测站-A3',location:'3号大棚',online:false,type:'soil',moisture:45,temp:19.8,lastUpdate:'1小时前'}
+];
+
+const alarms = [
+  {id:1,level:'L1',msg:'土壤湿度严重不足',detail:'1号大棚东区土壤湿度降至28%，低于临界值35%，需立即灌溉',device:'土壤监测站-A1',time:'10:23',date:'今天',acked:false},
+  {id:2,level:'L2',msg:'水压偏低警告',detail:'灌溉控制器-C1检测到水压0.18MPa，低于正常范围0.2-0.5MPa',device:'灌溉控制器-C1',time:'09:45',date:'今天',acked:false},
+  {id:3,level:'L1',msg:'设备离线告警',detail:'水质监测站-D1已离线超过2小时，请检查设备电源和网络连接',device:'水质监测站-D1',time:'08:12',date:'今天',acked:false},
+  {id:4,level:'L3',msg:'气温升高提醒',detail:'露天种植区气温达到33.5度，建议开启遮阳网和喷雾降温',device:'气象监测站-B1',time:'14:30',date:'今天',acked:true},
+  {id:5,level:'L2',msg:'EC值偏高',detail:'蓄水池EC值达到2.6mS/cm，接近上限2.8mS/cm，建议稀释',device:'水质监测站-D1',time:'07:55',date:'今天',acked:false},
+  {id:6,level:'L3',msg:'定时灌溉完成',detail:'2号大棚西区定时灌溉任务已完成，用水量12.5L',device:'灌溉控制器-C2',time:'06:00',date:'今天',acked:true},
+  {id:7,level:'L2',msg:'空气湿度偏低',detail:'果园区空气湿度降至38%，低于适宜范围40-75%',device:'气象监测站-B2',time:'15:20',date:'今天',acked:false},
+  {id:8,level:'L1',msg:'土壤温度异常',detail:'3号大棚土壤温度降至16度，低于作物适宜温度18度',device:'土壤监测站-A3',time:'05:30',date:'今天',acked:false}
+];
+
+const valves = [
+  {id:1,name:'主管道阀门',zone:'1号大棚',on:false},
+  {id:2,name:'滴灌阀门-东',zone:'1号大棚',on:true},
+  {id:3,name:'喷灌阀门',zone:'1号大棚',on:false},
+  {id:4,name:'主管道阀门',zone:'2号大棚',on:false},
+  {id:5,name:'滴灌阀门-西',zone:'2号大棚',on:false}
+];
+
+const schedules = [
+  {time:'06:00',days:'每天',duration:'30分钟',zone:'1号大棚'},
+  {time:'18:00',days:'每天',duration:'20分钟',zone:'1号大棚'},
+  {time:'07:00',days:'周一/三/五',duration:'45分钟',zone:'2号大棚'},
+  {time:'12:00',days:'周二/四/六',duration:'15分钟',zone:'果园区'}
+];
+
+let currentPage = 'home';
+let currentDevice = null;
+let currentZone = '1号大棚';
+let currentMode = 'manual';
+let alarmFilter = 'all';
+
+// ===== NAVIGATION =====
+function navigateTo(page, data) {
+  if (data) currentDevice = data;
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+  document.getElementById('appContainer').scrollTop = 0;
+  renderPage(page);
+  updateTabs();
+}
+function updateTabs() {
+  var tabMap = {home:'home',devices:'devices','device-detail':'devices',irrigation:'devices',alarms:'alarms',profile:'profile'};
+  var activeTab = tabMap[currentPage] || 'home';
+  document.querySelectorAll('.tab-item').forEach(function(t){
+    t.classList.toggle('active', t.dataset.tab === activeTab);
+  });
+}
+function rand(min, max, dec) {
+  var v = Math.random() * (max - min) + min;
+  return dec ? +v.toFixed(dec) : Math.round(v);
+}
+
+// ===== RENDER TAB BAR =====
+function renderTabBar() {
+  var unacked = alarms.filter(function(a){return !a.acked}).length;
+  var badgeHtml = unacked > 0 ? '<span class="tab-badge">' + unacked + '</span>' : '';
+  document.getElementById('tabBar').innerHTML =
+    '<div class="tab-item active" data-tab="home" onclick="navigateTo(&#39;home&#39;)">' +
+      '<span class="tab-icon">' + ICONS.home + '</span><span>首页</span></div>' +
+    '<div class="tab-item" data-tab="devices" onclick="navigateTo(&#39;devices&#39;)">' +
+      '<span class="tab-icon">' + ICONS.device + '</span><span>设备</span></div>' +
+    '<div class="tab-item" data-tab="alarms" onclick="navigateTo(&#39;alarms&#39;)">' +
+      '<span class="tab-icon" style="position:relative">' + ICONS.alarm + badgeHtml + '</span><span>告警</span></div>' +
+    '<div class="tab-item" data-tab="profile" onclick="navigateTo(&#39;profile&#39;)">' +
+      '<span class="tab-icon">' + ICONS.profile + '</span><span>我的</span></div>';
+}
+function renderPage(page) {
+  switch(page) {
+    case 'home': renderHome(); break;
+    case 'devices': renderDevices(); break;
+    case 'device-detail': renderDeviceDetail(); break;
+    case 'irrigation': renderIrrigation(); break;
+    case 'alarms': renderAlarms(); break;
+    case 'profile': renderProfile(); break;
+  }
+}
+
+// ===== HOME PAGE =====
+function renderHome() {
+  var hour = new Date().getHours();
+  var greeting = hour < 12 ? '早上好' : hour < 18 ? '下午好' : '晚上好';
+  var onlineCount = devices.filter(function(d){return d.online}).length;
+  var unackedCount = alarms.filter(function(a){return !a.acked}).length;
+  var moisture = rand(45, 78);
+  var temp = rand(22, 35, 1);
+  var html = '<div class="greeting-section">' +
+    '<div class="greeting-text">' + greeting + '，张大伯</div>' +
+    '<div class="greeting-sub"><span style="color:var(--alert-orange)">' + ICONS.sun + '</span> 晴 28°C · 绿源生态农场</div></div>';
+  html += '<div class="section-title">关键指标</div>';
+  html += '<div class="metric-grid">';
+  html += '<div class="metric-card"><div class="metric-icon green">' + ICONS.droplet + '</div>' +
+    '<div class="metric-label">土壤湿度</div>' +
+    '<div class="metric-value">' + moisture + '<span class="unit"> %</span></div></div>';
+  html += '<div class="metric-card"><div class="metric-icon orange">' + ICONS.thermometer + '</div>' +
+    '<div class="metric-label">环境温度</div>' +
+    '<div class="metric-value">' + temp + '<span class="unit"> °C</span></div></div>';
+  html += '<div class="metric-card"><div class="metric-icon blue">' + ICONS.device + '</div>' +
+    '<div class="metric-label">在线设备</div>' +
+    '<div class="metric-value">' + onlineCount + '<span class="unit"> / ' + devices.length + '</span></div></div>';
+  html += '<div class="metric-card"><div class="metric-icon red">' + ICONS.alarm + '</div>' +
+    '<div class="metric-label">活跃告警</div>' +
+    '<div class="metric-value" style="color:var(--alert-red)">' + unackedCount + '<span class="unit"> 条</span></div></div>';
+  html += '</div>';
+  html += '<div class="section-title">快捷操作</div>';
+  html += '<div class="quick-actions">';
+  html += '<div class="quick-action" onclick="navigateTo(&#39;irrigation&#39;)"><div class="quick-action-icon" style="background:var(--primary)">' + ICONS.valve + '</div><span>灌溉控制</span></div>';
+  html += '<div class="quick-action" onclick="navigateTo(&#39;devices&#39;)"><div class="quick-action-icon" style="background:var(--alert-blue)">' + ICONS.device + '</div><span>设备管理</span></div>';
+  html += '<div class="quick-action" onclick="navigateTo(&#39;alarms&#39;)"><div class="quick-action-icon" style="background:var(--alert-orange)">' + ICONS.alarm + '</div><span>告警中心</span></div>';
+  html += '<div class="quick-action"><div class="quick-action-icon" style="background:#7B1FA2">' + ICONS.clock + '</div><span>定时任务</span></div>';
+  html += '</div>';
+  html += '<div class="section-title">最近告警</div>';
+  html += '<div class="card">';
+  var recent = alarms.filter(function(a){return !a.acked}).slice(0, 3);
+  recent.forEach(function(a) {
+    var lc = a.level === 'L1' ? 'l1' : a.level === 'L2' ? 'l2' : 'l3';
+    html += '<div class="alarm-item"><div class="alarm-dot ' + lc + '"></div>' +
+      '<div class="alarm-content"><div class="alarm-msg">' + a.msg + '</div>' +
+      '<div class="alarm-meta">' + a.device + ' · ' + a.time + '</div></div></div>';
+  });
+  html += '</div>';
+  document.getElementById('page-home').innerHTML = html;
+}
+
+// ===== DEVICE LIST =====
+function renderDevices() {
+  var html = '<div class="section-title">设备列表</div>';
+  devices.forEach(function(d) {
+    var bgColor = d.online ? 'var(--primary)' : 'var(--text-hint)';
+    var icon = d.type==='soil'?ICONS.droplet:d.type==='weather'?ICONS.sun:d.type==='irrigation'?ICONS.valve:ICONS.water;
+    var reading = '';
+    if(d.type==='soil') reading='湿度 '+d.moisture+'%';
+    else if(d.type==='weather') reading='温度 '+d.airTemp+'°C';
+    else if(d.type==='irrigation') reading='流量 '+d.flow+' L/min';
+    else if(d.type==='water') reading='pH '+d.ph;
+    html += '<div class="card" onclick="navigateTo(&#39;device-detail&#39;,devices['+devices.indexOf(d)+'])">' +
+      '<div class="device-card">' +
+        '<div class="device-avatar" style="background:'+bgColor+'">'+icon+'</div>' +
+        '<div class="device-info"><div class="device-name">'+d.name+'</div>' +
+        '<div class="device-location">'+d.location+'</div></div>' +
+        '<div class="device-status"><span class="badge '+(d.online?'badge-online':'badge-offline')+'">'+(d.online?'在线':'离线')+'</span>' +
+        '<div class="device-reading">'+reading+'</div></div></div></div>';
+  });
+  document.getElementById('page-devices').innerHTML = html;
+}
+
+// ===== SENSOR CARD HELPER =====
+function sensorCard(label, value, unit, pct, color) {
+  return '<div class="sensor-card"><div class="sensor-label">'+label+'</div>' +
+    '<div class="sensor-value" style="color:'+color+'">'+value+'<span class="unit">'+unit+'</span></div>' +
+    '<div class="sensor-bar"><div class="sensor-bar-fill" style="width:'+Math.min(100,Math.max(5,pct))+'%;background:'+color+'"></div></div></div>';
+}
+
+// ===== DEVICE DETAIL =====
+function renderDeviceDetail() {
+  var d = currentDevice;
+  if (!d) return;
+  var bgColor = d.online ? 'var(--primary)' : 'var(--text-hint)';
+  var icon = d.type==='soil'?ICONS.droplet:d.type==='weather'?ICONS.sun:d.type==='irrigation'?ICONS.valve:ICONS.water;
+  var html = '<div class="page-header">' +
+    '<button class="back-btn" onclick="navigateTo(&#39;devices&#39;)">' + ICONS.back + '</button>' +
+    '<h2>设备详情</h2></div>';
+  html += '<div class="detail-header">' +
+    '<div class="detail-avatar" style="background:'+bgColor+'">'+icon+'</div>' +
+    '<div class="detail-info"><h3>'+d.name+'</h3>' +
+    '<p>'+d.location+' · '+(d.online?'在线':'离线')+' · 更新于'+d.lastUpdate+'</p></div></div>';
+  html += '<div class="section-title">实时数据</div><div class="sensor-grid">';
+  if (d.type==='soil') {
+    var m=rand(45,78),t=rand(18,26,1);
+    html += sensorCard('土壤湿度',m,'%',m,'var(--primary)');
+    html += sensorCard('土壤温度',t,'°C',(t-18)/8*100,'var(--alert-orange)');
+    html += sensorCard('pH值',rand(62,71)/10,'',rand(40,90),'var(--alert-blue)');
+    html += sensorCard('EC值',rand(12,28)/10,' mS/cm',rand(30,80),'#7B1FA2');
+  } else if (d.type==='weather') {
+    var at=rand(22,35,1),ah=rand(40,75);
+    html += sensorCard('空气温度',at,'°C',(at-22)/13*100,'var(--alert-orange)');
+    html += sensorCard('空气湿度',ah,'%',ah,'var(--primary)');
+    html += sensorCard('光照强度',rand(20000,65000),' lux',rand(30,90),'#F9A825');
+    html += sensorCard('风速',rand(5,30)/10,' m/s',rand(10,60),'var(--alert-blue)');
+  } else if (d.type==='irrigation') {
+    html += sensorCard('水压',rand(20,50)/100,' MPa',rand(40,100),'var(--primary)');
+    html += sensorCard('流量',rand(25,80)/10,' L/min',rand(30,90),'var(--alert-blue)');
+    html += sensorCard('今日用水',rand(50,200),' L',rand(20,80),'#7B1FA2');
+    html += sensorCard('运行时长',rand(1,8),' h',rand(10,90),'var(--alert-orange)');
+  } else {
+    html += sensorCard('pH值',rand(62,71)/10,'',rand(40,90),'var(--alert-blue)');
+    html += sensorCard('EC值',rand(12,28)/10,' mS/cm',rand(30,80),'#7B1FA2');
+    html += sensorCard('水温',rand(18,26,1),'°C',rand(30,80),'var(--alert-orange)');
+    html += sensorCard('溶解氧',rand(50,85)/10,' mg/L',rand(40,90),'var(--primary)');
+  }
+  html += '</div>';
+  html += '<div class="section-title">历史趋势</div>';
+  html += '<div class="chart-placeholder"><div style="font-size:14px;color:var(--text-secondary);margin-bottom:8px">最近24小时</div><div class="chart-bars">';
+  for (var i=0;i<24;i++) html += '<div class="chart-bar" style="height:'+rand(20,95)+'%"></div>';
+  html += '</div></div>';
+  html += '<div style="padding:16px;display:flex;gap:12px">';
+  if (d.type==='irrigation') {
+    html += '<button class="btn btn-primary btn-block" onclick="navigateTo(&#39;irrigation&#39;)">进入灌溉控制</button>';
+  } else {
+    html += '<button class="btn btn-primary" style="flex:1" onclick="navigateTo(&#39;irrigation&#39;)">灌溉控制</button>';
+    html += '<button class="btn btn-outline" style="flex:1">数据导出</button>';
+  }
+  html += '</div>';
+  document.getElementById('page-device-detail').innerHTML = html;
+}
+
+// ===== IRRIGATION CONTROL =====
+function renderIrrigation() {
+  var html = '<div class="page-header">' +
+    '<button class="back-btn" onclick="navigateTo(&#39;home&#39;)">' + ICONS.back + '</button>' +
+    '<h2>灌溉控制</h2></div>';
+  html += '<div class="section-title">选择区域</div><div class="zone-selector">';
+  var zones = ['1号大棚','2号大棚','果园区','露天区'];
+  zones.forEach(function(z){
+    html += '<button class="zone-btn'+(currentZone===z?' active':'')+'" onclick="currentZone=&#39;'+z+'&#39;;renderIrrigation()">'+z+'</button>';
+  });
+  html += '</div>';
+  html += '<div class="section-title">控制模式</div>';
+  html += '<div class="mode-toggle">' +
+    '<div class="mode-option'+(currentMode==='manual'?' active':'')+'" onclick="currentMode=&#39;manual&#39;;renderIrrigation()">手动控制</div>' +
+    '<div class="mode-option'+(currentMode==='auto'?' active':'')+'" onclick="currentMode=&#39;auto&#39;;renderIrrigation()">自动模式</div></div>';
+  html += '<div class="section-title">阀门控制</div>';
+  var zoneValves = valves.filter(function(v){return v.zone===currentZone});
+  if (zoneValves.length===0) {
+    html += '<div class="card" style="text-align:center;color:var(--text-secondary);padding:32px">该区域暂无阀门设备</div>';
+  } else {
+    zoneValves.forEach(function(v){
+      html += '<div class="valve-card"><div class="valve-info">' +
+        '<div class="valve-icon" style="background:'+(v.on?'var(--primary)':'var(--text-hint)')+'">'+ICONS.valve+'</div>' +
+        '<div><div class="valve-name">'+v.name+'</div>' +
+        '<div class="valve-status">'+(v.on?'运行中':'已关闭')+'</div></div></div>' +
+        '<button class="valve-toggle '+(v.on?'on':'off')+'" onclick="toggleValve('+v.id+','+ !v.on+')"></button></div>';
+    });
+  }
+  html += '<div class="section-title">灌溉计划</div><div class="schedule-card">';
+  html += '<div class="schedule-header"><div class="schedule-title">定时任务</div><span class="badge badge-online">'+schedules.filter(function(s){return s.zone===currentZone}).length+' 个</span></div>';
+  var zoneSchedules = schedules.filter(function(s){return s.zone===currentZone});
+  zoneSchedules.forEach(function(s){
+    html += '<div class="schedule-row"><div><div class="schedule-time">'+s.time+'</div><div class="schedule-days">'+s.days+'</div></div>' +
+      '<div class="schedule-duration">'+s.duration+'</div></div>';
+  });
+  if (zoneSchedules.length===0) html += '<div style="text-align:center;color:var(--text-secondary);padding:16px">暂无定时任务</div>';
+  html += '</div>';
+  document.getElementById('page-irrigation').innerHTML = html;
+}
+
+// ===== VALVE TOGGLE WITH MODAL =====
+function toggleValve(id, newState) {
+  var valve = valves.find(function(v){return v.id===id});
+  if (!valve) return;
+  var action = newState ? '开启' : '关闭';
+  var overlay = document.getElementById('modalOverlay');
+  var modal = document.getElementById('modalContent');
+  modal.innerHTML = '<h3>确认'+action+'阀门</h3>' +
+    '<p>确定要'+action+'「'+valve.name+'」吗？<br>区域：'+valve.zone+'</p>' +
+    '<div class="modal-actions">' +
+      '<button class="btn btn-outline btn-sm" onclick="closeModal()">取消</button>' +
+      '<button class="btn '+(newState?'btn-primary':'btn-danger')+' btn-sm" onclick="executeValve('+id+','+newState+')">'+action+'</button></div>';
+  overlay.classList.add('show');
+}
+function executeValve(id, newState) {
+  var modal = document.getElementById('modalContent');
+  var action = newState ? '开启' : '关闭';
+  modal.innerHTML = '<h3>正在'+action+'...</h3><p>请稍候，正在执行操作</p><div class="spinner"></div>';
+  setTimeout(function(){
+    valves.find(function(v){return v.id===id}).on = newState;
+    modal.innerHTML = '<h3>'+action+'成功</h3><p>阀门已成功'+action+'</p>' +
+      '<svg class="check-circle" viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" fill="var(--primary)"/>' +
+      '<path d="M17 28l8 8 14-14" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-dasharray="36" stroke-dashoffset="36" style="animation:checkDraw .4s ease forwards"/></svg>' +
+      '<div class="modal-actions"><button class="btn btn-primary btn-sm btn-block" onclick="closeModal();renderIrrigation()">完成</button></div>';
+  }, 1500);
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+// ===== ALARM LIST =====
+function renderAlarms() {
+  var html = '<div class="section-title">告警列表</div><div class="filter-bar">';
+  var filters = [{key:'all',label:'全部'},{key:'L1',label:'严重'},{key:'L2',label:'警告'},{key:'L3',label:'提示'}];
+  filters.forEach(function(fl){
+    html += '<button class="filter-btn'+(alarmFilter===fl.key?' active':'')+'" onclick="alarmFilter=&#39;'+fl.key+'&#39;;renderAlarms()">'+fl.label+'</button>';
+  });
+  html += '</div>';
+  var filtered = alarmFilter==='all' ? alarms : alarms.filter(function(a){return a.level===alarmFilter});
+  filtered.forEach(function(a){
+    var lc = a.level==='L1'?'l1':a.level==='L2'?'l2':'l3';
+    var ll = a.level==='L1'?'严重':a.level==='L2'?'警告':'提示';
+    html += '<div class="alarm-card"><div class="alarm-card-header">' +
+      '<span class="badge badge-'+lc+'">'+ll+'</span>' +
+      '<span style="font-size:12px;color:var(--text-hint)">'+a.device+'</span></div>' +
+      '<div class="alarm-card-msg">'+a.msg+'</div>' +
+      '<div class="alarm-card-detail">'+a.detail+'</div>' +
+      '<div class="alarm-card-footer"><span class="alarm-card-time">'+a.date+' '+a.time+'</span>' +
+      '<button class="alarm-ack-btn'+(a.acked?' acked':'')+'" onclick="ackAlarm('+a.id+')">'+(a.acked?'已确认':'确认')+'</button></div></div>';
+  });
+  if (filtered.length===0) html += '<div class="card" style="text-align:center;color:var(--text-secondary);padding:32px">暂无告警信息</div>';
+  document.getElementById('page-alarms').innerHTML = html;
+}
+function ackAlarm(id) {
+  var alarm = alarms.find(function(a){return a.id===id});
+  if (alarm && !alarm.acked) { alarm.acked = true; renderAlarms(); renderTabBar(); }
+}
+
+// ===== PROFILE =====
+function renderProfile() {
+  var html = '<div class="profile-header">' +
+    '<div class="profile-avatar">' + ICONS.profile + '</div>' +
+    '<div class="profile-name">张大伯</div>' +
+    '<div class="profile-farm">绿源生态农场</div></div>';
+  html += '<div class="menu-list">';
+  var items = [
+    {icon:ICONS.device,label:'我的设备',color:'var(--primary)',count:devices.length+' 台'},
+    {icon:ICONS.alarm,label:'告警记录',color:'var(--alert-orange)',count:alarms.length+' 条'},
+    {icon:ICONS.clock,label:'灌溉记录',color:'var(--alert-blue)',count:''},
+    {icon:ICONS.settings,label:'系统设置',color:'#757575',count:''},
+    {icon:ICONS.help,label:'帮助中心',color:'#7B1FA2',count:''},
+    {icon:ICONS.info,label:'关于我们',color:'#00838F',count:''},
+    {icon:ICONS.logout,label:'退出登录',color:'var(--alert-red)',count:''}
+  ];
+  items.forEach(function(item){
+    html += '<div class="menu-item">' +
+      '<div class="menu-icon" style="background:'+item.color+'">'+item.icon+'</div>' +
+      '<div class="menu-text">'+item.label+'</div>' +
+      (item.count ? '<span style="font-size:13px;color:var(--text-secondary)">'+item.count+'</span>' : '') +
+      '<span class="menu-arrow">'+ICONS.chevron+'</span></div>';
+  });
+  html += '</div>';
+  html += '<div style="text-align:center;padding:24px;color:var(--text-hint);font-size:13px">智灌通 v2.0.1</div>';
+  document.getElementById('page-profile').innerHTML = html;
+}
+
+// ===== INIT =====
+function updateTime() {
+  var now = new Date();
+  var h = String(now.getHours()).padStart(2, '0');
+  var m = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('statusTime').textContent = h + ':' + m;
+}
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+renderTabBar();
+renderHome();
+updateTime();
+setInterval(updateTime, 30000);
+</script>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智慧农业平台</title>
+<style>
+:root{--primary:#2E7D32;--primary-light:#4CAF50;--primary-dark:#1B5E20;--alert-red:#D32F2F;--alert-orange:#F57C00;--alert-yellow:#FBC02D;--bg:#F5F5F5;--card:#FFF;--text:#212121;--text2:#757575}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a2e;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.frame{width:375px;height:667px;background:var(--bg);border-radius:32px;overflow:hidden;position:relative;box-shadow:0 0 0 8px #333,0 0 0 10px #555,0 20px 60px rgba(0,0,0,.5)}
+.pg{position:absolute;top:0;left:0;width:100%;height:100%;background:var(--bg);transition:transform .3s,opacity .3s;overflow-y:auto;padding-bottom:70px}
+.pg.h{transform:translateX(100%);opacity:0;pointer-events:none}
+.pg.sl{transform:translateX(-100%);opacity:0;pointer-events:none}
+.tabs{position:absolute;bottom:0;left:0;width:100%;height:64px;background:var(--card);display:flex;border-top:1px solid #e0e0e0;z-index:100}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);transition:color .2s;min-height:56px;position:relative}
+.tab:hover{color:var(--primary-light)}.tab.on{color:var(--primary)}
+.tab svg{width:24px;height:24px;margin-bottom:2px}.tab span{font-size:11px}
+.badge{position:absolute;top:4px;right:50%;transform:translateX(18px);background:var(--alert-red);color:#fff;font-size:10px;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.hdr{background:var(--primary);color:#fff;padding:16px;display:flex;justify-content:space-between;align-items:center}
+.hdr-t{font-size:18px;font-weight:600}.hdr-s{font-size:14px;opacity:.9}
+.hdr-b{cursor:pointer;display:flex;align-items:center;gap:4px;font-size:16px;background:none;border:none;color:#fff}.hdr-b:hover{opacity:.8}.hdr-b svg{width:20px;height:20px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 16px}
+.scard{background:var(--card);border-radius:12px;padding:16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08);cursor:pointer;transition:transform .2s}
+.scard:hover{transform:scale(1.02)}.scard:active{transform:scale(.98)}
+.slbl{font-size:14px;color:var(--text2);margin-bottom:4px}
+.sval{font-size:36px;font-weight:700;color:var(--primary)}
+.sunit{font-size:16px;color:var(--text2)}
+.sico{margin-bottom:8px}.sico svg{width:28px;height:28px}
+.acts{display:flex;gap:10px;padding:0 16px 12px}
+.abtn{flex:1;padding:14px 8px;border:none;border-radius:12px;font-size:14px;font-weight:600;color:#fff;cursor:pointer;transition:transform .15s,opacity .15s;min-height:56px;display:flex;align-items:center;justify-content:center;gap:4px}
+.abtn:hover{opacity:.9}.abtn:active{transform:scale(.96)}
+.abtn.g{background:var(--primary)}.abtn.gr{background:#9e9e9e}.abtn.r{background:var(--alert-red)}
+.abtn svg{width:18px;height:18px}
+.cbox{background:var(--card);border-radius:12px;padding:16px;margin:0 16px 12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.ctit{font-size:14px;color:var(--text2);margin-bottom:8px}
+.di{background:var(--card);margin:8px 16px;border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.di:hover{transform:translateX(4px)}.di:active{transform:scale(.98)}
+.dst{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dst.on{background:var(--primary-light);box-shadow:0 0 6px rgba(76,175,80,.4)}.dst.off{background:#bdbdbd}
+.dinfo{flex:1}.dname{font-size:16px;font-weight:500;color:var(--text)}
+.dmeta{font-size:13px;color:var(--text2);margin-top:2px}
+.dval{text-align:right}.dvn{font-size:20px;font-weight:600;color:var(--primary)}
+.dvt{font-size:11px;color:var(--text2)}
+.darr svg{width:16px;height:16px;color:#ccc}
+.dcur{text-align:center;padding:20px}
+.dcv{font-size:48px;font-weight:700;color:var(--primary)}
+.dcl{font-size:16px;color:var(--text2);margin-top:4px}
+.drow{display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f0f0f0;font-size:16px}
+.dlbl{color:var(--text2)}.dv{color:var(--text);font-weight:500}
+.htbl{width:100%;border-collapse:collapse;font-size:14px}
+.htbl th{background:var(--bg);padding:10px 8px;text-align:left;color:var(--text2);font-weight:500}
+.htbl td{padding:10px 8px;border-bottom:1px solid #f0f0f0;color:var(--text)}
+.ci{background:var(--card);margin:12px 16px;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.chdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.cname{font-size:18px;font-weight:600;color:var(--text)}
+.cst{font-size:14px;padding:4px 12px;border-radius:20px}
+.cst.on{background:#e8f5e9;color:var(--primary)}.cst.off{background:#f5f5f5;color:var(--text2)}
+.tsw{width:64px;height:34px;background:#ccc;border-radius:17px;position:relative;cursor:pointer;transition:background .3s}
+.tsw.on{background:var(--primary-light)}
+.tsw .tk{width:28px;height:28px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .3s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tsw.on .tk{transform:translateX(30px)}
+.crow{display:flex;justify-content:space-between;align-items:center}
+.ebtn{display:flex;align-items:center;justify-content:center;gap:8px;width:calc(100% - 32px);margin:16px auto;padding:18px;background:var(--alert-red);color:#fff;border:none;border-radius:16px;font-size:18px;font-weight:700;cursor:pointer;min-height:60px;transition:transform .15s}
+.ebtn:hover{opacity:.9}.ebtn:active{transform:scale(.97)}.ebtn svg{width:24px;height:24px}
+.agt{font-size:14px;font-weight:600;padding:12px 16px 4px}
+.agt.l1{color:var(--alert-red)}.agt.l2{color:var(--alert-orange)}.agt.l3{color:#f9a825}
+.ai{background:var(--card);margin:6px 16px;border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.ab{padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;color:#fff;flex-shrink:0;margin-top:2px}
+.ab.l1{background:var(--alert-red)}.ab.l2{background:var(--alert-orange)}.ab.l3{background:var(--alert-yellow);color:#333}
+.ac{flex:1}.atit{font-size:16px;color:var(--text);font-weight:500}
+.atm{font-size:13px;color:var(--text2);margin-top:2px}
+.ast{font-size:12px;padding:2px 8px;border-radius:10px;flex-shrink:0;margin-top:2px}
+.ast.u{background:#ffebee;color:var(--alert-red)}.ast.r{background:#f5f5f5;color:var(--text2)}
+.phdr{text-align:center;padding:30px 16px 20px;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff}
+.avt{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;border:3px solid rgba(255,255,255,.4)}
+.avt svg{width:40px;height:40px;fill:#fff}
+.pname{font-size:20px;font-weight:600}.prole{font-size:14px;opacity:.85;margin-top:4px}
+.pstats{display:flex;justify-content:space-around;padding:16px}
+.si{text-align:center}.sv{font-size:20px;font-weight:700;color:var(--primary)}
+.sl{font-size:13px;color:var(--text2);margin-top:2px}
+.mi{display:flex;align-items:center;padding:16px;background:var(--card);border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s;min-height:56px}
+.mi:hover{background:#fafafa}.mi:active{background:#f0f0f0}
+.mi:first-child{border-radius:12px 12px 0 0}.mi:last-child{border-radius:0 0 12px 12px;border-bottom:none}
+.mico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-right:12px}
+.mico svg{width:20px;height:20px}.mtxt{flex:1;font-size:16px;color:var(--text)}
+.marr svg{width:16px;height:16px;color:#ccc}
+.mg{margin:12px 16px;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.mo{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .3s}
+.mo.show{opacity:1;pointer-events:auto}
+.md{background:var(--card);border-radius:16px;padding:24px;width:85%;text-align:center;transform:scale(.9);transition:transform .3s}
+.mo.show .md{transform:scale(1)}
+.md-t{font-size:18px;font-weight:600;color:var(--text);margin-bottom:8px}
+.md-m{font-size:16px;color:var(--text2);margin-bottom:20px}
+.md-bs{display:flex;gap:12px}
+.md-b{flex:1;padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;min-height:48px;transition:transform .15s}
+.md-b:active{transform:scale(.96)}
+.md-b.c{background:#f5f5f5;color:var(--text2)}
+.md-b.ok{background:var(--primary);color:#fff}
+.md-b.dg{background:var(--alert-red);color:#fff}
+.lo{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:300;opacity:0;pointer-events:none;transition:opacity .3s}
+.lo.show{opacity:1;pointer-events:auto}
+.spin{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:var(--primary);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.schk{width:64px;height:64px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;animation:bi .5s ease}
+@keyframes bi{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.schk svg{width:36px;height:36px}
+.stxt{font-size:18px;font-weight:600;color:var(--primary);margin-top:12px}
+.ltxt{font-size:16px;color:var(--text2);margin-top:12px}
+.stit{font-size:14px;color:var(--text2);padding:12px 16px 4px;font-weight:500}
+</style>
+</head>
+<body>
+<div class="frame">
+
+<div id="pg-home" class="pg">
+  <div class="hdr">
+    <div><div class="hdr-t">阳光温室基地</div><div class="hdr-s">智慧农业管理平台</div></div>
+    <div style="display:flex;align-items:center;gap:4px"><svg viewBox="0 0 24 24" fill="#FFD54F" stroke="#FFD54F" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><span style="font-size:14px">晴 28°C</span></div>
+  </div>
+  <div class="sgrid">
+    <div class="scard" onclick="goDetail(0)"><div class="sico" style="color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s-7 8-7 13a7 7 0 0014 0c0-5-7-13-7-13z"/></svg></div><div class="slbl">土壤湿度</div><div class="sval">62<span class="sunit">%</span></div></div>
+    <div class="scard" onclick="goDetail(2)"><div class="sico" style="color:#F57C00"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg></div><div class="slbl">土壤温度</div><div class="sval">24.5<span class="sunit">°C</span></div></div>
+    <div class="scard" onclick="goDetail(3)"><div class="sico" style="color:#D32F2F"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg></div><div class="slbl">空气温度</div><div class="sval">28.3<span class="sunit">°C</span></div></div>
+    <div class="scard" onclick="goDetail(3)"><div class="sico" style="color:#1976D2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s-7 8-7 13a7 7 0 0014 0c0-5-7-13-7-13z"/><path d="M8 15h8"/></svg></div><div class="slbl">空气湿度</div><div class="sval">71<span class="sunit">%</span></div></div>
+  </div>
+  <div class="cbox"><div class="ctit">24小时土壤湿度趋势</div>
+    <svg viewBox="0 0 310 80" style="width:100%;height:80px"><defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4CAF50" stop-opacity=".3"/><stop offset="100%" stop-color="#4CAF50" stop-opacity="0"/></linearGradient></defs><polyline fill="url(#cg)" stroke="none" points="0,60 20,55 40,50 60,58 80,45 100,40 120,42 140,35 160,30 180,38 200,32 220,28 240,35 260,30 280,25 300,20 310,22 310,80 0,80"/><polyline fill="none" stroke="#4CAF50" stroke-width="2" points="0,60 20,55 40,50 60,58 80,45 100,40 120,42 140,35 160,30 180,38 200,32 220,28 240,35 260,30 280,25 300,20 310,22"/><text x="0" y="78" font-size="10" fill="#757575">00:00</text><text x="70" y="78" font-size="10" fill="#757575">06:00</text><text x="145" y="78" font-size="10" fill="#757575">12:00</text><text x="220" y="78" font-size="10" fill="#757575">18:00</text><text x="280" y="78" font-size="10" fill="#757575">24:00</text></svg>
+  </div>
+  <div class="stit">快捷操作</div>
+  <div class="acts">
+    <button class="abtn g" onclick="goTab(4)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v7M12 15v7M2 12h7M15 12h7"/></svg>开启灌溉</button>
+    <button class="abtn gr" onclick="goTab(4)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v7M12 15v7M2 12h7M15 12h7"/></svg>关闭灌溉</button>
+    <button class="abtn r" onclick="emergStop()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>紧急停止</button>
+  </div>
+</div>
+
+<div id="pg-dev" class="pg h">
+  <div class="hdr"><div class="hdr-t">设备列表</div><div class="hdr-s">共 6 台设备</div></div>
+  <div class="stit">全部设备</div>
+  <div class="di" onclick="goDetail(0)">
+    <div class="dst on"></div>
+    <div class="dinfo"><div class="dname">土壤湿度传感器A</div><div class="dmeta">A区 · 在线</div></div>
+    <div class="dval"><div class="dvn">62%</div><div class="dvt">2分钟前</div></div>
+    <div class="darr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+  </div>
+  <div class="di" onclick="goDetail(1)">
+    <div class="dst on"></div>
+    <div class="dinfo"><div class="dname">土壤湿度传感器B</div><div class="dmeta">B区 · 在线</div></div>
+    <div class="dval"><div class="dvn">58%</div><div class="dvt">2分钟前</div></div>
+    <div class="darr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+  </div>
+  <div class="di" onclick="goDetail(2)">
+    <div class="dst on"></div>
+    <div class="dinfo"><div class="dname">土壤温度传感器</div><div class="dmeta">A区 · 在线</div></div>
+    <div class="dval"><div class="dvn">24.5°C</div><div class="dvt">3分钟前</div></div>
+    <div class="darr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+  </div>
+  <div class="di" onclick="goDetail(3)">
+    <div class="dst on"></div>
+    <div class="dinfo"><div class="dname">空气温湿度传感器</div><div class="dmeta">温室 · 在线</div></div>
+    <div class="dval"><div class="dvn">28.3°C / 71%</div><div class="dvt">1分钟前</div></div>
+    <div class="darr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+  </div>
+  <div class="di" onclick="goDetail(4)">
+    <div class="dst on"></div>
+    <div class="dinfo"><div class="dname">灌溉阀门1</div><div class="dmeta">A区 · 在线</div></div>
+    <div class="dval"><div class="dvn">开启中</div><div class="dvt">5分钟前</div></div>
+    <div class="darr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+  </div>
+  <div class="di" onclick="goDetail(5)">
+    <div class="dst off"></div>
+    <div class="dinfo"><div class="dname">灌溉阀门2</div><div class="dmeta">B区 · 离线</div></div>
+    <div class="dval"><div class="dvn">已关闭</div><div class="dvt">15分钟前</div></div>
+    <div class="darr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+  </div>
+</div>
+
+<div id="pg-detail" class="pg h">
+  <div class="hdr">
+    <button class="hdr-b" onclick="backFromDetail()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>返回</button>
+    <div class="hdr-t" id="det-title">设备详情</div>
+    <div style="width:60px"></div>
+  </div>
+  <div class="dcur"><div class="dcv" id="det-val">62%</div><div class="dcl" id="det-lbl">土壤湿度传感器A · 当前值</div></div>
+  <div class="drow"><span class="dlbl">设备ID</span><span class="dv" id="det-id">SENSOR-HUM-A01</span></div>
+  <div class="drow"><span class="dlbl">设备状态</span><span class="dv" id="det-st" style="color:var(--primary)">在线</span></div>
+  <div class="drow"><span class="dlbl">所属区域</span><span class="dv" id="det-area">A区</span></div>
+  <div class="drow"><span class="dlbl">最后更新</span><span class="dv" id="det-tm">2分钟前</span></div>
+  <div class="cbox" style="margin-top:12px"><div class="ctit">24小时趋势</div>
+    <svg viewBox="0 0 310 120" style="width:100%;height:120px"><defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4CAF50" stop-opacity=".2"/><stop offset="100%" stop-color="#4CAF50" stop-opacity="0"/></linearGradient></defs><line x1="20" y1="20" x2="310" y2="20" stroke="#eee"/><line x1="20" y1="50" x2="310" y2="50" stroke="#eee"/><line x1="20" y1="80" x2="310" y2="80" stroke="#eee"/><text x="0" y="24" font-size="9" fill="#999">70%</text><text x="0" y="54" font-size="9" fill="#999">60%</text><text x="0" y="84" font-size="9" fill="#999">50%</text><polyline fill="url(#dg)" stroke="none" points="30,70 65,55 100,48 135,60 170,42 205,36 240,39 275,30 305,24 305,95 30,95"/><polyline fill="none" stroke="#4CAF50" stroke-width="2.5" stroke-linejoin="round" points="30,70 65,55 100,48 135,60 170,42 205,36 240,39 275,30 305,24"/><circle cx="30" cy="70" r="4" fill="#fff" stroke="#4CAF50" stroke-width="2"/><circle cx="65" cy="55" r="4" fill="#fff" stroke="#4CAF50" stroke-width="2"/><circle cx="100" cy="48" r="4" fill="#fff" stroke="#4CAF50" stroke-width="2"/><circle cx="135" cy="60" r="4" fill="#fff" stroke="#4CAF50" stroke-width="2"/><circle cx="170" cy="42" r="4" fill="#fff" stroke="#4CAF50" stroke-width="2"/><circle cx="205" cy="36" r="4" fill="#fff" stroke="#4CAF50" stroke-width="2"/><circle cx="240" cy="39" r="4" fill="#fff" stroke="#4CAF50" stroke-width="2"/><circle cx="275" cy="30" r="4" fill="#fff" stroke="#4CAF50" stroke-width="2"/><circle cx="305" cy="24" r="4" fill="#fff" stroke="#4CAF50" stroke-width="2"/><text x="30" y="108" font-size="9" fill="#999">00:00</text><text x="100" y="108" font-size="9" fill="#999">06:00</text><text x="170" y="108" font-size="9" fill="#999">12:00</text><text x="240" y="108" font-size="9" fill="#999">18:00</text><text x="290" y="108" font-size="9" fill="#999">now</text></svg>
+  </div>
+  <div class="cbox"><div class="ctit">历史数据</div>
+    <table class="htbl"><thead><tr><th>时间</th><th>数值</th><th>状态</th></tr></thead><tbody>
+    <tr><td>10:30</td><td>62%</td><td style="color:var(--primary)">正常</td></tr>
+    <tr><td>10:00</td><td>61%</td><td style="color:var(--primary)">正常</td></tr>
+    <tr><td>09:30</td><td>59%</td><td style="color:var(--primary)">正常</td></tr>
+    <tr><td>09:00</td><td>57%</td><td style="color:var(--alert-orange)">偏低</td></tr>
+    <tr><td>08:30</td><td>55%</td><td style="color:var(--alert-orange)">偏低</td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+<div id="pg-ctrl" class="pg h">
+  <div class="hdr"><div class="hdr-t">控制面板</div><div class="hdr-s">灌溉控制</div></div>
+  <div class="ci">
+    <div class="chdr"><div class="cname">阀门1 - A区</div><div class="cst on" id="v1-st">开启中</div></div>
+    <div class="crow"><span style="font-size:16px;color:var(--text2)">灌溉开关</span>
+      <div class="tsw on" id="v1-sw" onclick="toggleValve(1)"><div class="tk"></div></div>
+    </div>
+  </div>
+  <div class="ci">
+    <div class="chdr"><div class="cname">阀门2 - B区</div><div class="cst off" id="v2-st">已关闭</div></div>
+    <div class="crow"><span style="font-size:16px;color:var(--text2)">灌溉开关</span>
+      <div class="tsw" id="v2-sw" onclick="toggleValve(2)"><div class="tk"></div></div>
+    </div>
+  </div>
+  <button class="ebtn" onclick="emergStop()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg> 紧急停止所有灌溉</button>
+</div>
+
+<div id="pg-alrt" class="pg h">
+  <div class="hdr"><div class="hdr-t">告警列表</div><div class="hdr-s">共 5 条告警</div></div>
+  <div class="agt l1">L1 紧急</div>
+  <div class="ai"><div class="ab l1">L1</div><div class="ac"><div class="atit">灌溉阀门1执行失败</div><div class="atm">2分钟前</div></div><div class="ast u">未处理</div></div>
+  <div class="agt l2">L2 重要</div>
+  <div class="ai"><div class="ab l2">L2</div><div class="ac"><div class="atit">土壤湿度传感器A离线</div><div class="atm">15分钟前</div></div><div class="ast u">未处理</div></div>
+  <div class="ai"><div class="ab l2">L2</div><div class="ac"><div class="atit">B区土壤湿度超上限</div><div class="atm">32分钟前</div></div><div class="ast u">未处理</div></div>
+  <div class="agt l3">L3 一般</div>
+  <div class="ai"><div class="ab l3">L3</div><div class="ac"><div class="atit">A区定时灌溉已完成</div><div class="atm">1小时前</div></div><div class="ast r">已处理</div></div>
+  <div class="ai"><div class="ab l3">L3</div><div class="ac"><div class="atit">系统备份完成</div><div class="atm">3小时前</div></div><div class="ast r">已处理</div></div>
+</div>
+
+<div id="pg-me" class="pg h">
+  <div class="phdr">
+    <div class="avt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0112 0v1"/></svg></div>
+    <div class="pname">张建国</div>
+    <div class="prole">基地管理员</div>
+  </div>
+  <div class="cbox">
+    <div class="pstats">
+      <div class="si"><div class="sv">阳光温室</div><div class="sl">基地名称</div></div>
+      <div class="si"><div class="sv">12台</div><div class="sl">设备数量</div></div>
+      <div class="si"><div class="sv">156天</div><div class="sl">运行天数</div></div>
+    </div>
+  </div>
+  <div class="mg">
+    <div class="mi"><div class="mico" style="background:#e8f5e9;color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div><div class="mtxt">通知设置</div><div class="marr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div></div>
+    <div class="mi"><div class="mico" style="background:#e3f2fd;color:#1976D2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></div><div class="mtxt">免打扰时段</div><div class="marr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div></div>
+    <div class="mi"><div class="mico" style="background:#fff3e0;color:#F57C00"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg></div><div class="mtxt">操作员管理</div><div class="marr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div></div>
+  </div>
+  <div class="mg">
+    <div class="mi"><div class="mico" style="background:#e8f5e9;color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></div><div class="mtxt">灌溉记录</div><div class="marr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div></div>
+    <div class="mi"><div class="mico" style="background:#f3e5f5;color:#7B1FA2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div><div class="mtxt">系统设置</div><div class="marr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div></div>
+    <div class="mi"><div class="mico" style="background:#e0e0e0;color:#616161"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div><div class="mtxt">关于我们</div><div class="marr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="goTab(0)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"/></svg><span>首页</span></div>
+  <div class="tab" onclick="goTab(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg><span>设备</span></div>
+  <div class="tab" onclick="goTab(2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2z"/><path d="M12 10v4M12 18h.01"/></svg><span>告警</span><div class="badge">3</div></div>
+  <div class="tab" onclick="goTab(3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0112 0v1"/></svg><span>我的</span></div>
+</div>
+
+<div class="mo" id="modal">
+  <div class="md">
+    <div class="md-t" id="md-t">确认操作</div>
+    <div class="md-m" id="md-m">确认执行此操作？</div>
+    <div class="md-bs">
+      <button class="md-b c" onclick="closeModal()">取消</button>
+      <button class="md-b ok" id="md-ok" onclick="confirmAction()">确认</button>
+    </div>
+  </div>
+</div>
+<div class="lo" id="loading">
+  <div class="spin" id="lo-spin"></div>
+  <div class="ltxt" id="lo-txt">正在执行...</div>
+</div>
+</div>
+<script>
+const pages = ['pg-home','pg-dev','pg-detail','pg-ctrl','pg-alrt','pg-me'];
+const tabMap = {0:'pg-home',1:'pg-dev',2:'pg-alrt',3:'pg-me',4:'pg-ctrl'};
+const tabs = document.querySelectorAll('.tab');
+let curTab = 0;
+let prevPage = null;
+let pendingAction = null;
+
+const devData = [
+  {name:'土壤湿度传感器A',id:'SENSOR-HUM-A01',st:'在线',val:'62%',area:'A区',tm:'2分钟前'},
+  {name:'土壤湿度传感器B',id:'SENSOR-HUM-B01',st:'在线',val:'58%',area:'B区',tm:'2分钟前'},
+  {name:'土壤温度传感器',id:'SENSOR-TMP-A01',st:'在线',val:'24.5°C',area:'A区',tm:'3分钟前'},
+  {name:'空气温湿度传感器',id:'SENSOR-ATH-01',st:'在线',val:'28.3°C / 71%',area:'温室',tm:'1分钟前'},
+  {name:'灌溉阀门1',id:'VALVE-A01',st:'在线',val:'开启中',area:'A区',tm:'5分钟前'},
+  {name:'灌溉阀门2',id:'VALVE-B01',st:'离线',val:'已关闭',area:'B区',tm:'15分钟前'},
+];
+
+function showPage(id) {
+  pages.forEach(p => {
+    const el = document.getElementById(p);
+    if (!el) return;
+    if (p === id) { el.className = 'pg'; }
+    else { el.className = 'pg h'; }
+  });
+}
+
+function goTab(n) {
+  curTab = n;
+  const pgId = tabMap[n];
+  showPage(pgId);
+  tabs.forEach((t, i) => {
+    t.className = (i === (n > 3 ? n : n)) ? 'tab on' : 'tab';
+  });
+  // highlight correct tab for control panel
+  if (n === 4) {
+    tabs.forEach(t => t.className = 'tab');
+    tabs[0].className = 'tab on';
+  } else {
+    tabs.forEach((t, i) => t.className = i === n ? 'tab on' : 'tab');
+  }
+}
+
+function goDetail(idx) {
+  const d = devData[idx];
+  document.getElementById('det-title').textContent = d.name;
+  document.getElementById('det-val').textContent = d.val;
+  document.getElementById('det-lbl').textContent = d.name + ' · 当前值';
+  document.getElementById('det-id').textContent = d.id;
+  document.getElementById('det-st').textContent = d.st;
+  document.getElementById('det-st').style.color = d.st === '在线' ? 'var(--primary)' : 'var(--alert-red)';
+  document.getElementById('det-area').textContent = d.area;
+  document.getElementById('det-tm').textContent = d.tm;
+  prevPage = curTab <= 3 ? tabMap[curTab] : tabMap[0];
+  showPage('pg-detail');
+}
+
+function backFromDetail() {
+  showPage(prevPage || 'pg-dev');
+  if (prevPage === 'pg-dev') goTab(1);
+  else goTab(0);
+}
+
+function toggleValve(n) {
+  const sw = document.getElementById('v'+n+'-sw');
+  const st = document.getElementById('v'+n+'-st');
+  const isOn = sw.classList.contains('on');
+  pendingAction = () => {
+    if (isOn) {
+      sw.classList.remove('on');
+      st.textContent = '已关闭';
+      st.className = 'cst off';
+    } else {
+      sw.classList.add('on');
+      st.textContent = '开启中';
+      st.className = 'cst on';
+    }
+  };
+  document.getElementById('md-t').textContent = '确认操作';
+  document.getElementById('md-m').textContent = isOn ? '确认关闭阀门'+n+'灌溉？' : '确认开启灌溉阀门？';
+  document.getElementById('md-ok').className = 'md-b ok';
+  document.getElementById('md-ok').textContent = '确认';
+  document.getElementById('modal').classList.add('show');
+}
+
+function emergStop() {
+  pendingAction = () => {
+    document.getElementById('v1-sw').classList.remove('on');
+    document.getElementById('v1-st').textContent = '已关闭';
+    document.getElementById('v1-st').className = 'cst off';
+    document.getElementById('v2-sw').classList.remove('on');
+    document.getElementById('v2-st').textContent = '已关闭';
+    document.getElementById('v2-st').className = 'cst off';
+  };
+  document.getElementById('md-t').textContent = '紧急停止';
+  document.getElementById('md-m').textContent = '确认紧急停止所有灌溉？';
+  document.getElementById('md-ok').className = 'md-b dg';
+  document.getElementById('md-ok').textContent = '确认停止';
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  pendingAction = null;
+}
+
+function confirmAction() {
+  document.getElementById('modal').classList.remove('show');
+  const lo = document.getElementById('loading');
+  const spin = document.getElementById('lo-spin');
+  const txt = document.getElementById('lo-txt');
+  spin.className = 'spin';
+  txt.textContent = '正在执行...';
+  txt.style.color = 'var(--text2)';
+  lo.classList.add('show');
+  setTimeout(() => {
+    if (pendingAction) pendingAction();
+    pendingAction = null;
+    spin.className = 'schk';
+    spin.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>';
+    txt.textContent = '操作成功';
+    txt.className = 'stxt';
+    setTimeout(() => {
+      lo.classList.remove('show');
+      spin.innerHTML = '';
+      txt.className = 'ltxt';
+    }, 1200);
+  }, 1500);
+}
+</script>
+</body>
+</html>
