@@ -11,4 +11,6 @@ public interface IrrigationRuleRepository extends JpaRepository<IrrigationRule, 
     List<IrrigationRule> findByEnabledTrue();
 
     List<IrrigationRule> findByDeviceId(String deviceId);
+
+    List<IrrigationRule> findByTenantIdAndGreenhouseNo(Long tenantId, String greenhouseNo);
 }

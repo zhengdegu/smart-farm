@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import com.smartfarm.shared.application.WeatherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
@@ -36,6 +37,7 @@ public class ScreenController {
     private final AlertService alertService;
     private final ReportService reportService;
     private final GreenhousePlantingService plantingService;
+    private final WeatherService weatherService;
 
     @GetMapping("/data")
     @Operation(summary = "大屏全量数据", description = "一次返回设备概览、实时环境、告警、灌溉统计、节水效果、种植进度")
@@ -135,6 +137,25 @@ public class ScreenController {
             } catch (Exception ignored) {}
         }
         result.put("plantings", plantList);
+
+        // 7. 天气数据
+        WeatherService.WeatherData weather = weatherService.getCurrentWeather();
+        WeatherService.WeatherForecast wForecast = weatherService.getForecast();
+        if (weather != null) {
+            Map<String, Object> weatherMap = new LinkedHashMap<>();
+            weatherMap.put("temperature", weather.getTemperature());
+            weatherMap.put("humidity", weather.getHumidity());
+            weatherMap.put("precipitation", weather.getPrecipitation());
+            weatherMap.put("isRaining", weather.isRaining());
+            weatherMap.put("description", weatherService.getWeatherDescription());
+            weatherMap.put("irrigationFactor", weatherService.getIrrigationAdjustmentFactor());
+            if (wForecast != null) {
+                weatherMap.put("willRainSoon", wForecast.isWillRainSoon());
+                weatherMap.put("precipitationNext6h", wForecast.getPrecipitationNext6h());
+                weatherMap.put("maxTempToday", wForecast.getMaxTempToday());
+            }
+            result.put("weather", weatherMap);
+        }
 
         return result;
     }

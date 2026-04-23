@@ -40,6 +40,9 @@ public class IrrigationRule extends BaseEntity {
     @Column(name = "duration_min")
     private Integer durationMin = 30;
 
+    @Column(name = "greenhouse_no", length = 20)
+    private String greenhouseNo;
+
     @Column
     private Boolean enabled = true;
 

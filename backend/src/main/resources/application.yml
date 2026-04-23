@@ -60,6 +60,13 @@ wechat:
     alert: ""
   enabled: false
 
+# AI
+ai:
+  llm:
+    api-url: ${AI_LLM_API_URL:https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions}
+    api-key: ${AI_LLM_API_KEY:}
+    model: ${AI_LLM_MODEL:qwen-plus}
+
 # Actuator
 management:
   endpoints:

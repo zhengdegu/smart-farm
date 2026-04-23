@@ -3,6 +3,7 @@ package com.smartfarm.irrigation.application;
 import com.smartfarm.alert.application.AlertService;
 import com.smartfarm.alert.domain.Alert;
 import com.smartfarm.irrigation.domain.*;
+import com.smartfarm.shared.application.WeatherService;
 import com.smartfarm.telemetry.application.TelemetryService;
 import com.smartfarm.telemetry.domain.SensorData;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class IrrigationEngine {
     private final TelemetryService telemetryService;
     private final AlertService alertService;
     private final CommandLogRepository commandLogRepo;
+    private final WeatherService weatherService;
 
     @Value("${smartfarm.command.timeout-seconds:30}")
     private int commandTimeoutSeconds;
@@ -68,13 +70,22 @@ public class IrrigationEngine {
                 if (!"soil_moisture".equals(dataType)) continue;
 
                 if (rule.getThresholdLow() != null && value < rule.getThresholdLow()) {
+                    // 天气联动：下雨时跳过灌溉
+                    double weatherFactor = weatherService.getIrrigationAdjustmentFactor();
+                    if (weatherFactor <= 0.0) {
+                        log.info("天气联动: 当前下雨，跳过灌溉 rule={}, device={}", rule.getName(), rule.getDeviceId());
+                        continue;
+                    }
+
                     // 湿度低于下限 → 开阀
                     if (!hasActiveOpenCommand(rule.getDeviceId())) {
-                        log.info("规则触发[{}]: {}={} < {}, 开阀 {}",
-                                rule.getName(), dataType, value, rule.getThresholdLow(), rule.getDeviceId());
+                        int baseDuration = rule.getDurationMin() != null ? rule.getDurationMin() : 30;
+                        int adjustedDuration = (int) Math.round(baseDuration * weatherFactor);
+                        log.info("规则触发[{}]: {}={} < {}, 开阀 {}, 天气系数={}, 时长={}min",
+                                rule.getName(), dataType, value, rule.getThresholdLow(), rule.getDeviceId(), weatherFactor, adjustedDuration);
                         commandService.sendCommand(rule.getTenantId(), rule.getDeviceId(),
                                 CommandLog.CommandAction.OPEN_VALVE,
-                                Map.of("duration_min", rule.getDurationMin() != null ? rule.getDurationMin() : 30),
+                                Map.of("duration_min", adjustedDuration, "weather_factor", weatherFactor),
                                 "AUTO:rule_" + rule.getId());
                         rule.setLastTriggeredAt(OffsetDateTime.now());
                     }
