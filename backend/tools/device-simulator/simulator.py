@@ -86,7 +86,7 @@ class ValveSimulator:
 
         # 模拟失败
         if random.random() < CMD_FAIL_RATE:
-            print(f"  [VALVE {self.device_id}] ❌ 执行失败!")
+            print(f"  [VALVE {self.device_id}] FAIL 执行失败!")
             return {
                 "cmd_id": cmd_id,
                 "device_id": self.device_id,
@@ -103,7 +103,7 @@ class ValveSimulator:
             self.state = "CLOSED"
             self.open_since = None
 
-        print(f"  [VALVE {self.device_id}] ✓ 执行成功, 状态={self.state}")
+        print(f"  [VALVE {self.device_id}] OK 执行成功, 状态={self.state}")
         return {
             "cmd_id": cmd_id,
             "device_id": self.device_id,
@@ -126,7 +126,7 @@ def main():
     sensors = []
     sensor_types = ["soil_moisture", "soil_temp", "air_temp", "air_humidity"]
     for i in range(SENSOR_COUNT):
-        s_type = sensor_types[i % len(senstypes)]
+        s_type = sensor_types[i % len(sensor_types)]
         sensor = SensorSimulator(f"sensor_{i+1:03d}", s_type)
         sensors.append(sensor)
 
@@ -139,14 +139,14 @@ def main():
     # MQTT 回调
     def on_connect(client, userdata, flags, rc, properties=None):
         if rc == 0:
-            print("[MQTT] ✓ 连接成功")
+            print("[MQTT] OK 连接成功")
             # 订阅阀门控制指令
             for vid in valves:
                 topic = f"/{TENANT_ID}/valve/{vid}/command"
                 client.subscribe(topic, qos=1)
                 print(f"[MQTT] 订阅: {topic}")
         else:
-            print(f"[MQ接失败, rc={rc}")
+            print(f"[MQTT] 连接失败, rc={rc}")
 
     def on_message(client, userdata, msg):
         device_id = msg.topic.split("/")[3]
@@ -157,7 +157,7 @@ def main():
             client.publish(ack_topic, json.dumps(response), qos=1)
 
     # 连接MQTT
-    client = mqtt.Client(client_id=f"simulator_{TENANT_ID}", protocol=mqtt.MQTTv5)
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=f"simulator_{TENANT_ID}", protocol=mqtt.MQTTv5)
     client.on_connect = on_connect
     client.on_message = on_message
 
@@ -190,7 +190,7 @@ def main():
 
                 # 打印异常数据
                 if _is_anomaly(sensor.sensor_type, value):
-                    print(f"  ⚠️  [{sensor.device_id}] {sensor.sensor_type}={value} (异常!)")
+                    print(f"  WARN  [{sensor.device_id}] {sensor.sensor_type}={value} (异常!)")
 
             # 打印心跳
             ts = datetime.now().strftime("%H:%M:%S")
@@ -220,7 +220,7 @@ def _is_anomaly(sensor_type, value):
         "soil_moisture": (20, 90),
         "soil_temp": (5, 40),
         "air_temp": (5, 40),
-        "aity": (20, 95),
+        "air_humidity": (20, 95),
     }
     low, high = thresholds.get(sensor_type, (0, 100))
     return value < low or value > high

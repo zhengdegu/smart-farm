@@ -69,57 +69,82 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, shallowRef } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import axios from 'axios'
 import * as echarts from 'echarts/core'
 import { BarChart, GaugeChart } from 'echarts/charts'
 import { TitleComponent, TooltipComponent, GridComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 echarts.use([BarChart, GaugeChart, TitleComponent, TooltipComponent, GridComponent, CanvasRenderer])
 
+const screenApi = axios.create({ baseURL: '/api/v1/screen', timeout: 10000 })
+
 const canvasRef = ref(null)
 const irrigChart = ref(null)
 const waterChart = ref(null)
 const currentTime = ref('')
-let timer = null, animId = null
+let timer = null, animId = null, refreshTimer = null
 
-// 模拟数据
-const stats = ref({ onlineDevices: 12, offlineDevices: 2, totalSensors: 10, totalValves: 4 })
-const envData = ref([
-  { label: '土壤湿度', value: 62, unit: '%', color: '#409eff' },
-  { label: '土壤温度', value: 24.5, unit: '°C', color: '#e6a23c' },
-  { label: '空气温度', value: 28.3, unit: '°C', color: '#f56c6c' },
-  { label: '空气湿度', value: 71, unit: '%', color: '#67c23a' },
-])
-const alerts = ref([
-  { id: 1, level: 'L2', title: '3号棚土壤湿度偏低' },
-  { id: 2, level: 'L3', title: '传感器 sensor_003 数据延迟' },
-])
+const stats = ref({ onlineDevices: 0, offlineDevices: 0, totalSensors: 0, totalValves: 0 })
+const envData = ref([])
+const alerts = ref([])
 const greenhouses = ref([
-  { no: '1', moisture: 65, style: { left: '20%', top: '30%' } },
-  { no: '2', moisture: 58, style: { left: '50%', top: '25%' } },
-  { no: '3', moisture: 35, style: { left: '75%', top: '35%' } },
-  { no: '4', moisture: 72, style: { left: '35%', top: '60%' } },
+  { no: '1', moisture: 0, style: { left: '20%', top: '30%' } },
+  { no: '2', moisture: 0, style: { left: '50%', top: '25%' } },
+  { no: '3', moisture: 0, style: { left: '75%', top: '35%' } },
+  { no: '4', moisture: 0, style: { left: '35%', top: '60%' } },
 ])
-const plantings = ref([
-  { no: '1', crop: '番茄', stage: '开花结果期', progress: 65 },
-  { no: '2', crop: '黄瓜', stage: '营养生长期', progress: 40 },
-  { no: '3', crop: '叶菜', stage: '生长期', progress: 55 },
-  { no: '4', crop: '番茄', stage: '果实膨大期', progress: 80 },
-])
+const plantings = ref([])
+let irrigChartData = { dates: [], counts: [] }
+let waterSavingPercent = 0
 
 const updateTime = () => {
   currentTime.value = new Date().toLocaleString('zh-CN', { hour12: false })
 }
 
-onMounted(() => {
+async function fetchScreenData() {
+  try {
+    const { data } = await screenApi.get('/data')
+    if (data.deviceStats) stats.value = data.deviceStats
+    if (data.envData) {
+      envData.value = data.envData.map(e => ({
+        label: e.label, unit: e.unit, color: e.color,
+        value: typeof e.value === 'number' ? Math.round(e.value * 10) / 10 : e.value
+      }))
+      const moisture = data.envData.find(e => e.label === '土壤湿度')
+      if (moisture) {
+        greenhouses.value.forEach(gh => {
+          gh.moisture = Math.round(moisture.value + (Math.random() - 0.5) * 20)
+        })
+      }
+    }
+    if (data.alerts) alerts.value = data.alerts
+    if (data.irrigationChart) {
+      irrigChartData = data.irrigationChart
+      updateIrrigChart()
+    }
+    if (data.waterSaving) {
+      waterSavingPercent = data.waterSaving.waterSavedPercent || 0
+      updateWaterChart()
+    }
+    if (data.plantings && data.plantings.length) plantings.value = data.plantings
+  } catch (e) {
+    console.warn('大屏数据加载失败:', e.message)
+  }
+}
+
+onMounted(async () => {
   updateTime()
   timer = setInterval(updateTime, 1000)
   init3D()
   initCharts()
+  await fetchScreenData()
+  refreshTimer = setInterval(fetchScreenData, 15000)
 })
 
 onUnmounted(() => {
   clearInterval(timer)
+  clearInterval(refreshTimer)
   cancelAnimationFrame(animId)
 })
 
@@ -215,24 +240,25 @@ async function init3D() {
   animate()
 }
 
+let irrigChartInstance = null
+let waterChartInstance = null
+
 function initCharts() {
-  // 灌溉统计
-  const ic = echarts.init(irrigChart.value)
-  ic.setOption({
+  irrigChartInstance = echarts.init(irrigChart.value)
+  irrigChartInstance.setOption({
     backgroundColor: 'transparent',
     textStyle: { color: '#aaa' },
     tooltip: { trigger: 'axis' },
     grid: { top: 10, right: 10, bottom: 20, left: 40 },
-    xAxis: { type: 'category', data: ['周一','周二','周三','周四','周五','周六','周日'], axisLine: { lineStyle: { color: '#333' } } },
+    xAxis: { type: 'category', data: [], axisLine: { lineStyle: { color: '#333' } } },
     yAxis: { type: 'value', splitLine: { lineStyle: { color: '#1a2a3a' } }, axisLine: { lineStyle: { color: '#333' } } },
     series: [
-      { type: 'bar', data: [5,3,6,4,7,2,5], itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#409eff'},{offset:1,color:'#0d47a1'}]) } }
+      { type: 'bar', data: [], itemStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#409eff'},{offset:1,color:'#0d47a1'}]) } }
     ]
   })
 
-  // 节水效果
-  const wc = echarts.init(waterChart.value)
-  wc.setOption({
+  waterChartInstance = echarts.init(waterChart.value)
+  waterChartInstance.setOption({
     backgroundColor: 'transparent',
     series: [{
       type: 'gauge', radius: '90%', startAngle: 200, endAngle: -20,
@@ -242,8 +268,23 @@ function initCharts() {
       axisTick: { show: false }, splitLine: { show: false },
       axisLabel: { color: '#aaa', fontSize: 10 },
       detail: { formatter: '{value}%', fontSize: 20, color: '#67c23a', offsetCenter: [0, '70%'] },
-      data: [{ value: 32, name: '节水率' }]
+      data: [{ value: 0, name: '节水率' }]
     }]
+  })
+}
+
+function updateIrrigChart() {
+  if (!irrigChartInstance) return
+  irrigChartInstance.setOption({
+    xAxis: { data: irrigChartData.dates },
+    series: [{ data: irrigChartData.counts }]
+  })
+}
+
+function updateWaterChart() {
+  if (!waterChartInstance) return
+  waterChartInstance.setOption({
+    series: [{ data: [{ value: Math.round(waterSavingPercent), name: '节水率' }] }]
   })
 }
 </script>
