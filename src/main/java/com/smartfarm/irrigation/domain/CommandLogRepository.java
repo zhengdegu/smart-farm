@@ -14,4 +14,8 @@ public interface CommandLogRepository extends JpaRepository<CommandLog, Long> {
     List<CommandLog> findByDeviceIdAndStatusIn(String deviceId, List<CommandLog.CommandStatus> statuses);
 
     List<CommandLog> findByStatusIn(List<CommandLog.CommandStatus> statuses);
+
+    List<CommandLog> findByStatusInAndCreatedAtBefore(List<CommandLog.CommandStatus> statuses, java.time.OffsetDateTime before);
+
+    List<CommandLog> findByStatusAndSentAtBefore(CommandLog.CommandStatus status, java.time.OffsetDateTime before);
 }

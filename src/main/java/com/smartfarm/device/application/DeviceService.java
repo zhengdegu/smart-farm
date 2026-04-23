@@ -60,4 +60,17 @@ public class DeviceService {
         }
         deviceRepository.save(device);
     }
+
+    @Transactional
+    public Device updateDevice(String deviceId, String name, String location, String greenhouseNo) {
+        Device device = getDevice(deviceId);
+        if (name != null) device.setName(name);
+        if (location != null) device.setLocation(location);
+        if (greenhouseNo != null) device.setGreenhouseNo(greenhouseNo);
+        return deviceRepository.save(device);
+    }
+
+    public List<Device> listByGreenhouse(Long tenantId, String greenhouseNo) {
+        return deviceRepository.findByTenantIdAndGreenhouseNo(tenantId, greenhouseNo);
+    }
 }

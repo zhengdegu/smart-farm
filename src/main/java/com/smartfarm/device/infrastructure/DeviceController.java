@@ -47,11 +47,28 @@ public class DeviceController {
         deviceService.deleteDevice(deviceId);
     }
 
+    @PutMapping("/{deviceId}")
+    public Device update(@PathVariable String deviceId, @RequestBody UpdateDeviceRequest req) {
+        return deviceService.updateDevice(deviceId, req.getName(), req.getLocation(), req.getGreenhouseNo());
+    }
+
+    @GetMapping("/greenhouse/{greenhouseNo}")
+    public List<Device> listByGreenhouse(@PathVariable String greenhouseNo) {
+        return deviceService.listByGreenhouse(SecurityUtils.currentTenantId(), greenhouseNo);
+    }
+
     @Data
     public static class CreateDeviceRequest {
         @NotBlank private String deviceId;
         @NotNull private Device.DeviceType deviceType;
         @NotBlank private String name;
+        private String location;
+        private String greenhouseNo;
+    }
+
+    @Data
+    public static class UpdateDeviceRequest {
+        private String name;
         private String location;
         private String greenhouseNo;
     }
