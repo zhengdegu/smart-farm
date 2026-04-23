@@ -1,122 +1,168 @@
-# 🌱 智慧农业灌溉平台 (Smart Farm)
+# 🌱 智慧农业平台 Smart Farm
 
-> 面向设施温室蔬菜种植基地的智慧灌溉解决方案
+面向设施温室蔬菜种植基地的一体化智慧灌溉解决方案，提供 **设备接入 + 智能灌溉 + 数据驱动决策 + 三端协同（小程序 / PC 管理后台 / 3D 数据大屏）**。
 
-## 快速开始
+## 功能截图
 
-```bash
-# 1. 克隆项目
-git clone <repo-url> && cd smart-farm
+### 3D 数据大屏
+政府示范项目核心交付件，温室三维场景 + 实时数据 + 灌溉动画 + 告警弹窗 + 历史回放。
 
-# 2. 启动开发环境（PostgreSQL + EMQX + Redis + 设备模拟器）
-docker compose -f docker-compose-dev.yml up -d
+![3D数据大屏](docs/screenshots/screen3d.png)
 
-# 3. 启动后端
-./gradlew bootRun
+### 总览仪表盘
+设备在线率、今日灌溉、待处理告警、节水率趋势一目了然。
 
-# 4. 访问
-# - API文档: http://localhost:8080/swagger-ui.html
-# - EMQX控制台: http://localhost:18083 (admin/public)
-# - 数据库管理: http://localhost:8081 (dev/dev123)
-```
+![仪表盘](docs/screenshots/dashboard.png)
 
-## 环境要求
+### 设备管理
+传感器和阀门设备的注册、查询、状态监控。
 
-| 工具 | 版本 |
+![设备管理](docs/screenshots/device.png)
+
+### 灌溉管理
+灌溉规则配置（阈值触发/定时任务）+ 执行记录查询。
+
+![灌溉管理](docs/screenshots/irrigation.png)
+
+### 告警中心
+L1/L2/L3 三级告警，按级别筛选、批量确认。
+
+![告警中心](docs/screenshots/alert.png)
+
+### 数据报表
+灌溉统计、节水率对比、传感器趋势，支持 CSV/Excel/PDF 导出。
+
+![数据报表](docs/screenshots/report.png)
+
+## 技术栈
+
+| 组件 | 选型 |
 |------|------|
-| JDK | 17+ |
-| Docker | 20+ |
-| Docker Compose | 2.0+ |
-| Node.js | 18+（小程序开发） |
-| 微信开发者工具 | 最新版 |
+| 后端 | Java 17 + Spring Boot 3.2.5 |
+| 数据库 | PostgreSQL + TimescaleDB |
+| 消息队列 | EMQX (MQTT Broker) |
+| 缓存 | Redis 7 |
+| PC 后台 | Vue 3 + Element Plus + ECharts |
+| 3D 大屏 | Vue 3 + Three.js + ECharts |
+| 小程序 | 微信原生小程序 |
+| AI | 通义千问 (Function Calling) |
+| 监控 | Prometheus + Grafana |
+| 部署 | Docker Compose |
 
 ## 项目结构
 
 ```
 smart-farm/
-├── src/main/java/com/smartfarm/
-│   ├── device/          # 设备管理上下文
-│   ├── telemetry/       # 遥测数据上下文
-│   ├── irrigation/      # 灌溉控制上下文
-│   ├── alert/           # 告警上下文
-│   ├── user/            # 用户上下文
-│   └── shared/          # 公共模块（MQTT、安全、配置）
-├── sql/                 # 数据库DDL脚本
-├── docs/                # API文档（OpenAPI）
-├── tools/
-│   └── device-simulator/  # 设备模拟器（Python）
-├── docker-compose-dev.yml # 开发环境
-└── docker-compose.yml     # 生产环境
+├── backend/                # Spring Boot 后端 (11个DDD模块)
+│   ├── src/main/java/com/smartfarm/
+│   │   ├── device/         # 设备管理
+│   │   ├── telemetry/      # 遥测数据
+│   │   ├── irrigation/     # 智能灌溉 (规则引擎+指令状态机)
+│   │   ├── alert/          # 告警通知
+│   │   ├── user/           # 用户认证 (JWT)
+│   │   ├── crop/           # 作物模板+种植管理
+│   │   ├── report/         # 数据报表+导出
+│   │   ├── ai/             # AI智能体 (L1对话/L2巡检/L3决策)
+│   │   ├── tenant/         # 多租户SaaS
+│   │   ├── fertigation/    # 水肥一体化
+│   │   └── shared/         # 共享 (安全/天气/大屏API)
+│   └── tools/device-simulator/  # 设备模拟器 (Python)
+├── frontend/               # Vue3 PC管理后台 (9个页面+3D大屏)
+├── miniapp/                # 微信小程序 (6个页面)
+├── monitoring/             # Prometheus + Grafana 配置
+├── docs/                   # 需求文档 + 截图
+└── docker-compose.yml      # 一键部署 (8个容器)
 ```
 
-## 开发环境服务
+## 快速开始
 
-| 服务 | 端口 | 说明 |
-|------|------|------|
-| PostgreSQL + TimescaleDB | 5432 | 用户: dev, 密码: dev123, 库: smartfarm_dev |
-| EMQX (MQTT Broker) | 1883 (MQTT), 18083 (Dashboard) | 开发环境允许匿名连接 |
-| Redis | 6379 | 缓存、Token存储 |
-| Adminer | 8081 | 数据库Web管理 |
-| 设备模拟器 | — | 自动上报传感器数据 |
+### 环境要求
 
-## 设备模拟器
+- Docker 20+ & Docker Compose
+- JDK 17+ (本地开发)
+- Node.js 20+ (前端开发)
 
-开发环境自动启动，也可单独运行：
+### 一键启动
 
 ```bash
-cd tools/device-simulator
-pip install -r requirements.txt
-python simulator.py
+git clone <repo-url>
+cd smart-farm
+
+# 启动全部服务 (数据库+EMQX+Redis+后端+前端+模拟器+Prometheus+Grafana)
+docker compose up -d --build
+
+# 等待约1分钟，访问：
+# PC后台:    http://localhost        (admin / admin123)
+# 3D大屏:    http://localhost/screen3d
+# Swagger:   http://localhost:8080/swagger-ui.html
+# Grafana:   http://localhost:3001   (admin / admin123)
+# EMQX:      http://localhost:18083  (admin / public)
+# Prometheus: http://localhost:9090
 ```
 
-环境变量配置：
+### 本地开发
 
-| 变量 | 默认值 | 说明 |
-|------|--------|------|
-| MQTT_BROKER | localhost | EMQX地址 |
-| SENSOR_COUNT | 5 | 模拟传感器数量 |
-| REPORT_INTERVAL_SEC | 10 | 上报间隔(秒) |
-| VALVE_COUNT | 2 | 模拟阀门数量 |
-| ANOMALY_RATE | 0.05 | 异常数据概率 |
-| CMD_FAIL_RATE | 0.1 | 指令失败概率 |
+```bash
+# 启动依赖服务
+docker compose up -d postgres emqx redis
 
-## MQTT Topic 规范
+# 后端
+cd backend
+mvn spring-boot:run
 
+# 前端
+cd frontend
+npm install && npm run dev
 ```
-/{tenant_id}/{device_type}/{device_id}/{data_type}
 
-示例：
-/t001/sensor/sensor_001/telemetry      # 传感器上报
-/t001/valve/valve_001/command           # 阀门控制指令
-/t001/valve/valve_001/command_ack       # 阀门指令确认
-/t001/gateway/gw_001/status             # 网关状态
-```
+## 核心功能
+
+### 智能灌溉引擎
+- 阈值触发：土壤湿度 < 下限自动开阀，> 上限自动关阀
+- 天气联动：下雨自动跳过灌溉，高温自动增加灌溉
+- 安全护栏：单次灌溉最长 60 分钟强制关阀
+- 指令状态机：CREATED → SENT → CONFIRMED → EXECUTED/FAILED，超时自动重试 3 次
+
+### AI 智能体 (三层架构)
+- L1 对话助手：自然语言查数据、控设备（"1号棚湿度多少"、"打开阀门灌20分钟"）
+- L2 巡检 Agent：每 30 分钟趋势预判、每 2 小时设备健康检查、每日运营摘要
+- L3 自主决策：每周分析历史数据，自动生成灌溉阈值优化建议
+
+### 水肥一体化
+- 配方管理：N/P/K 比例、EC/pH 目标值
+- 联动执行：同时控制施肥泵 + 灌溉阀
+
+### 数据报表
+- 灌溉统计（日/周/月）、节水率对比、告警统计
+- 导出：CSV / Excel / 月度 PDF 报告
 
 ## API 文档
 
-OpenAPI 规范文件: `docs/openapi.yaml`
+启动后访问 Swagger UI：`http://localhost:8080/swagger-ui.html`
 
-开发环境启动后访问 Swagger UI: http://localhost:8080/swagger-ui.html
+主要 API 分组：
+- 设备管理 `/api/v1/devices`
+- 遥测数据 `/api/v1/telemetry`
+- 灌溉指令 `/api/v1/commands`
+- 灌溉规则 `/api/v1/rules`
+- 告警管理 `/api/v1/alerts`
+- 数据报表 `/api/v1/reports`
+- 作物管理 `/api/v1/crop-templates` `/api/v1/greenhouse-plantings`
+- AI 智能体 `/api/v1/ai/chat` `/api/v1/ai/patrol` `/api/v1/ai/suggestions`
+- 水肥一体化 `/api/v1/fertigation`
+- 租户管理 `/api/v1/tenants`
+- 大屏数据 `/api/v1/screen/data`
 
-## Git 分支策略
+## 环境变量
 
-| 分支 | 用途 |
-|------|------|
-| main | 生产代码，保护分支 |
-| develop | 开发主线 |
-| feature/{模块}-{功能} | 功能开发 |
-| hotfix/{描述} | 紧急修复 |
+| 变量 | 默认值 | 说明 |
+|------|--------|------|
+| DB_PASSWORD | smartfarm123 | 数据库密码 |
+| JWT_SECRET | (内置开发密钥) | JWT 签名密钥 |
+| GRAFANA_PASSWORD | admin123 | Grafana 密码 |
+| AI_LLM_API_KEY | (空) | 通义千问 API Key |
+| AI_LLM_MODEL | qwen-plus | AI 模型名称 |
 
-Commit 规范: `feat:` / `fix:` / `docs:` / `refactor:` / `test:` / `# 常见问题
+## License
 
-**Q: EMQX 连接失败？**
-确认 EMQX 容器已启动: `docker compose -f docker-compose-dev.yml ps`
-
-**Q: 数据库连接失败？**
-确认 PostgreSQL 容器健康: `docker compose -f docker-compose-dev.yml logs postgres`
-
-**Q: 设备模拟器无数据？**
-检查 EMQX Dashboard (http://localhost:18083) 中的客户端连接和消息统计
-
-**Q: TimescaleDB 扩展未加载？**
-init.sql 会自动创建扩展，如果手动建库需执行: `CREATE EXTENSION IF NOT EXISTS timescaledb;`
+MIT
