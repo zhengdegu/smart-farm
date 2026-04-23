@@ -6,14 +6,14 @@ spring:
     name: smart-farm
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/smartfarm_dev
-    username: dev
-    password: dev123
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/smartfarm_dev}
+    username: ${SPRING_DATASOURCE_USERNAME:dev}
+    password: ${SPRING_DATASOURCE_PASSWORD:dev123}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
@@ -22,7 +22,7 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
       port: 6379
 
   jackson:
@@ -32,7 +32,7 @@ spring:
 
 # MQTT
 mqtt:
-  broker: tcp://localhost:1883
+  broker: ${MQTT_BROKER:tcp://localhost:1883}
   client-id: smartfarm-server
   username: ""
   password: ""
@@ -40,7 +40,7 @@ mqtt:
 
 # JWT
 jwt:
-  secret: dev-secret-key-change-in-production-at-least-256-bits-long!!
+  secret: ${JWT_SECRET:dev-secret-key-change-in-production-at-least-256-bits-long!!}
   access-token-expiry: 7200      # 2小时
   refresh-token-expiry: 604800   # 7天
 

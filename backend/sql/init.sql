@@ -65,7 +65,7 @@ CREATE INDEX idx_device_status ON device(status);
 -- ============================================================
 -- 4. 网关
 -- ============================================================
-CREgateway (
+CREATE TABLE gateway (
     id BIGSERIAL PRIMARY KEY,
     tenant_id BIGINT NOT NULL REFERENCES tenant(id),
     gateway_id VARCHAR(64) UNIQUE NOT NULL,
@@ -129,7 +129,8 @@ CREATE TABLE command_log (
     error_code VARCHAR(10),
     -- 触发来源
     triggered_by VARCHAR(64), -- AUTO:rule_id / USER:user_id
-    sign VARCHAR(128)
+    sign VARCHAR(128),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE INDEX idx_cmd_device_status ON command_log(device_id, status);

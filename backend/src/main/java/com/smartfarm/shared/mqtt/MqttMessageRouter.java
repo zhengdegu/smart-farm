@@ -10,9 +10,11 @@ import com.smartfarm.telemetry.application.TelemetryService;
 import com.smartfarm.telemetry.domain.SensorData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.paho.mqttv5.client.IMqttMessageListener;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.MqttSubscription;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -41,12 +43,16 @@ public class MqttMessageRouter {
         try {
             // 订阅传感器数据
             String sensorTopic = "/" + tenantId + "/sensor/+/telemetry";
-            mqttClient.subscribe(sensorTopic, 1, (topic, msg) -> handleSensorData(topic, msg));
+            MqttSubscription sensorSub = new MqttSubscription(sensorTopic, 1);
+            IMqttMessageListener sensorListener = (topic, msg) -> handleSensorData(topic, msg);
+            mqttClient.subscribe(new MqttSubscription[]{sensorSub}, new IMqttMessageListener[]{sensorListener});
             log.info("已订阅: {}", sensorTopic);
 
             // 订阅阀门 ACK
             String ackTopic = "/" + tenantId + "/valve/+/command_ack";
-            mqttClient.subscribe(ackTopic, 1, (topic, msg) -> handleCommandAck(topic, msg));
+            MqttSubscription ackSub = new MqttSubscription(ackTopic, 1);
+            IMqttMessageListener ackListener = (topic, msg) -> handleCommandAck(topic, msg);
+            mqttClient.subscribe(new MqttSubscription[]{ackSub}, new IMqttMessageListener[]{ackListener});
             log.info("已订阅: {}", ackTopic);
 
         } catch (MqttException e) {
