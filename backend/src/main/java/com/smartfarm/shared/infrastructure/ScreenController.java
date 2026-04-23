@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/screen")
 @RequiredArgsConstructor
+@Tag(name = "大屏数据", description = "3D数据大屏聚合接口（免鉴权）")
 public class ScreenController {
 
     private static final Long DEFAULT_TENANT = 1L;
@@ -35,6 +38,7 @@ public class ScreenController {
     private final GreenhousePlantingService plantingService;
 
     @GetMapping("/data")
+    @Operation(summary = "大屏全量数据", description = "一次返回设备概览、实时环境、告警、灌溉统计、节水效果、种植进度")
     public Map<String, Object> screenData() {
         Map<String, Object> result = new LinkedHashMap<>();
 

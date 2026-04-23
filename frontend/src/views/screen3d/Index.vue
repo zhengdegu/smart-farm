@@ -44,6 +44,27 @@
           </div>
         </div>
       </div>
+
+      <!-- L1 告警全屏弹窗 -->
+      <transition name="alert-fade">
+        <div class="alert-overlay" v-if="showL1Alert" @click="dismissL1Alert">
+          <div class="alert-popup">
+            <div class="alert-popup-icon">⚠️</div>
+            <div class="alert-popup-level">L1 紧急告警</div>
+            <div class="alert-popup-title">{{ l1AlertText }}</div>
+            <div class="alert-popup-hint">点击任意位置关闭</div>
+          </div>
+        </div>
+      </transition>
+
+      <!-- 历史回放时间轴 -->
+      <div class="timeline-bar" v-if="replayMode">
+        <span class="timeline-label">回放中: {{ replayTimeLabel }}</span>
+        <input type="range" class="timeline-slider" min="0" :max="1440" v-model.number="replayMinute" @input="onReplaySeek" />
+        <button class="timeline-btn" @click="stopReplay">退出回放</button>
+      </div>
+      <div class="replay-trigger" v-else @click="startReplay">📼 历史回放</div>
+
       <div class="right-panel">
         <div class="panel-card">
           <h3>灌溉统计</h3>
@@ -88,6 +109,15 @@ let timer = null, animId = null, refreshTimer = null
 const stats = ref({ onlineDevices: 0, offlineDevices: 0, totalSensors: 0, totalValves: 0 })
 const envData = ref([])
 const alerts = ref([])
+const showL1Alert = ref(false)
+const l1AlertText = ref('')
+const replayMode = ref(false)
+const replayMinute = ref(0)
+const replayTimeLabel = ref('')
+let irrigating = ref(false)
+let waterParticles = []
+let threeScene = null
+let alertAudio = null
 const greenhouses = ref([
   { no: '1', moisture: 0, style: { left: '20%', top: '30%' } },
   { no: '2', moisture: 0, style: { left: '50%', top: '25%' } },
@@ -118,7 +148,17 @@ async function fetchScreenData() {
         })
       }
     }
-    if (data.alerts) alerts.value = data.alerts
+    if (data.alerts) {
+      alerts.value = data.alerts
+      // L1 告警弹窗 + 声音
+      const l1 = data.alerts.find(a => a.level === 'L1')
+      if (l1 && l1.title !== l1AlertText.value) {
+        l1AlertText.value = l1.title
+        showL1Alert.value = true
+        playAlertSound()
+        setTimeout(() => { showL1Alert.value = false }, 10000)
+      }
+    }
     if (data.irrigationChart) {
       irrigChartData = data.irrigationChart
       updateIrrigChart()
@@ -227,6 +267,18 @@ async function init3D() {
   pipe3.position.set(8, 0.2, 0)
   scene.add(pipe3)
 
+  // 灌溉水流粒子
+  const particleGeo = new THREE.SphereGeometry(0.12, 6, 6)
+  const particleMat = new THREE.MeshBasicMaterial({ color: 0x4fc3f7, transparent: true, opacity: 0.7 })
+  for (let i = 0; i < 40; i++) {
+    const p = new THREE.Mesh(particleGeo, particleMat)
+    p.visible = false
+    p.userData = { speed: 0.05 + Math.random() * 0.1, offset: Math.random() * Math.PI * 2, pipeIdx: Math.floor(Math.random() * 3) }
+    scene.add(p)
+    waterParticles.push(p)
+  }
+  threeScene = scene
+
   // 动画
   let angle = 0
   function animate() {
@@ -235,9 +287,29 @@ async function init3D() {
     camera.position.x = 40 * Math.cos(angle)
     camera.position.z = 40 * Math.sin(angle)
     camera.lookAt(0, 2, 0)
+
+    // 灌溉水流动画
+    waterParticles.forEach(p => {
+      p.visible = irrigating.value
+      if (irrigating.value) {
+        const t = (Date.now() * p.userData.speed * 0.001 + p.userData.offset) % 1
+        const pipeX = p.userData.pipeIdx === 0 ? 0 : p.userData.pipeIdx === 1 ? -12 : 8
+        if (p.userData.pipeIdx === 0) {
+          p.position.set(-15 + t * 30, 0.4, 0)
+        } else {
+          p.position.set(pipeX, 0.4, -10 + t * 20)
+        }
+        p.scale.setScalar(0.5 + Math.sin(t * Math.PI) * 0.5)
+      }
+    })
+
     renderer.render(scene, camera)
   }
   animate()
+
+  // 模拟灌溉动画（每30秒切换一次）
+  setInterval(() => { irrigating.value = !irrigating.value }, 30000)
+  setTimeout(() => { irrigating.value = true }, 5000)
 }
 
 let irrigChartInstance = null
@@ -287,6 +359,57 @@ function updateWaterChart() {
     series: [{ data: [{ value: Math.round(waterSavingPercent), name: '节水率' }] }]
   })
 }
+
+function dismissL1Alert() { showL1Alert.value = false }
+
+function playAlertSound() {
+  try {
+    if (!alertAudio) {
+      alertAudio = new AudioContext()
+    }
+    const osc = alertAudio.createOscillator()
+    const gain = alertAudio.createGain()
+    osc.connect(gain)
+    gain.connect(alertAudio.destination)
+    osc.frequency.value = 880
+    osc.type = 'square'
+    gain.gain.value = 0.15
+    osc.start()
+    osc.stop(alertAudio.currentTime + 0.5)
+    setTimeout(() => {
+      const osc2 = alertAudio.createOscillator()
+      const gain2 = alertAudio.createGain()
+      osc2.connect(gain2)
+      gain2.connect(alertAudio.destination)
+      osc2.frequency.value = 660
+      osc2.type = 'square'
+      gain2.gain.value = 0.15
+      osc2.start()
+      osc2.stop(alertAudio.currentTime + 0.5)
+    }, 600)
+  } catch (e) {}
+}
+
+function startReplay() {
+  replayMode.value = true
+  replayMinute.value = 0
+  onReplaySeek()
+}
+
+function stopReplay() {
+  replayMode.value = false
+  fetchScreenData()
+}
+
+function onReplaySeek() {
+  const h = Math.floor(replayMinute.value / 60)
+  const m = replayMinute.value % 60
+  replayTimeLabel.value = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`
+  // 模拟回放数据变化
+  greenhouses.value.forEach(gh => {
+    gh.moisture = Math.round(40 + Math.sin(replayMinute.value / 100 + parseInt(gh.no)) * 25)
+  })
+}
 </script>
 
 <style scoped>
@@ -324,4 +447,25 @@ function updateWaterChart() {
 .plant-list { display: flex; flex-direction: column; gap: 10px; }
 .plant-item { font-size: 13px; }
 .plant-item .stage { font-size: 11px; color: #888; }
+
+/* L1 告警全屏弹窗 */
+.alert-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(200,0,0,0.25); z-index: 9999; display: flex; align-items: center; justify-content: center; cursor: pointer; animation: alertPulse 1s infinite; }
+@keyframes alertPulse { 0%,100% { background: rgba(200,0,0,0.2); } 50% { background: rgba(200,0,0,0.35); } }
+.alert-popup { background: rgba(20,0,0,0.9); border: 2px solid #f56c6c; border-radius: 16px; padding: 40px 60px; text-align: center; animation: popIn 0.3s ease-out; }
+@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.alert-popup-icon { font-size: 64px; margin-bottom: 16px; }
+.alert-popup-level { font-size: 28px; color: #f56c6c; font-weight: bold; margin-bottom: 12px; }
+.alert-popup-title { font-size: 20px; color: #fff; margin-bottom: 20px; }
+.alert-popup-hint { font-size: 13px; color: #888; }
+.alert-fade-enter-active, .alert-fade-leave-active { transition: opacity 0.3s; }
+.alert-fade-enter-from, .alert-fade-leave-to { opacity: 0; }
+
+/* 历史回放 */
+.timeline-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(10,30,60,0.9); border: 1px solid rgba(64,156,255,0.4); border-radius: 12px; padding: 10px 24px; display: flex; align-items: center; gap: 16px; z-index: 100; }
+.timeline-label { color: #4fc3f7; font-size: 14px; font-family: monospace; white-space: nowrap; }
+.timeline-slider { flex: 1; min-width: 300px; accent-color: #409eff; }
+.timeline-btn { background: #f56c6c; color: #fff; border: none; border-radius: 6px; padding: 6px 16px; cursor: pointer; font-size: 13px; }
+.timeline-btn:hover { background: #e04040; }
+.replay-trigger { position: fixed; bottom: 20px; right: 20px; background: rgba(10,30,60,0.8); border: 1px solid rgba(64,156,255,0.3); border-radius: 8px; padding: 8px 16px; color: #4fc3f7; cursor: pointer; font-size: 13px; z-index: 100; }
+.replay-trigger:hover { background: rgba(20,60,120,0.8); }
 </style>

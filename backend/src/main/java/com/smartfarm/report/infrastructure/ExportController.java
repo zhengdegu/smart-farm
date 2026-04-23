@@ -10,6 +10,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -18,11 +20,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/reports/export")
 @RequiredArgsConstructor
+@Tag(name = "数据导出", description = "CSV/Excel 导出")
 public class ExportController {
 
     private final ReportService reportService;
 
     @GetMapping("/irrigation-daily")
+    @Operation(summary = "导出灌溉统计", description = "支持 xlsx/csv 格式")
     public void exportIrrigationDaily(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,

@@ -25,14 +25,19 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/v1/reports")
 @RequiredArgsConstructor
+@Tag(name = "PDF报告", description = "月度PDF报告自动生成")
 public class PdfReportController {
 
     private final ReportService reportService;
 
     @PostMapping("/monthly-pdf")
+    @Operation(summary = "生成月度PDF报告", description = "包含灌溉概览、节水效果、告警统计、每日明细")
     public void generateMonthlyPdf(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate month,
             HttpServletResponse response) throws IOException {
