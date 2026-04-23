@@ -106,6 +106,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Metrics -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
         <!-- Excel Export -->
         <dependency>
             <groupId>org.apache.poi</groupId>
