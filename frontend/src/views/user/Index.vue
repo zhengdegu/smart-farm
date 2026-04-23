@@ -19,5 +19,5 @@
 import { ref, onMounted } from 'vue'
 import api from '../../api'
 const users = ref([])
-onMounted(async () => { try { users.value = await api.get('/users') } catch {} })
+onMounted(async () => { try { users.value = await api.get('/auth/users') } catch {} })
 </script>

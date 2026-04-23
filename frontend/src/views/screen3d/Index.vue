@@ -69,9 +69,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import * as THREE from 'three'
-import * as echarts from 'echarts'
+import { ref, onMounted, onUnmounted, shallowRef } from 'vue'
+import * as echarts from 'echarts/core'
+import { BarChart, GaugeChart } from 'echarts/charts'
+import { TitleComponent, TooltipComponent, GridComponent } from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
+echarts.use([BarChart, GaugeChart, TitleComponent, TooltipComponent, GridComponent, CanvasRenderer])
 
 const canvasRef = ref(null)
 const irrigChart = ref(null)
@@ -120,7 +123,8 @@ onUnmounted(() => {
   cancelAnimationFrame(animId)
 })
 
-function init3D() {
+async function init3D() {
+  const THREE = await import('three')
   const canvas = canvasRef.value
   const w = canvas.parentElement.clientWidth
   const h = canvas.parentElement.clientHeight - 40

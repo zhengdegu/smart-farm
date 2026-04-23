@@ -44,20 +44,20 @@ export const telemetryApi = {
 
 // Irrigation
 export const irrigationApi = {
-  listRules: () => api.get('/irrigation/rules'),
-  createRule: (data) => api.post('/irrigation/rules', data),
-  updateRule: (id, data) => api.put(`/irrigation/rules/${id}`, data),
-  deleteRule: (id) => api.delete(`/irrigation/rules/${id}`),
-  toggleRule: (id) => api.patch(`/irrigation/rules/${id}/toggle`),
-  sendCommand: (data) => api.post('/irrigation/commands', data),
-  listCommands: () => api.get('/irrigation/commands'),
-  emergencyStop: () => api.post('/irrigation/commands/emergency-stop'),
+  listRules: () => api.get('/rules'),
+  createRule: (data) => api.post('/rules', data),
+  updateRule: (id, data) => api.put(`/rules/${id}`, data),
+  deleteRule: (id) => api.delete(`/rules/${id}`),
+  toggleRule: (id) => api.post(`/rules/${id}/toggle`),
+  sendCommand: (data) => api.post('/commands', data),
+  listCommands: () => api.get('/commands/history'),
+  emergencyStop: () => api.post('/commands/emergency-stop'),
 }
 
 // Alert
 export const alertApi = {
   list: (params) => api.get('/alerts', { params }),
-  acknowledge: (id) => api.patch(`/alerts/${id}/acknowledge`),
+  acknowledge: (id) => api.post(`/alerts/${id}/acknowledge`),
   stats: () => api.get('/alerts/stats'),
 }
 
@@ -83,5 +83,4 @@ export const cropApi = {
 // Auth
 export const authApi = {
   login: (data) => api.post('/auth/login', data),
-  me: () => api.get('/auth/me'),
 }
