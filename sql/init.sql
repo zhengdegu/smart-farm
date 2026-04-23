@@ -229,3 +229,268 @@ INSERT INTO tenant (name, contact_name, contact_phone) VALUES
 
 INSERT INTO sys_user (tenant_id, username, password_hash, nickname, role) VALUES
 (1, 'admin', '$2a$10$placeholder_bcrypt_hash', '管理员', 'ADMIN');
+
+-- ============================================================
+-- 12. 种植模板（6.5）
+-- ============================================================
+CREATE TABLE crop_template (
+    id BIGSERIAL PRIMARY KEY,
+    tenant_id BIGINT REFERENCES tenant(id), -- NULL 表示系统预设
+    crop_type VARCHAR(32) NOT NULL,          -- TOMATO/CUCUMBER/LEAFY/...
+    name VARCHAR(100) NOT NULL,
+    stages JSONB NOT NULL DEFAULT '[]',      -- 各生长阶段灌溉参数
+    is_system BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_crop_template_tenant ON crop_template(tenant_id);
+CREATE INDEX idx_crop_template_type ON crop_template(crop_type);
+
+-- ============================================================
+-- 13. 大棚种植记录（6.5）
+-- ============================================================
+CREATE TABLE greenhouse_planting (
+    id BIGSERIAL PRIMARY KEY,
+    tenant_id BIGINT NOT NULL REFERENCES tenant(id),
+    greenhouse_no VARCHAR(20) NOT NULL,
+    crop_template_id BIGINT NOT NULL REFERENCES crop_template(id),
+    planting_date DATE NOT NULL,
+    expected_harvest_date DATE,
+    current_stage VARCHAR(32),               -- 当前所处阶段名称
+    status VARCHAR(16) NOT NULL DEFAULT 'GROWING', -- GROWING/HARVESTED/ABANDONED
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_planting_tenant_greenhouse ON greenhouse_planting(tenant_id, greenhouse_no);
+
+-- ============================================================
+-- 14. 灌溉日统计（6.6）
+-- ============================================================
+CREATE TABLE irrigation_daily_summary (
+    id BIGSERIAL PRIMARY KEY,
+    tenant_id BIGINT NOT NULL REFERENCES tenant(id),
+    greenhouse_no VARCHAR(20) NOT NULL,
+    summary_date DATE NOT NULL,
+    irrigation_count INTEGER NOT NULL DEFAULT 0,
+    total_duration_min INTEGER NOT NULL DEFAULT 0,
+    estimated_water_liters NUMERIC(10,2) NOT NULL DEFAULT 0,
+    avg_soil_moisture NUMERIC(5,2),
+    auto_trigger_count INTEGER NOT NULL DEFAULT 0,
+    manual_trigger_count INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (tenant_id, greenhouse_no, summary_date)
+);
+
+CREATE INDEX idx_daily_summary_tenant_date ON irrigation_daily_summary(tenant_id, summary_date DESC);
+
+-- ============================================================
+-- 15. 月度报告（6.6）
+-- ============================================================
+CREATE TABLE monthly_report (
+    id BIGSERIAL PRIMARY KEY,
+    tenant_id BIGINT NOT NULL REFERENCES tenant(id),
+    report_month DATE NOT NULL,              -- 存月份首日，如 2025-04-01
+    water_saved_percent NUMERIC(5,2),        -- 节水率 %
+    total_irrigation_count INTEGER NOT NULL DEFAULT 0,
+    total_water_liters NUMERIC(12,2) NOT NULL DEFAULT 0,
+    device_online_rate NUMERIC(5,2),         -- 设备在线率 %
+    alert_count INTEGER NOT NULL DEFAULT 0,
+    report_url VARCHAR(500),                 -- 生成的报告文件地址
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_monthly_report_tenant_month ON monthly_report(tenant_id, report_month DESC);
+
+-- ============================================================
+-- 系统预设种植模板
+-- ============================================================
+INSERT INTO crop_template (tenant_id, crop_type, name, is_system, stages) VALUES
+(NULL, 'TOMATO', '番茄标准种植模板', TRUE, '[
+  {
+    "stage": "seedling",
+    "name": "育苗期",
+    "duration_days": 25,
+    "irrigation": {
+      "mode": "SCHEDULE",
+      "times_per_day": 2,
+      "duration_min": 10,
+      "soil_moisture_low": 55,
+      "soil_moisture_high": 75
+    }
+  },
+  {
+    "stage": "transplant",
+    "name": "定植缓苗期",
+    "duration_days": 10,
+    "irrigation": {
+      "mode": "THRESHOLD",
+      "times_per_day": 3,
+      "duration_min": 15,
+      "soil_moisture_low": 60,
+      "soil_moisture_high": 80
+    }
+  },
+  {
+    "stage": "vegetative",
+    "name": "营养生长期",
+    "duration_days": 30,
+    "irrigation": {
+      "mode": "THRESHOLD",
+      "times_per_day": 2,
+      "duration_min": 20,
+      "soil_moisture_low": 60,
+      "soil_moisture_high": 75
+    }
+  },
+  {
+    "stage": "flowering",
+    "name": "开花坐果期",
+    "duration_days": 20,
+    "irrigation": {
+      "mode": "THRESHOLD",
+      "times_per_day": 2,
+      "duration_min": 25,
+      "soil_moisture_low": 65,
+      "soil_moisture_high": 80
+    }
+  },
+  {
+    "stage": "fruiting",
+    "name": "果实膨大期",
+    "duration_days": 40,
+    "irrigation": {
+      "mode": "THRESHOLD",
+      "times_per_day": 3,
+      "duration_min": 30,
+      "soil_moisture_low": 70,
+      "soil_moisture_high": 85
+    }
+  },
+  {
+    "stage": "ripening",
+    "name": "成熟采收期",
+    "duration_days": 30,
+    "irrigation": {
+      "mode": "SCHEDULE",
+      "times_per_day": 1,
+      "duration_min": 15,
+      "soil_moisture_low": 55,
+      "soil_moisture_high": 70
+    }
+  }
+]'),
+
+(NULL, 'CUCUMBER', '黄瓜标准种植模板', TRUE, '[
+  {
+    "stage": "seedling",
+    "name": "育苗期",
+    "duration_days": 15,
+    "irrigation": {
+      "mode": "SCHEDULE",
+      "times_per_day": 2,
+      "duration_min": 8,
+      "soil_moisture_low": 60,
+      "soil_moisture_high": 80
+    }
+  },
+  {
+    "stage": "transplant",
+    "name": "定植缓苗期",
+    "duration_days": 7,
+    "irrigation": {
+      "mode": "THRESHOLD",
+      "times_per_day": 3,
+      "duration_min": 12,
+      "soil_moisture_low": 65,
+      "soil_moisture_high": 85
+    }
+  },
+  {
+    "stage": "vegetative",
+    "name": "伸蔓期",
+    "duration_days": 20,
+    "irrigation": {
+      "mode": "THRESHOLD",
+      "times_per_day": 2,
+      "duration_min": 20,
+      "soil_moisture_low": 65,
+      "soil_moisture_high": 80
+    }
+  },
+  {
+    "stage": "flowering",
+    "name": "开花期",
+    "duration_days": 15,
+    "irrigation": {
+      "mode": "THRESHOLD",
+      "times_per_day": 3,
+      "duration_min": 20,
+      "soil_moisture_low": 70,
+      "soil_moisture_high": 85
+    }
+  },
+  {
+    "stage": "fruiting",
+    "name": "结瓜盛期",
+    "duration_days": 50,
+    "irrigation": {
+      "mode": "THRESHOLD",
+      "times_per_day": 3,
+      "duration_min": 25,
+      "soil_moisture_low": 70,
+      "soil_moisture_high": 88
+    }
+  }
+]'),
+
+(NULL, 'LEAFY', '叶菜通用种植模板', TRUE, '[
+  {
+    "stage": "germination",
+    "name": "发芽期",
+    "duration_days": 5,
+    "irrigation": {
+      "mode": "SCHEDULE",
+      "times_per_day": 3,
+      "duration_min": 5,
+      "soil_moisture_low": 70,
+      "soil_moisture_high": 90
+    }
+  },
+  {
+    "stage": "seedling",
+    "name": "幼苗期",
+    "duration_days": 10,
+    "irrigation": {
+      "mode": "SCHEDULE",
+      "times_per_day": 2,
+      "duration_min": 8,
+      "soil_moisture_low": 65,
+      "soil_moisture_high": 85
+    }
+  },
+  {
+    "stage": "growth",
+    "name": "旺盛生长期",
+    "duration_days": 20,
+    "irrigation": {
+      "mode": "THRESHOLD",
+      "times_per_day": 2,
+      "duration_min": 12,
+      "soil_moisture_low": 65,
+      "soil_moisture_high": 85
+    }
+  },
+  {
+    "stage": "harvest",
+    "name": "采收期",
+    "duration_days": 10,
+    "irrigation": {
+      "mode": "SCHEDULE",
+      "times_per_day": 1,
+      "duration_min": 8,
+      "soil_moisture_low": 60,
+      "soil_moisture_high": 80
+    }
+  }
+]');
