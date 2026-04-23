@@ -1,0 +1,31 @@
+<view class="container">
+  <!-- 筛选 -->
+  <view class="filter-bar">
+    <view class="filter-item {{filter==='all'?'active':''}}" bindtap="onFilterChange" data-type="all">全部</view>
+    <view class="filter-item {{filter==='SENSOR'?'active':''}}" bindtap="onFilterChange" data-type="SENSOR">传感器</view>
+    <view class="filter-item {{filter==='VALVE'?'active':''}}" bindtap="onFilterChange" data-type="VALVE">阀门</view>
+  </view>
+
+  <!-- 设备列表 -->
+  <view class="card device-card" wx:for="{{devices}}" wx:key="deviceId" bindtap="onDeviceTap" data-device="{{item}}">
+    <view class="device-header">
+      <text class="device-name">{{item.name || item.deviceId}}</text>
+      <view class="tag {{item.status==='ONLINE'?'tag-success':'tag-danger'}}">{{item.status==='ONLINE'?'在线':'离线'}}</view>
+    </view>
+    <view class="device-info">
+      <text class="device-id">ID: {{item.deviceId}}</text>
+      <text class="device-type">{{item.deviceType==='SENSOR'?'传感器':'阀门'}}</text>
+    </view>
+    <view class="device-meta">
+      <text wx:if="{{item.greenhouseNo}}">{{item.greenhouseNo}}号棚</text>
+      <text wx:if="{{item.location}}">{{item.location}}</text>
+    </view>
+    <view class="device-actions" catchtap="">
+      <view class="action-btn" catchtap="onRefreshDevice" data-id="{{item.deviceId}}">刷新数据</view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && !devices.length}}">
+    <text>暂无设备</text>
+  </view>
+</view>

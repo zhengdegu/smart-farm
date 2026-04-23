@@ -1,0 +1,18 @@
+.action-bar { display: flex; gap: 20rpx; margin-bottom: 20rpx; }
+.action-bar .btn-primary, .action-bar .btn-danger { flex: 1; }
+
+.tab-bar { display: flex; margin-bottom: 20rpx; background: #fff; border-radius: 12rpx; overflow: hidden; }
+.tab-item { flex: 1; text-align: center; padding: 20rpx 0; font-size: 28rpx; color: #666; }
+.tab-item.active { color: #07c160; border-bottom: 4rpx solid #07c160; font-weight: 600; }
+
+.rule-card { padding: 24rpx; }
+.rule-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
+.rule-name { font-size: 30rpx; font-weight: 600; }
+.rule-info { display: flex; justify-content: space-between; font-size: 24rpx; color: #999; margin-bottom: 8rpx; }
+.rule-detail { font-size: 24rpx; color: #666; background: #f9f9f9; padding: 12rpx; border-radius: 8rpx; }
+
+.cmd-card { padding: 20rpx; }
+.cmd-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
+.cmd-device { font-size: 28rpx; font-weight: 500; }
+.cmd-info { display: flex; justify-content: space-between; font-size: 24rpx; color: #999; }
+.empty { text-align: center; padding: 80rpx 0; color: #999; }

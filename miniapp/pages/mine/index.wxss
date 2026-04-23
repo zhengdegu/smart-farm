@@ -1,0 +1,12 @@
+.user-card { display: flex; align-items: center; gap: 24rpx; padding: 32rpx 24rpx; }
+.user-avatar { font-size: 72rpx; }
+.user-info { display: flex; flex-direction: column; gap: 8rpx; }
+.user-name { font-size: 34rpx; font-weight: 600; }
+.login-btn-small { padding: 8rpx 24rpx; font-size: 24rpx; display: inline-block; }
+
+.menu-item { display: flex; justify-content: space-between; align-items: center; padding: 28rpx 0; border-bottom: 1rpx solid #f5f5f5; font-size: 28rpx; }
+.menu-item:last-child { border-bottom: none; }
+.menu-arrow { color: #ccc; font-size: 36rpx; }
+.menu-detail { color: #999; font-size: 24rpx; }
+
+.logout-btn { margin-top: 40rpx; }

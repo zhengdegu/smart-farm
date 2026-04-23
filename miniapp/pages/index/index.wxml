@@ -1,0 +1,83 @@
+<view class="container">
+  <!-- 设备概览 -->
+  <view class="card">
+    <view class="card-title">设备概览</view>
+    <view class="stat-grid">
+      <view class="stat-item">
+        <text class="stat-num online">{{stats.onlineDevices}}</text>
+        <text class="stat-label">在线设备</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num offline">{{stats.offlineDevices}}</text>
+        <text class="stat-label">离线设备</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.totalSensors}}</text>
+        <text class="stat-label">传感器</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.totalValves}}</text>
+        <text class="stat-label">阀门</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 实时环境 -->
+  <view class="card">
+    <view class="card-title">实时环境</view>
+    <view class="env-grid">
+      <view class="env-item" wx:for="{{envData}}" wx:key="label">
+        <text class="env-value" style="color:{{item.color}}">{{item.value}}</text>
+        <text class="env-unit">{{item.unit}}</text>
+        <text class="env-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="card">
+    <view class="card-title">快捷操作</view>
+    <view class="action-grid">
+      <view class="action-item" bindtap="goDevice">
+        <view class="action-icon device-icon">📡</view>
+        <text>设备管理</text>
+      </view>
+      <view class="action-item" bindtap="goIrrigation">
+        <view class="action-icon water-icon">💧</view>
+        <text>灌溉控制</text>
+      </view>
+      <view class="action-item" bindtap="goAlert">
+        <view class="action-icon alert-icon">🔔</view>
+        <text>告警中心</text>
+      </view>
+      <view class="action-item" bindtap="onEmergencyStop">
+        <view class="action-icon stop-icon">🛑</view>
+        <text>紧急停止</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 种植进度 -->
+  <view class="card" wx:if="{{plantings.length}}">
+    <view class="card-title">种植进度</view>
+    <view class="plant-item" wx:for="{{plantings}}" wx:key="no">
+      <view class="plant-header">
+        <text class="plant-name">{{item.no}}号棚 · {{item.crop}}</text>
+        <text class="plant-stage">{{item.stage}}</text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width:{{item.progress}}%"></view>
+      </view>
+      <text class="progress-text">{{item.progress}}%</text>
+    </view>
+  </view>
+
+  <!-- 最新告警 -->
+  <view class="card" wx:if="{{alerts.length}}">
+    <view class="card-title">最新告警</view>
+    <view class="alert-item" wx:for="{{alerts}}" wx:key="id">
+      <view class="tag tag-{{item.level === 'L1' ? 'danger' : item.level === 'L2' ? 'warning' : 'info'}}">{{item.level}}</view>
+      <text class="alert-title">{{item.title}}</text>
+    </view>
+  </view>
+</view>

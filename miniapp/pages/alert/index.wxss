@@ -1,0 +1,18 @@
+.filter-bar { display: flex; gap: 16rpx; margin-bottom: 20rpx; }
+.filter-item { padding: 12rpx 32rpx; background: #fff; border-radius: 32rpx; font-size: 26rpx; color: #666; }
+.filter-item.active { background: #07c160; color: #fff; }
+
+.alert-card { padding: 24rpx; border-left: 6rpx solid #ddd; }
+.alert-card.level-l1 { border-left-color: #fa5151; }
+.alert-card.level-l2 { border-left-color: #e6a23c; }
+.alert-card.level-l3 { border-left-color: #409eff; }
+.alert-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
+.alert-time { font-size: 22rpx; color: #999; }
+.alert-body { margin-bottom: 12rpx; }
+.alert-title { font-size: 30rpx; font-weight: 500; display: block; }
+.alert-content { font-size: 24rpx; color: #666; display: block; margin-top: 8rpx; }
+.alert-footer { display: flex; justify-content: space-between; align-items: center; }
+.alert-device { font-size: 22rpx; color: #999; }
+.action-btn { padding: 8rpx 24rpx; background: #f0f9f4; color: #07c160; border-radius: 8rpx; font-size: 24rpx; }
+.empty { text-align: center; padding: 80rpx 0; color: #999; }
+.load-more { text-align: center; padding: 20rpx 0; color: #ccc; font-size: 24rpx; }

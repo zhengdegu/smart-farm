@@ -1,0 +1,26 @@
+<view class="container">
+  <view class="filter-bar">
+    <view class="filter-item {{filter==='all'?'active':''}}" bindtap="onFilterChange" data-status="all">全部({{total}})</view>
+    <view class="filter-item {{filter==='PENDING'?'active':''}}" bindtap="onFilterChange" data-status="PENDING">待处理</view>
+    <view class="filter-item {{filter==='ACKNOWLEDGED'?'active':''}}" bindtap="onFilterChange" data-status="ACKNOWLEDGED">已确认</view>
+  </view>
+
+  <view class="card alert-card {{item.level==='L1'?'level-l1':item.level==='L2'?'level-l2':'level-l3'}}" wx:for="{{alerts}}" wx:key="id">
+    <view class="alert-header">
+      <view class="tag {{item.level==='L1'?'tag-danger':item.level==='L2'?'tag-warning':'tag-info'}}">{{item.level}}</view>
+      <text class="alert-time">{{item.createdAt}}</text>
+    </view>
+    <view class="alert-body">
+      <text class="alert-title">{{item.title}}</text>
+      <text class="alert-content" wx:if="{{item.content}}">{{item.content}}</text>
+    </view>
+    <view class="alert-footer">
+      <text class="alert-device" wx:if="{{item.deviceId}}">设备: {{item.deviceId}}</text>
+      <view class="action-btn" wx:if="{{item.status==='PENDING'}}" catchtap="onAcknowledge" data-id="{{item.id}}">确认处理</view>
+      <view class="tag tag-success" wx:if="{{item.status==='ACKNOWLEDGED'}}">已确认</view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && !alerts.length}}"><text>暂无告警</text></view>
+  <view class="load-more" wx:if="{{!hasMore && alerts.length}}"><text>没有更多了</text></view>
+</view>

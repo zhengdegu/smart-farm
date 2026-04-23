@@ -1,0 +1,13 @@
+.filter-bar { display: flex; gap: 16rpx; margin-bottom: 20rpx; }
+.filter-item { padding: 12rpx 32rpx; background: #fff; border-radius: 32rpx; font-size: 26rpx; color: #666; }
+.filter-item.active { background: #07c160; color: #fff; }
+
+.device-card { padding: 24rpx; }
+.device-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
+.device-name { font-size: 32rpx; font-weight: 600; }
+.device-info { display: flex; justify-content: space-between; font-size: 24rpx; color: #999; margin-bottom: 8rpx; }
+.device-meta { font-size: 24rpx; color: #999; margin-bottom: 12rpx; }
+.device-meta text { margin-right: 20rpx; }
+.device-actions { display: flex; justify-content: flex-end; }
+.action-btn { padding: 8rpx 24rpx; background: #f0f9f4; color: #07c160; border-radius: 8rpx; font-size: 24rpx; }
+.empty { text-align: center; padding: 80rpx 0; color: #999; }

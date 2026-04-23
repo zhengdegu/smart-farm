@@ -1,0 +1,28 @@
+.stat-grid { display: flex; justify-content: space-around; }
+.stat-item { text-align: center; }
+.stat-num { display: block; font-size: 48rpx; font-weight: 700; color: #07c160; }
+.stat-num.online { color: #07c160; }
+.stat-num.offline { color: #fa5151; }
+.stat-label { font-size: 24rpx; color: #999; }
+
+.env-grid { display: flex; flex-wrap: wrap; }
+.env-item { width: 50%; display: flex; align-items: baseline; padding: 12rpx 0; }
+.env-value { font-size: 40rpx; font-weight: 700; }
+.env-unit { font-size: 24rpx; color: #999; margin-left: 4rpx; }
+.env-label { font-size: 24rpx; color: #999; margin-left: 12rpx; }
+
+.action-grid { display: flex; justify-content: space-around; }
+.action-item { text-align: center; font-size: 24rpx; color: #666; }
+.action-icon { font-size: 48rpx; margin-bottom: 8rpx; }
+
+.plant-item { margin-bottom: 20rpx; }
+.plant-header { display: flex; justify-content: space-between; margin-bottom: 8rpx; }
+.plant-name { font-size: 28rpx; font-weight: 500; }
+.plant-stage { font-size: 24rpx; color: #999; }
+.progress-bar { height: 12rpx; background: #f0f0f0; border-radius: 6rpx; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #07c160, #06ad56); border-radius: 6rpx; transition: width 0.3s; }
+.progress-text { font-size: 22rpx; color: #999; }
+
+.alert-item { display: flex; align-items: center; gap: 12rpx; padding: 12rpx 0; border-bottom: 1rpx solid #f5f5f5; }
+.alert-item:last-child { border-bottom: none; }
+.alert-title { font-size: 26rpx; color: #333; flex: 1; }

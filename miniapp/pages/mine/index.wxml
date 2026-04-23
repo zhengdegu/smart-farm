@@ -1,0 +1,54 @@
+<view class="container">
+  <!-- 用户信息 -->
+  <view class="card user-card">
+    <block wx:if="{{isLoggedIn}}">
+      <view class="user-avatar">🧑‍🌾</view>
+      <view class="user-info">
+        <text class="user-name">{{userInfo.username || '用户'}}</text>
+        <view class="tag tag-success">{{userInfo.role || 'OPERATOR'}}</view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="user-avatar">👤</view>
+      <view class="user-info">
+        <text class="user-name">未登录</text>
+        <view class="btn-primary login-btn-small" bindtap="onLogin">去登录</view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="card">
+    <view class="menu-item">
+      <text>🌡️ 传感器趋势</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item">
+      <text>📊 灌溉报表</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item">
+      <text>🌱 种植管理</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item">
+      <text>⚙️ 系统设置</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 关于 -->
+  <view class="card">
+    <view class="menu-item">
+      <text>📖 使用帮助</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item">
+      <text>ℹ️ 关于系统</text>
+      <text class="menu-detail">V1.0.0</text>
+    </view>
+  </view>
+
+  <!-- 退出 -->
+  <view class="btn-danger logout-btn" wx:if="{{isLoggedIn}}" bindtap="onLogout">退出登录</view>
+</view>
