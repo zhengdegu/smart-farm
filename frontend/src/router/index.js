@@ -3,6 +3,7 @@ import Layout from '../layouts/MainLayout.vue'
 
 const routes = [
   { path: '/login', name: 'Login', component: () => import('../views/Login.vue') },
+  { path: '/screen3d', name: 'Screen3D', component: () => import('../views/screen3d/Index.vue') },
   {
     path: '/', component: Layout, redirect: '/dashboard',
     children: [

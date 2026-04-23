@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    container_name: smartfarm-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: smartfarm
+      POSTGRES_USER: smartfarm
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-smartfarm123}
+    volumes:
+      - ./backend/sql/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartfarm"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  emqx:
+    image: emqx/emqx:5.6
+    container_name: smartfarm-emqx
+    ports:
+      - "1883:1883"
+      - "18083:18083"
+    environment:
+      EMQX_ALLOW_ANONYMOUS: "true"
+    volumes:
+      - emqx_data:/opt/emqx/data
+    healthcheck:
+      test: ["CMD", "emqx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: smartfarm-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build: ./backend
+    container_name: smartfarm-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/smartfarm
+      SPRING_DATASOURCE_USERNAME: smartfarm
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-smartfarm123}
+      SPRING_DATA_REDIS_HOST: redis
+      MQTT_BROKER: tcp://emqx:1883
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production-at-least-256-bits}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      emqx:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  frontend:
+    build: ./frontend
+    container_name: smartfarm-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  device-simulator:
+    build: ./backend/tools/device-simulator
+    container_name: smartfarm-simulator
+    environment:
+      MQTT_BROKER: emqx
+      MQTT_PORT: "1883"
+      TENANT_ID: t001
+      SENSOR_COUNT: "5"
+      REPORT_INTERVAL_SEC: "10"
+    depends_on:
+      emqx:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  emqx_data:
+  redis_data:
