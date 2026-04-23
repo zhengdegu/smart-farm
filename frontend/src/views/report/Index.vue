@@ -29,6 +29,22 @@
         </el-card>
       </el-col>
     </el-row>
+    <el-row :gutter="16" style="margin-top:16px">
+      <el-col :span="24">
+        <el-card>
+          <template #header>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span>数据导出</span>
+            </div>
+          </template>
+          <el-space>
+            <el-button type="primary" @click="exportExcel">导出 Excel</el-button>
+            <el-button @click="exportCsv">导出 CSV</el-button>
+            <el-button type="danger" @click="exportPdf">生成月度 PDF 报告</el-button>
+          </el-space>
+        </el-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script setup>
@@ -75,4 +91,41 @@ const loadTrend = () => {
 }
 
 onUnmounted(() => charts.forEach(c => c.dispose()))
+
+const downloadFile = (url) => {
+  const token = localStorage.getItem('token')
+  const a = document.createElement('a')
+  a.href = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now()
+  // Use fetch to add auth header
+  fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+    .then(r => r.blob())
+    .then(blob => {
+      const u = URL.createObjectURL(blob)
+      a.href = u
+      a.download = url.split('/').pop().split('?')[0] || 'export'
+      a.click()
+      URL.revokeObjectURL(u)
+    })
+}
+
+const exportExcel = () => {
+  const [start, end] = dateRange.value
+  downloadFile(`/api/v1/reports/export/irrigation-daily?start=${fmt(start)}&end=${fmt(end)}&format=xlsx`)
+}
+const exportCsv = () => {
+  const [start, end] = dateRange.value
+  downloadFile(`/api/v1/reports/export/irrigation-daily?start=${fmt(start)}&end=${fmt(end)}&format=csv`)
+}
+const exportPdf = () => {
+  const month = fmt(dateRange.value[0])
+  fetch(`/api/v1/reports/monthly-pdf?month=${month}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  }).then(r => r.blob()).then(blob => {
+    const u = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = u; a.download = `monthly_report_${month.slice(0,7)}.pdf`; a.click()
+    URL.revokeObjectURL(u)
+  })
+}
 </script>
