@@ -32,4 +32,12 @@ public class TelemetryService {
     public void ingest(SensorData data) {
         sensorDataRepository.save(data);
     }
+
+    public List<Object[]> aggregate(String deviceId, OffsetDateTime start, OffsetDateTime end) {
+        return sensorDataRepository.aggregateByDevice(deviceId, start, end);
+    }
+
+    public List<SensorData> getByTenantAndType(Long tenantId, String dataType, OffsetDateTime start, OffsetDateTime end) {
+        return sensorDataRepository.findByTenantAndType(tenantId, dataType, start, end);
+    }
 }

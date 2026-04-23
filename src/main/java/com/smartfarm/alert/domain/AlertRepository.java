@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public interface AlertRepository extends JpaRepository<Alert, Long> {
 
@@ -25,4 +26,10 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
 
     @Query("SELECT COUNT(a) FROM Alert a WHERE a.tenantId = :tid AND a.createdAt > :since")
     long countTodayByTenant(@Param("tid") Long tenantId, @Param("since") OffsetDateTime since);
+
+    @Query("SELECT a.level, COUNT(a) FROM Alert a WHERE a.tenantId = :tid AND a.createdAt BETWEEN :start AND :end GROUP BY a.level")
+    List<Object[]> countByLevelAndDateRange(@Param("tid") Long tenantId, @Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end);
+
+    @Query("SELECT a.type, COUNT(a) FROM Alert a WHERE a.tenantId = :tid AND a.createdAt BETWEEN :start AND :end GROUP BY a.type")
+    List<Object[]> countByTypeAndDateRange(@Param("tid") Long tenantId, @Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end);
 }

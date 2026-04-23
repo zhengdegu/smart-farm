@@ -85,11 +85,24 @@ public class ReportService {
      * 告警统计
      */
     public Map<String, Object> getAlertStats(Long tenantId, LocalDate start, LocalDate end) {
-        // 简化实现，后续可扩展按类型/级别/时段分组
+        OffsetDateTime startTime = start.atStartOfDay().atOffset(java.time.ZoneOffset.ofHours(8));
+        OffsetDateTime endTime = end.plusDays(1).atStartOfDay().atOffset(java.time.ZoneOffset.ofHours(8));
+
+        List<Object[]> byLevel = alertRepo.countByLevelAndDateRange(tenantId, startTime, endTime);
+        List<Object[]> byType = alertRepo.countByTypeAndDateRange(tenantId, startTime, endTime);
+
+        Map<String, Long> levelStats = new LinkedHashMap<>();
+        for (Object[] row : byLevel) levelStats.put(row[0].toString(), (Long) row[1]);
+
+        Map<String, Long> typeStats = new LinkedHashMap<>();
+        for (Object[] row : byType) typeStats.put(row[0].toString(), (Long) row[1]);
+
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("tenantId", tenantId);
         result.put("period", Map.of("start", start, "end", end));
-        // TODO: 按 level/type 分组统计
+        result.put("byLevel", levelStats);
+        result.put("byType", typeStats);
+        result.put("total", levelStats.values().stream().mapToLong(Long::longValue).sum());
         return result;
     }
 
@@ -109,8 +122,46 @@ public class ReportService {
         LocalDate yesterday = LocalDate.now().minusDays(1);
         log.info("开始生成 {} 灌溉日统计", yesterday);
 
-        // TODO: 按租户和大棚分组，从 command_log 汇总灌溉数据
-     // 这里是框架代码，实际需要查询 command_log 表
-        log.info("灌溉日统计生成完成");
+        OffsetDateTime dayStart = yesterday.atStartOfDay().atOffset(java.time.ZoneOffset.ofHours(8));
+        OffsetDateTime dayEnd = yesterday.plusDays(1).atStartOfDay().atOffset(java.time.ZoneOffset.ofHours(8));
+
+        List<CommandLog> commands = commandLogRepo.findByStatusInAndCreatedAtBefore(
+                List.of(CommandLog.CommandStatus.EXECUTED), dayEnd);
+
+        Map<String, IrrigationDailySummary> summaries = new LinkedHashMap<>();
+        for (CommandLog cmd : commands) {
+            if (cmd.getCreatedAt().isBefore(dayStart)) continue;
+            if (cmd.getAction() != CommandLog.CommandAction.OPEN_VALVE) continue;
+
+            String key = cmd.getTenantId() + ":" + cmd.getDeviceId();
+            IrrigationDailySummary s = summaries.computeIfAbsent(key, k -> {
+                IrrigationDailySummary ns = new IrrigationDailySummary();
+                ns.setTenantId(cmd.getTenantId());
+                ns.setSummaryDate(yesterday);
+                ns.setIrrigationCount(0);
+                ns.setTotalDurationMin(0);
+                ns.setEstimatedWaterLiters(0.0);
+                ns.setAutoTriggerCount(0);
+                ns.setManualTriggerCount(0);
+                return ns;
+            });
+
+            s.setIrrigationCount(s.getIrrigationCount() + 1);
+            int duration = cmd.getParams() != null && cmd.getParams().containsKey("duration_min")
+                    ? ((Number) cmd.getParams().get("duration_min")).intValue() : 30;
+            s.setTotalDurationMin(s.getTotalDurationMin() + duration);
+            s.setEstimatedWaterLiters(s.getEstimatedWaterLiters() + duration * 10.0);
+
+            if (cmd.getTriggeredBy() != null && cmd.getTriggeredBy().startsWith("AUTO:")) {
+                s.setAutoTriggerCount(s.getAutoTriggerCount() + 1);
+            } else {
+                s.setManualTriggerCount(s.getManualTriggerCount() + 1);
+            }
+        }
+
+        for (IrrigationDailySummary s : summaries.values()) {
+            dailyRepo.save(s);
+        }
+        log.info("灌溉日统计生成完成: {} 条记录", summaries.size());
     }
 }

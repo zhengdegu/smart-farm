@@ -37,4 +37,23 @@ public class TelemetryController {
         List<SensorData> recent = telemetryService.getRecentByTenant(tenantId, 30);
         return Map.of("sensors", recent);
     }
+
+    @GetMapping("/{deviceId}/aggregate")
+    public List<Map<String, Object>> aggregate(
+            @PathVariable String deviceId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime end) {
+        return telemetryService.aggregate(deviceId, start, end).stream()
+                .map(row -> Map.<String, Object>of(
+                        "dataType", row[0], "avg", row[1], "min", row[2], "max", row[3]))
+                .toList();
+    }
+
+    @GetMapping("/trend")
+    public List<SensorData> trend(
+            @RequestParam String dataType,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime end) {
+        return telemetryService.getByTenantAndType(SecurityUtils.currentTenantId(), dataType, start, end);
+    }
 }

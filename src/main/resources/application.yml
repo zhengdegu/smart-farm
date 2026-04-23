@@ -52,6 +52,14 @@ smartfarm:
     max-retry: 3
     max-duration-minutes: 60
 
+# WeChat
+wechat:
+  app-id: ""
+  app-secret: ""
+  template-id:
+    alert: ""
+  enabled: false
+
 # Actuator
 management:
   endpoints:
