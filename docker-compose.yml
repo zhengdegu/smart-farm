@@ -12,7 +12,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-smartfarm123}
     volumes:
       - ./backend/sql/init.sql:/docker-entrypoint-initdb.d/01-init.sql
-      - pg_data:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U smartfarm"]
       interval: 5s
@@ -28,7 +28,7 @@ services:
     environment:
       EMQX_ALLOW_ANONYMOUS: "true"
     volumes:
-      - emqx_data:/opt/emqx/data
+      - ./data/emqx:/opt/emqx/data
     healthcheck:
       test: ["CMD", "emqx", "ping"]
       interval: 10s
@@ -41,7 +41,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis_data:/data
+      - ./data/redis:/data
 
   backend:
     build: ./backend
@@ -85,7 +85,6 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-volumes:
-  pg_data:
-  emqx_data:
-  redis_data:
+networks:
+  default:
+    name: smartfarm
