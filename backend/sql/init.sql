@@ -229,7 +229,7 @@ INSERT INTO tenant (name, contact_name, contact_phone) VALUES
 ('示范基地', '张三', '13800138000');
 
 INSERT INTO sys_user (tenant_id, username, password_hash, nickname, role) VALUES
-(1, 'admin', '$2a$10$placeholder_bcrypt_hash', '管理员', 'ADMIN');
+(1, 'admin', '$2b$10$1DDF4hXdn1iXWyYcdv9A1uHW4j6BmJDB8p.wL/B9Q6PnzXnVC9TW.', '管理员', 'ADMIN');
 
 -- ============================================================
 -- 12. 种植模板（6.5）
