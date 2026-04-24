@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智慧农业 - PC管理后台原型</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#2E7D32;--pl:#4CAF50;--pd:#1B5E20;--bg:#F0F2F5;--card:#FFF;--text:#212121;--ts:#757575;--border:#E0E0E0;--l1:#D32F2F;--l2:#F57C00;--l3:#FBC02D;--blue:#1976D2;--sidebar-w:220px}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden}
+
+/* Sidebar */
+.sidebar{width:var(--sidebar-w);background:#1B2A1E;color:#fff;display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-logo{padding:20px;font-size:18px;font-weight:700;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px}
+.nav-group-label{padding:16px 20px 6px;font-size:11px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px}
+.nav-item{padding:11px 20px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.7);transition:all .15s}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item.active{background:var(--primary);color:#fff;font-weight:600}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--l1);color:#fff;border-radius:10px;padding:1px 7px;font-size:11px}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:56px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-title{font-size:16px;font-weight:600}
+.topbar-breadcrumb{font-size:13px;color:var(--ts)}
+.topbar-right{display:flex;align-items:center;gap:16px;font-size:14px;color:var(--ts)}
+.topbar-right .badge{background:var(--l1);color:#fff;border-radius:10px;padding:2px 8px;font-size:11px}
+.topbar-search{border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:13px;width:200px;outline:none}
+.topbar-search:focus{border-color:var(--pl)}
+
+.content{flex:1;overflow-y:auto;padding:20px 24px}
+
+/* Stats Cards */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);display:flex;align-items:center;gap:16px}
+.stat-icon-box{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.stat-icon-box.green{background:rgba(46,125,50,.1)}
+.stat-icon-box.blue{background:rgba(25,118,210,.1)}
+.stat-icon-box.orange{background:rgba(245,124,0,.1)}
+.stat-icon-box.red{background:rgba(211,47,47,.1)}
+.stat-info .label{font-size:13px;color:var(--ts)}
+.stat-info .value{font-size:28px;font-weight:700;margin-top:2px}
+.stat-info .trend{font-size:12px;margin-top:4px}
+.trend-up{color:var(--pl)}
+.trend-down{color:var(--l1)}
+
+/* Charts */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px}
+.chart-card{background:var(--card);border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.chart-card .title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.chart-card .title .sub{font-size:12px;color:var(--ts);font-weight:400}
+.chart-placeholder{height:220px;background:linear-gradient(180deg,rgba(46,125,50,.04),transparent);border-radius:8px;display:flex;align-items:flex-end;padding:0 12px 12px;gap:8px}
+.chart-placeholder .bar{flex:1;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--pl),var(--primary))}
+.gauge-placeholder{height:220px;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.gauge-circle{width:140px;height:140px;border-radius:50%;border:12px solid #E8F5E9;border-top-color:var(--primary);border-right-color:var(--primary);border-bottom-color:var(--pl);display:flex;align-items:center;justify-content:center;flex-direction:column}
+.gauge-val{font-size:32px;font-weight:800;color:var(--primary)}
+.gauge-label{font-size:13px;color:var(--ts);margin-top:8px}
+
+/* Table */
+.table-card{background:var(--card);border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);margin-bottom:20px}
+.table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.table-header .title{font-size:15px;font-weight:600}
+.table-actions{display:flex;gap:8px}
+.btn{padding:7px 16px;border:none;border-radius:6px;font-size:13px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:4px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--pd)}
+.btn-outline{background:#fff;color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{border-color:var(--pl);color:var(--primary)}
+.btn-sm{padding:4px 10px;font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;padding:10px 12px;color:var(--ts);font-weight:500;border-bottom:2px solid var(--border);font-size:13px}
+td{padding:12px;border-bottom:1px solid #f5f5f5;vertical-align:middle}
+tr:hover td{background:rgba(46,125,50,.02)}
+.status-tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:500}
+.status-tag.online{background:#E8F5E9;color:var(--primary)}
+.status-tag.offline{background:#F5F5F5;color:#999}
+.status-tag.fault{background:#FFEBEE;color:var(--l1)}
+.status-tag.alarm{background:#FFF3E0;color:var(--l2)}
+.status-tag.pending{background:#FFF3E0;color:var(--l2)}
+.status-tag.resolved{background:#E8F5E9;color:var(--primary)}
+.level-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;color:#fff}
+.level-badge.l1{background:var(--l1)}
+.level-badge.l2{background:var(--l2)}
+.level-badge.l3{background:var(--l3)}
+.pagination{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:16px;font-size:13px;color:var(--ts)}
+.page-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff}
+.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">🌱 智慧农业平台</div>
+  <div class="nav-group-label">概览</div>
+  <div class="nav-item active"><span class="nav-icon">📊</span>总览仪表盘</div>
+  <div class="nav-group-label">业务管理</div>
+  <div class="nav-item"><span class="nav-icon">📡</span>设备管理</div>
+  <div class="nav-item"><span class="nav-icon">💧</span>灌溉管理</div>
+  <div class="nav-item"><span class="nav-icon">🔔</span>告警中心<span class="nav-badge">3</span></div>
+  <div class="nav-item"><span class="nav-icon">🌿</span>种植管理</div>
+  <div class="nav-group-label">数据分析</div>
+  <div class="nav-item"><span class="nav-icon">📈</span>数据报表</div>
+  <div class="nav-item"><span class="nav-icon">📄</span>月度报告</div>
+  <div class="nav-group-label">系统</div>
+  <div class="nav-item"><span class="nav-icon">👥</span>用户管理</div>
+  <div class="nav-item"><span class="nav-icon">⚙️</span>系统设置</div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-title">总览仪表盘</span>
+      <span class="topbar-breadcrumb">示范基地 · 1号温室</span>
+    </div>
+    <div class="topbar-right">
+      <input class="topbar-search" placeholder="🔍 搜索设备、告警...">
+      <span>🔔 <span class="badge">3</span></span>
+      <span>👤 管理员</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- 统计卡片 -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon-box green">📡</div>
+        <div class="stat-info">
+          <div class="label">设备在线率</div>
+          <div class="value">96.8%</div>
+          <div class="trend trend-up">↑ 1.2% 较昨日</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-box blue">💧</div>
+        <div class="stat-info">
+          <div class="label">今日灌溉</div>
+          <div class="value">5 次</div>
+          <div class="trend trend-up">总时长 120 分钟</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-box orange">⚠️</div>
+        <div class="stat-info">
+          <div class="label">待处理告警</div>
+          <div class="value" style="color:var(--l2)">3</div>
+          <div class="trend trend-down">↑ 2 较昨日</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-box green">🌊</div>
+        <div class="stat-info">
+          <div class="label">本月节水率</div>
+          <div class="value" style="color:var(--primary)">32%</div>
+          <div class="trend trend-up">↑ 8.3% 较上月</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图表行 -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="title">传感器数据趋势（24h）<span class="sub">土壤湿度 · 土壤温度 · 空气温度</span></div>
+        <div class="chart-placeholder">
+          <div class="bar" style="height:40%"></div><div class="bar" style="height:55%"></div>
+          <div class="bar" style="height:45%"></div><div class="bar" style="height:65%"></div>
+          <div class="bar" style="height:50%"></div><div class="bar" style="height:70%"></div>
+          <div class="bar" style="height:60%"></div><div class="bar" style="height:55%"></div>
+          <div class="bar" style="height:45%"></div><div class="bar" style="height:50%"></div>
+          <div class="bar" style="height:65%"></div><div class="bar" style="height:75%"></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="title">节水率</div>
+        <div class="gauge-placeholder">
+          <div class="gauge-circle">
+            <div class="gauge-val">32%</div>
+          </div>
+          <div class="gauge-label">累计节水 12.8 吨</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 设备表格 -->
+    <div class="table-card">
+      <div class="table-header">
+        <span class="title">设备列表</span>
+        <div class="table-actions">
+          <button class="btn btn-outline">📥 导出</button>
+          <button class="btn btn-primary">+ 注册设备</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>设备名称</th><th>类型</th><th>棚号</th><th>最新数据</th><th>状态</th><th>最后在线</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td>1号温湿度传感器</td><td>传感器</td><td>1号棚</td><td>28.5°C / 65%</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
+          <tr><td>2号温湿度传感器</td><td>传感器</td><td>1号棚</td><td>27.8°C / 62%</td><td><span class="status-tag online">在线</span></td><td>1分钟前</td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
+          <tr><td>3号温湿度传感器</td><td>传感器</td><td>2号棚</td><td>—</td><td><span class="status-tag fault">故障</span></td><td>2小时前</td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
+          <tr><td>土壤湿度传感器</td><td>传感器</td><td>1号棚</td><td>32.5%</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
+          <tr><td>灌溉阀门 A1</td><td>阀门</td><td>1号棚A区</td><td>关闭</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">控制</button></td></tr>
+          <tr><td>灌溉阀门 A2</td><td>阀门</td><td>1号棚B区</td><td>开启中(12min)</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">控制</button></td></tr>
+          <tr><td>主网关 GW-01</td><td>网关</td><td>—</td><td>13台设备</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <span>共 14 条</span>
+        <div class="page-btn">‹</div>
+        <div class="page-btn active">1</div>
+        <div class="page-btn">2</div>
+        <div class="page-btn">›</div>
+      </div>
+    </div>
+
+    <!-- 告警表格 -->
+    <div class="table-card">
+      <div class="table-header">
+        <span class="title">最近告警</span>
+        <div class="table-actions">
+          <button class="btn btn-outline">全部告警 →</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>级别</th><th>告警内容</th><th>设备</th><th>时间</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td><span class="level-badge l1">L1</span></td><td>灌溉指令执行失败</td><td>阀门 A2</td><td>10:15</td><td><span class="status-tag pending">待处理</span></td><td><button class="btn btn-primary btn-sm">处理</button></td></tr>
+          <tr><td><span class="level-badge l2">L2</span></td><td>土壤湿度低于阈值 (32.5%)</td><td>土壤湿度传感器</td><td>10:10</td><td><span class="status-tag pending">待处理</span></td><td><button class="btn btn-primary btn-sm">处理</button></td></tr>
+          <tr><td><span class="level-badge l2">L2</span></td><td>传感器离线超过30分钟</td><td>3号温湿度传感器</td><td>08:24</td><td><span class="status-tag pending">待处理</span></td><td><button class="btn btn-primary btn-sm">处理</button></td></tr>
+          <tr><td><span class="level-badge l3">L3</span></td><td>定时灌溉任务完成</td><td>阀门 A1</td><td>06:20</td><td><span class="status-tag resolved">已处理</span></td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</body></html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>智慧农业 - 微信小程序原型</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#2E7D32;--pl:#4CAF50;--pd:#1B5E20;--bg:#F5F5F5;--card:#fff;--text:#212121;--ts:#757575;--border:#E0E0E0;--l1:#D32F2F;--l2:#F57C00;--l3:#FBC02D;--shadow:0 2px 8px rgba(0,0,0,.08);--radius:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:16px;color:var(--text);background:#1a1a2e;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px;gap:20px;flex-wrap:wrap}
+.phone-frame{width:375px;height:812px;background:var(--bg);border-radius:40px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3);border:8px solid #1a1a1a;flex-shrink:0}
+.phone-label{text-align:center;color:#888;font-size:13px;margin-bottom:8px;font-weight:600}
+.page{height:calc(812px - 56px - 44px);overflow-y:auto;padding-bottom:16px}
+.status-bar{height:44px;background:var(--primary);display:flex;align-items:center;justify-content:space-between;padding:0 20px;color:#fff;font-size:12px}
+.tab-bar{position:absolute;bottom:0;left:0;right:0;height:56px;background:#fff;display:flex;border-top:1px solid var(--border);z-index:100}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#999;gap:2px}
+.tab-item.active{color:var(--primary)}
+.tab-icon{font-size:22px}
+
+/* ===== 首页 ===== */
+.home-header{background:linear-gradient(135deg,var(--primary),var(--pl));color:#fff;padding:16px;border-radius:0 0 20px 20px}
+.home-header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.base-name{font-size:18px;font-weight:700}
+.base-switch{font-size:12px;opacity:.8;border:1px solid rgba(255,255,255,.4);padding:2px 8px;border-radius:12px}
+.weather-row{display:flex;align-items:center;gap:8px;font-size:13px;opacity:.9}
+.alert-badge{background:var(--l1);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700}
+
+.data-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+.data-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);text-align:center;position:relative;overflow:hidden}
+.data-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.data-card.normal::before{background:var(--pl)}
+.data-card.warn::before{background:var(--l2)}
+.data-card.danger::before{background:var(--l1)}
+.card-icon{font-size:28px;margin-bottom:4px}
+.card-value{font-size:36px;font-weight:800;color:var(--text);line-height:1}
+.card-unit{font-size:14px;color:var(--ts);margin-left:2px}
+.card-label{font-size:13px;color:var(--ts);margin-top:4px}
+.card-status{font-size:11px;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px}
+.card-status.ok{background:#E8F5E9;color:var(--primary)}
+.card-status.low{background:#FFF3E0;color:var(--l2)}
+.card-status.bad{background:#FFEBEE;color:var(--l1)}
+
+.advice-banner{margin:0 16px;background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:flex-start;gap:10px}
+.advice-icon{font-size:24px;flex-shrink:0}
+.advice-text{font-size:14px;color:var(--pd);line-height:1.5}
+.advice-stage{font-size:12px;color:var(--pl);font-weight:600}
+
+.today-summary{margin:12px 16px;background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);display:flex;justify-content:space-around;text-align:center}
+.sum-item .sum-val{font-size:22px;font-weight:700;color:var(--primary)}
+.sum-item .sum-label{font-size:11px;color:var(--ts)}
+
+.action-bar{position:sticky;bottom:56px;left:0;right:0;padding:12px 16px;background:rgba(245,245,245,.95);backdrop-filter:blur(10px);display:flex;gap:10px;z-index:50}
+.action-btn{flex:1;height:56px;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s}
+.action-btn:active{transform:scale(.96)}
+.btn-start{background:var(--primary);color:#fff}
+.btn-stop{background:#eee;color:#666}
+.btn-emergency{background:var(--l1);color:#fff;flex:.6}
+
+/* ===== 设备页 ===== */
+.page-title{font-size:18px;font-weight:700;padding:16px 16px 8px}
+.device-summary{display:flex;gap:8px;padding:0 16px 12px}
+.dev-sum-item{flex:1;background:var(--card);border-radius:10px;padding:10px;text-align:center;box-shadow:var(--shadow)}
+.dev-sum-val{font-size:24px;font-weight:700}
+.dev-sum-val.online{color:var(--primary)}
+.dev-sum-val.offline{color:#999}
+.dev-sum-val.fault{color:var(--l1)}
+.dev-sum-label{font-size:11px;color:var(--ts)}
+.section-title{font-size:14px;font-weight:600;color:var(--ts);padding:12px 16px 6px}
+.device-item{display:flex;align-items:center;padding:14px 16px;background:var(--card);margin:0 16px 8px;border-radius:var(--radius);box-shadow:var(--shadow)}
+.dev-icon-wrap{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-right:12px;font-size:22px}
+.dev-icon-wrap.on{background:rgba(46,125,50,.1)}
+.dev-icon-wrap.off{background:rgba(0,0,0,.05)}
+.dev-info{flex:1}
+.dev-name{font-size:15px;font-weight:600}
+.dev-meta{font-size:12px;color:var(--ts);margin-top:2px}
+.status-dot{width:10px;height:10px;border-radius:50%}
+.status-dot.online{background:var(--primary);box-shadow:0 0 6px rgba(46,125,50,.5)}
+.status-dot.offline{background:#bbb}
+.status-dot.fault{background:var(--l1);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ===== 数据页 ===== */
+.tab-switch{display:flex;margin:12px 16px;background:var(--card);border-radius:10px;padding:3px;box-shadow:var(--shadow)}
+.tab-switch-item{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:14px;color:var(--ts);cursor:pointer}
+.tab-switch-item.active{background:var(--primary);color:#fff;font-weight:600}
+.chart-card{margin:12px 16px;background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.chart-title{font-size:14px;font-weight:600;margin-bottom:12px}
+.chart-placeholder{height:160px;background:linear-gradient(180deg,rgba(46,125,50,.08),rgba(46,125,50,.02));border-radius:8px;display:flex;align-items:flex-end;padding:0 8px 8px;gap:6px}
+.chart-bar{flex:1;background:linear-gradient(180deg,var(--pl),var(--primary));border-radius:4px 4px 0 0;min-height:20px}
+.chart-line{height:120px;background:linear-gradient(180deg,rgba(46,125,50,.06),transparent);border-radius:8px;position:relative;overflow:hidden}
+.chart-line::after{content:'';position:absolute;bottom:20px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--primary),var(--pl),var(--primary));border-radius:1px}
+.water-save-card{margin:12px 16px;background:linear-gradient(135deg,var(--primary),var(--pl));border-radius:var(--radius);padding:24px;color:#fff;text-align:center;box-shadow:var(--shadow)}
+.ws-value{font-size:48px;font-weight:800}
+.ws-label{font-size:14px;opacity:.9;margin-top:4px}
+.ws-sub{font-size:12px;opacity:.7;margin-top:8px}
+
+/* 作物管理 */
+.crop-card{margin:12px 16px;background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.crop-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.crop-name{font-size:16px;font-weight:700}
+.crop-stage-badge{background:#E8F5E9;color:var(--primary);padding:3px 10px;border-radius:10px;font-size:12px;font-weight:600}
+.stage-progress{display:flex;gap:2px;margin:12px 0}
+.stage-step{flex:1;height:6px;border-radius:3px;background:#E0E0E0}
+.stage-step.done{background:var(--primary)}
+.stage-step.current{background:var(--pl);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.stage-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--ts)}
+.crop-params{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.param-item{background:var(--bg);border-radius:8px;padding:10px;text-align:center}
+.param-val{font-size:18px;font-weight:700;color:var(--primary)}
+.param-label{font-size:11px;color:var(--ts)}
+
+/* ===== 告警页 ===== */
+.alert-filter{display:flex;gap:6px;padding:12px 16px;overflow-x:auto}
+.filter-chip{padding:6px 14px;border-radius:20px;font-size:13px;white-space:nowrap;background:var(--card);color:var(--ts);border:1px solid var(--border)}
+.filter-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.alert-stats{display:flex;gap:12px;padding:0 16px 12px}
+.alert-stat{font-size:13px;color:var(--ts)}
+.alert-stat strong{color:var(--text)}
+.alert-item{display:flex;align-items:flex-start;padding:14px 16px;background:var(--card);margin:0 16px 8px;border-radius:var(--radius);box-shadow:var(--shadow);gap:12px}
+.alert-level-badge{min-width:32px;height:20px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.alert-level-badge.l1{background:var(--l1)}
+.alert-level-badge.l2{background:var(--l2)}
+.alert-level-badge.l3{background:var(--l3)}
+.alert-content{flex:1}
+.alert-title{font-size:14px;font-weight:600}
+.alert-device{font-size:12px;color:var(--ts);margin-top:2px}
+.alert-time{font-size:11px;color:#bbb;margin-top:4px}
+.alert-action{font-size:12px;color:var(--primary);font-weight:600;margin-top:6px}
+
+/* ===== 我的页 ===== */
+.profile-header{text-align:center;padding:30px 16px 20px;background:linear-gradient(135deg,var(--primary),var(--pl));color:#fff;border-radius:0 0 24px 24px}
+.avatar{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:32px;border:3px solid rgba(255,255,255,.4)}
+.profile-name{font-size:18px;font-weight:700}
+.profile-role{font-size:13px;opacity:.8;margin-top:4px}
+.profile-base{font-size:12px;opacity:.7;margin-top:2px}
+.menu-group{margin:12px 16px;background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.menu-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--bg);gap:12px;font-size:15px}
+.menu-item:last-child{border-bottom:none}
+.menu-icon{font-size:20px;width:28px;text-align:center}
+.menu-arrow{margin-left:auto;color:#ccc;font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- ==================== 首页 ==================== -->
+<div>
+<div class="phone-label">Tab 1: 首页（Dashboard）</div>
+<div class="phone-frame">
+  <div class="status-bar"><span>10:24</span><span>📶 WiFi</span><span>🔋 85%</span></div>
+  <div class="page">
+    <div class="home-header">
+      <div class="home-header-top">
+        <div><div class="base-name">🌱 示范基地</div></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="alert-badge">3</span>
+          <span class="base-switch">切换 ▾</span>
+        </div>
+      </div>
+      <div class="weather-row">
+        <span>☀️ 28°C</span><span>湿度 65%</span><span>东南风 2级</span>
+      </div>
+    </div>
+
+    <div class="data-cards">
+      <div class="data-card warn">
+        <div class="card-icon">💧</div>
+        <div class="card-value">32.5<span class="card-unit">%</span></div>
+        <div class="card-label">土壤湿度</div>
+        <span class="card-status low">⚠ 偏低</span>
+      </div>
+      <div class="data-card normal">
+        <div class="card-icon">🌡</div>
+        <div class="card-value">24.1<span class="card-unit">°C</span></div>
+        <div class="card-label">土壤温度</div>
+        <span class="card-status ok">✓ 正常</span>
+      </div>
+      <div class="data-card normal">
+        <div class="card-icon">🌤</div>
+        <div class="card-value">28.6<span class="card-unit">°C</span></div>
+        <div class="card-label">空气温度</div>
+        <span class="card-status ok">✓ 正常</span>
+      </div>
+      <div class="data-card normal">
+        <div class="card-icon">💨</div>
+        <div class="card-value">68.3<span class="card-unit">%</span></div>
+        <div class="card-label">空气湿度</div>
+        <span class="card-status ok">✓ 正常</span>
+      </div>
+    </div>
+
+    <div class="advice-banner">
+      <div class="advice-icon">🌿</div>
+      <div>
+        <div class="advice-stage">番茄 · 开花坐果期 第58天</div>
+        <div class="advice-text">土壤湿度偏低（32.5%），建议灌溉 <strong>25分钟</strong>，目标湿度 65%</div>
+      </div>
+    </div>
+
+    <div class="today-summary">
+      <div class="sum-item"><div class="sum-val">5</div><div class="sum-label">今日灌溉(次)</div></div>
+      <div class="sum-item"><div class="sum-val">120</div><div class="sum-label">总时长(分钟)</div></div>
+      <div class="sum-item"><div class="sum-val">2.4</div><div class="sum-label">用水量(吨)</div></div>
+    </div>
+
+    <div class="action-bar">
+      <button class="action-btn btn-start">💧 开始灌溉</button>
+      <button class="action-btn btn-stop">⏹ 停止</button>
+      <button class="action-btn btn-emergency">🚨 急停</button>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item active"><span class="tab-icon">🏠</span>首页</div>
+    <div class="tab-item"><span class="tab-icon">📡</span>设备</div>
+    <div class="tab-item"><span class="tab-icon">📊</span>数据</div>
+    <div class="tab-item"><span class="tab-icon">🔔</span>告警</div>
+    <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== 设备页 ==================== -->
+<div>
+<div class="phone-label">Tab 2: 设备</div>
+<div class="phone-frame">
+  <div class="status-bar"><span>10:24</span><span>📶 WiFi</span><span>🔋 85%</span></div>
+  <div class="page">
+    <div class="page-title">设备管理</div>
+    <div class="device-summary">
+      <div class="dev-sum-item"><div class="dev-sum-val online">12</div><div class="dev-sum-label">在线</div></div>
+      <div class="dev-sum-item"><div class="dev-sum-val offline">1</div><div class="dev-sum-label">离线</div></div>
+      <div class="dev-sum-item"><div class="dev-sum-val fault">1</div><div class="dev-sum-label">故障</div></div>
+    </div>
+    <div class="section-title">传感器 (8)</div>
+    <div class="device-item"><div class="dev-icon-wrap on">🌡</div><div class="dev-info"><div class="dev-name">1号温湿度传感器</div><div class="dev-meta">1号棚 · 28.5°C / 65%</div></div><div class="status-dot online"></div></div>
+    <div class="device-item"><div class="dev-icon-wrap on">🌡</div><div class="dev-info"><div class="dev-name">2号温湿度传感器</div><div class="dev-meta">1号棚 · 27.8°C / 62%</div></div><div class="status-dot online"></div></div>
+    <div class="device-item"><div class="dev-icon-wrap off">🌡</div><div class="dev-info"><div class="dev-name">3号温湿度传感器</div><div class="dev-meta">2号棚 · 离线 2小时</div></div><div class="status-dot fault"></div></div>
+    <div class="device-item"><div class="dev-icon-wrap on">💧</div><div class="dev-info"><div class="dev-name">土壤湿度传感器</div><div class="dev-meta">1号棚 · 32.5%</div></div><div class="status-dot online"></div></div>
+    <div class="device-item"><div class="dev-icon-wrap on">☀️</div><div class="dev-info"><div class="dev-name">光照传感器</div><div class="dev-meta">1号棚 · 452 μmol/m²/s</div></div><div class="status-dot online"></div></div>
+    <div class="section-title">阀门 (4)</div>
+    <div class="device-item"><div class="dev-icon-wrap on">🚿</div><div class="dev-info"><div class="dev-name">灌溉阀门 A1</div><div class="dev-meta">1号棚A区 · 关闭</div></div><div class="status-dot online"></div></div>
+    <div class="device-item"><div class="dev-icon-wrap on">🚿</div><div class="dev-info"><div class="dev-name">灌溉阀门 A2</div><div class="dev-meta">1号棚B区 · 开启中 (剩余12min)</div></div><div class="status-dot online"></div></div>
+    <div class="section-title">网关 (1)</div>
+    <div class="device-item"><div class="dev-icon-wrap on">📡</div><div class="dev-info"><div class="dev-name">主网关 GW-01</div><div class="dev-meta">管理 13 台设备 · 在线</div></div><div class="status-dot online"></div></div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item"><span class="tab-icon">🏠</span>首页</div>
+    <div class="tab-item active"><span class="tab-icon">📡</span>设备</div>
+    <div class="tab-item"><span class="tab-icon">📊</span>数据</div>
+    <div class="tab-item"><span class="tab-icon">🔔</span>告警</div>
+    <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== 数据页 ==================== -->
+<div>
+<div class="phone-label">Tab 3: 数据</div>
+<div class="phone-frame">
+  <div class="status-bar"><span>10:24</span><span>📶 WiFi</span><span>🔋 85%</span></div>
+  <div class="page">
+    <div class="page-title">数据中心</div>
+    <div class="tab-switch">
+      <div class="tab-switch-item active">灌溉统计</div>
+      <div class="tab-switch-item">节水率</div>
+      <div class="tab-switch-item">传感器</div>
+      <div class="tab-switch-item">作物</div>
+    </div>
+
+    <div class="water-save-card">
+      <div class="ws-value">32%</div>
+      <div class="ws-label">本月节水率</div>
+      <div class="ws-sub">累计节水 12.8 吨 · 较上月 +8.3%</div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">灌溉次数（近7天）</div>
+      <div class="chart-placeholder">
+        <div class="chart-bar" style="height:45%"></div>
+        <div class="chart-bar" style="height:60%"></div>
+        <div class="chart-bar" style="height:35%"></div>
+        <div class="chart-bar" style="height:80%"></div>
+        <div class="chart-bar" style="height:55%"></div>
+        <div class="chart-bar" style="height:70%"></div>
+        <div class="chart-bar" style="height:50%"></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">用水量趋势</div>
+      <div class="chart-line"></div>
+    </div>
+
+    <!-- 作物管理卡片 -->
+    <div class="crop-card">
+      <div class="crop-header">
+        <div class="crop-name">🍅 番茄</div>
+        <span class="crop-stage-badge">开花坐果期</span>
+      </div>
+      <div style="font-size:13px;color:var(--ts)">种植日期: 2026-03-01 · 第58天</div>
+      <div class="stage-progress">
+        <div class="stage-step done"></div>
+        <div class="stage-step done"></div>
+        <div class="stage-step current"></div>
+        <div class="stage-step"></div>
+        <div class="stage-step"></div>
+      </div>
+      <div class="stage-labels">
+        <span>苗期</span><span>生长期</span><span>开花期</span><span>果期</span><span>采收期</span>
+      </div>
+      <div class="crop-params">
+        <div class="param-item"><div class="param-val">50-75%</div><div class="param-label">湿度范围</div></div>
+        <div class="param-item"><div class="param-val">25min</div><div class="param-label">建议灌溉时长</div></div>
+        <div class="param-item"><div class="param-val">20-28°C</div><div class="param-label">最佳温度</div></div>
+        <div class="param-item"><div class="param-val">2次/天</div><div class="param-label">灌溉频次</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item"><span class="tab-icon">🏠</span>首页</div>
+    <div class="tab-item"><span class="tab-icon">📡</span>设备</div>
+    <div class="tab-item active"><span class="tab-icon">📊</span>数据</div>
+    <div class="tab-item"><span class="tab-icon">🔔</span>告警</div>
+    <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== 告警页 ==================== -->
+<div>
+<div class="phone-label">Tab 4: 告警</div>
+<div class="phone-frame">
+  <div class="status-bar"><span>10:24</span><span>📶 WiFi</span><span>🔋 85%</span></div>
+  <div class="page">
+    <div class="page-title">告警中心</div>
+    <div class="alert-stats">
+      <span class="alert-stat">今日告警 <strong>5</strong> 条</span>
+      <span class="alert-stat">待处理 <strong style="color:var(--l1)">3</strong> 条</span>
+    </div>
+    <div class="alert-filter">
+      <span class="filter-chip active">全部</span>
+      <span class="filter-chip" style="border-color:var(--l1);color:var(--l1)">L1 紧急</span>
+      <span class="filter-chip" style="border-color:var(--l2);color:var(--l2)">L2 重要</span>
+      <span class="filter-chip">L3 一般</span>
+      <span class="filter-chip">未处理</span>
+      <span class="filter-chip">已处理</span>
+    </div>
+    <div class="alert-item">
+      <span class="alert-level-badge l1">L1</span>
+      <div class="alert-content">
+        <div class="alert-title">灌溉指令执行失败</div>
+        <div class="alert-device">阀门 A2 · 1号棚B区</div>
+        <div class="alert-time">10:15 · 15分钟前</div>
+        <div class="alert-action">点击处理 →</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <span class="alert-level-badge l2">L2</span>
+      <div class="alert-content">
+        <div class="alert-title">土壤湿度低于阈值</div>
+        <div class="alert-device">土壤湿度传感器 · 1号棚 · 当前 32.5%</div>
+        <div class="alert-time">10:10 · 20分钟前</div>
+        <div class="alert-action">点击处理 →</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <span class="alert-level-badge l2">L2</span>
+      <div class="alert-content">
+        <div class="alert-title">3号温湿度传感器离线</div>
+        <div class="alert-device">2号棚 · 已离线 2小时</div>
+        <div class="alert-time">08:24 · 2小时前</div>
+        <div class="alert-action">点击处理 →</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <span class="alert-level-badge l3">L3</span>
+      <div class="alert-content">
+        <div class="alert-title">定时灌溉任务完成</div>
+        <div class="alert-device">阀门 A1 · 灌溉 20分钟</div>
+        <div class="alert-time">06:20 · 今早</div>
+        <div style="font-size:12px;color:var(--pl);margin-top:4px">✓ 已自动处理</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <span class="alert-level-badge l3">L3</span>
+      <div class="alert-content">
+        <div class="alert-title">月度报告已生成</div>
+        <div class="alert-device">2026年3月运营报告</div>
+        <div class="alert-time">昨日 20:00</div>
+        <div style="font-size:12px;color:var(--pl);margin-top:4px">✓ 已查看</div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item"><span class="tab-icon">🏠</span>首页</div>
+    <div class="tab-item"><span class="tab-icon">📡</span>设备</div>
+    <div class="tab-item"><span class="tab-icon">📊</span>数据</div>
+    <div class="tab-item active"><span class="tab-icon">🔔</span>告警</div>
+    <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== 我的页 ==================== -->
+<div>
+<div class="phone-label">Tab 5: 我的</div>
+<div class="phone-frame">
+  <div class="status-bar"><span>10:24</span><span>📶 WiFi</span><span>🔋 85%</span></div>
+  <div class="page">
+    <div class="profile-header">
+      <div class="avatar">👨‍🌾</div>
+      <div class="profile-name">张三</div>
+      <div class="profile-role">管理员</div>
+      <div class="profile-base">📍 示范基地</div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-item"><span class="menu-icon">🏠</span>基地管理<span class="menu-arrow">›</span></div>
+      <div class="menu-item"><span class="menu-icon">🔔</span>通知设置<span class="menu-arrow">›</span></div>
+      <div class="menu-item"><span class="menu-icon">🌙</span>免打扰时段<span style="margin-left:auto;font-size:13px;color:var(--ts)">22:00-06:00</span><span class="menu-arrow" style="margin-left:8px">›</span></div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-item"><span class="menu-icon">👥</span>操作员管理<span style="margin-left:auto;font-size:13px;color:var(--ts)">3人</span><span class="menu-arrow" style="margin-left:8px">›</span></div>
+      <div class="menu-item"><span class="menu-icon">📋</span>操作日志<span class="menu-arrow">›</span></div>
+    </div>
+    <div class="menu-group">
+      <div class="menu-item"><span class="menu-icon">📖</span>操作视频教程<span class="menu-arrow">›</span></div>
+      <div class="menu-item"><span class="menu-icon">❓</span>帮助与反馈<span class="menu-arrow">›</span></div>
+      <div class="menu-item"><span class="menu-icon">ℹ️</span>关于<span style="margin-left:auto;font-size:13px;color:var(--ts)">V1.0.0</span><span class="menu-arrow" style="margin-left:8px">›</span></div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item"><span class="tab-icon">🏠</span>首页</div>
+    <div class="tab-item"><span class="tab-icon">📡</span>设备</div>
+    <div class="tab-item"><span class="tab-icon">📊</span>数据</div>
+    <div class="tab-item"><span class="tab-icon">🔔</span>告警</div>
+    <div class="tab-item active"><span class="tab-icon">👤</span>我的</div>
+  </div>
+</div>
+</div>
+
+</body></html>
