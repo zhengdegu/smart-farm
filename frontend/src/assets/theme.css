@@ -1,0 +1,40 @@
+:root {
+  /* 主色 */
+  --sf-primary: #2E7D32;
+  --sf-primary-light: #4CAF50;
+  --sf-primary-dark: #1B5E20;
+
+  /* 背景 */
+  --sf-bg: #F0F2F5;
+  --sf-card: #FFFFFF;
+  --sf-sidebar-bg: #1B2A1E;
+
+  /* 文字 */
+  --sf-text: #212121;
+  --sf-text-secondary: #757575;
+
+  /* 边框 */
+  --sf-border: #E0E0E0;
+
+  /* 告警级别 */
+  --sf-l1: #D32F2F;
+  --sf-l2: #F57C00;
+  --sf-l3: #FBC02D;
+
+  /* 功能色 */
+  --sf-blue: #1976D2;
+  --sf-success: #4CAF50;
+  --sf-danger: #D32F2F;
+
+  /* 布局 */
+  --sf-sidebar-width: 220px;
+  --sf-topbar-height: 56px;
+
+  /* 阴影 */
+  --sf-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  --sf-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* 圆角 */
+  --sf-radius: 10px;
+  --sf-radius-sm: 6px;
+}

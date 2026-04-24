@@ -1,0 +1,96 @@
+<view class="page-container">
+  <view class="page-title">数据中心</view>
+
+  <!-- 子标签切换 -->
+  <view class="tab-switch">
+    <view
+      class="tab-switch-item {{activeTab === item.key ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="key"
+      bindtap="onTabSwitch"
+      data-tab="{{item.key}}"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 灌溉统计子标签 -->
+  <block wx:if="{{activeTab === 'irrigation'}}">
+    <view class="chart-card">
+      <view class="chart-title">灌溉次数（近7天）</view>
+      <view class="chart-placeholder">
+        <view class="chart-bar" wx:for="{{irrigationBars}}" wx:key="day" style="height:{{item.height}}%"></view>
+      </view>
+    </view>
+    <view class="chart-card">
+      <view class="chart-title">用水量趋势</view>
+      <view class="chart-line"></view>
+    </view>
+  </block>
+
+  <!-- 节水率子标签 -->
+  <block wx:if="{{activeTab === 'water'}}">
+    <view class="water-save-card">
+      <view class="ws-value">{{waterSaving.rate}}%</view>
+      <view class="ws-label">本月节水率</view>
+      <view class="ws-sub">累计节水 {{waterSaving.totalSaved}} 吨 · 较上月 {{waterSaving.change}}</view>
+    </view>
+    <view class="chart-card">
+      <view class="chart-title">月度节水率趋势</view>
+      <view class="chart-placeholder">
+        <view class="chart-bar" wx:for="{{waterBars}}" wx:key="month" style="height:{{item.height}}%"></view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 传感器子标签 -->
+  <block wx:if="{{activeTab === 'sensor'}}">
+    <view class="chart-card">
+      <view class="chart-title">🌡 温度趋势（24h）</view>
+      <view class="chart-placeholder chart-small">
+        <view class="chart-bar" wx:for="{{tempBars}}" wx:key="index" style="height:{{item.height}}%"></view>
+      </view>
+    </view>
+    <view class="chart-card">
+      <view class="chart-title">💧 湿度趋势（24h）</view>
+      <view class="chart-placeholder chart-small">
+        <view class="chart-bar" wx:for="{{humidityBars}}" wx:key="index" style="height:{{item.height}}%"></view>
+      </view>
+    </view>
+    <view class="chart-card">
+      <view class="chart-title">☀️ 光照趋势（24h）</view>
+      <view class="chart-line"></view>
+    </view>
+  </block>
+
+  <!-- 作物子标签 -->
+  <block wx:if="{{activeTab === 'crop'}}">
+    <view class="crop-card" wx:for="{{crops}}" wx:key="name">
+      <view class="crop-header">
+        <view class="crop-name">{{item.name}}</view>
+        <view class="crop-stage-badge">{{item.stage}}</view>
+      </view>
+      <view class="crop-date">种植日期: {{item.plantDate}} · 第{{item.days}}天</view>
+
+      <!-- 5阶段进度条 -->
+      <view class="stage-progress">
+        <view
+          wx:for="{{item.stages}}"
+          wx:for-item="stage"
+          wx:for-index="si"
+          wx:key="si"
+          class="stage-step {{si < item.stageIndex ? 'done' : si === item.stageIndex ? 'current' : ''}}"
+        ></view>
+      </view>
+      <view class="stage-labels">
+        <text wx:for="{{item.stages}}" wx:for-item="stage" wx:key="stage">{{stage}}</text>
+      </view>
+
+      <!-- 参数网格 -->
+      <view class="crop-params">
+        <view class="param-item" wx:for="{{item.params}}" wx:for-item="param" wx:key="label">
+          <view class="param-val">{{param.value}}</view>
+          <view class="param-label">{{param.label}}</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

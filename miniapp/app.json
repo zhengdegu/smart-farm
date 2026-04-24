@@ -2,25 +2,26 @@
   "pages": [
     "pages/index/index",
     "pages/device/index",
+    "pages/data/index",
     "pages/irrigation/index",
     "pages/alert/index",
     "pages/mine/index",
     "pages/login/index"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#07c160",
+    "navigationBarBackgroundColor": "#2E7D32",
     "navigationBarTitleText": "智慧农业",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#f5f5f5"
   },
   "tabBar": {
     "color": "#999",
-    "selectedColor": "#07c160",
+    "selectedColor": "#2E7D32",
     "backgroundColor": "#fff",
     "list": [
       { "pagePath": "pages/index/index", "text": "首页", "iconPath": "static/tab-home.png", "selectedIconPath": "static/tab-home-active.png" },
       { "pagePath": "pages/device/index", "text": "设备", "iconPath": "static/tab-device.png", "selectedIconPath": "static/tab-device-active.png" },
-      { "pagePath": "pages/irrigation/index", "text": "灌溉", "iconPath": "static/tab-water.png", "selectedIconPath": "static/tab-water-active.png" },
+      { "pagePath": "pages/data/index", "text": "数据", "iconPath": "static/tab-data.png", "selectedIconPath": "static/tab-data-active.png" },
       { "pagePath": "pages/alert/index", "text": "告警", "iconPath": "static/tab-alert.png", "selectedIconPath": "static/tab-alert-active.png" },
       { "pagePath": "pages/mine/index", "text": "我的", "iconPath": "static/tab-mine.png", "selectedIconPath": "static/tab-mine-active.png" }
     ]

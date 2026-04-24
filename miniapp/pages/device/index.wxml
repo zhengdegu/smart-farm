@@ -1,31 +1,100 @@
-<view class="container">
-  <!-- 筛选 -->
-  <view class="filter-bar">
-    <view class="filter-item {{filter==='all'?'active':''}}" bindtap="onFilterChange" data-type="all">全部</view>
-    <view class="filter-item {{filter==='SENSOR'?'active':''}}" bindtap="onFilterChange" data-type="SENSOR">传感器</view>
-    <view class="filter-item {{filter==='VALVE'?'active':''}}" bindtap="onFilterChange" data-type="VALVE">阀门</view>
-  </view>
+<view class="page-container">
+  <view class="page-title">设备管理</view>
 
-  <!-- 设备列表 -->
-  <view class="card device-card" wx:for="{{devices}}" wx:key="deviceId" bindtap="onDeviceTap" data-device="{{item}}">
-    <view class="device-header">
-      <text class="device-name">{{item.name || item.deviceId}}</text>
-      <view class="tag {{item.status==='ONLINE'?'tag-success':'tag-danger'}}">{{item.status==='ONLINE'?'在线':'离线'}}</view>
+  <!-- 设备汇总栏 -->
+  <view class="device-summary">
+    <view class="dev-sum-item">
+      <view class="dev-sum-val online">{{summary.online}}</view>
+      <view class="dev-sum-label">在线</view>
     </view>
-    <view class="device-info">
-      <text class="device-id">ID: {{item.deviceId}}</text>
-      <text class="device-type">{{item.deviceType==='SENSOR'?'传感器':'阀门'}}</text>
+    <view class="dev-sum-item">
+      <view class="dev-sum-val offline">{{summary.offline}}</view>
+      <view class="dev-sum-label">离线</view>
     </view>
-    <view class="device-meta">
-      <text wx:if="{{item.greenhouseNo}}">{{item.greenhouseNo}}号棚</text>
-      <text wx:if="{{item.location}}">{{item.location}}</text>
-    </view>
-    <view class="device-actions" catchtap="">
-      <view class="action-btn" catchtap="onRefreshDevice" data-id="{{item.deviceId}}">刷新数据</view>
+    <view class="dev-sum-item">
+      <view class="dev-sum-val fault">{{summary.fault}}</view>
+      <view class="dev-sum-label">故障</view>
     </view>
   </view>
 
-  <view class="empty" wx:if="{{!loading && !devices.length}}">
+  <!-- 按类型分组设备列表 -->
+  <block wx:for="{{groups}}" wx:key="title">
+    <view class="section-title">{{item.title}} ({{item.count}})</view>
+    <view
+      class="device-item"
+      wx:for="{{item.devices}}"
+      wx:for-item="device"
+      wx:key="id"
+      bindtap="onDeviceTap"
+      data-device="{{device}}"
+    >
+      <view class="dev-icon-wrap {{device.iconBg}}">{{device.icon}}</view>
+      <view class="dev-info">
+        <view class="dev-name">{{device.name}}</view>
+        <view class="dev-meta">{{device.meta}}</view>
+      </view>
+      <view class="status-dot {{device.status}}"></view>
+    </view>
+  </block>
+
+  <view class="empty" wx:if="{{!loading && groups.length === 0}}">
     <text>暂无设备</text>
+  </view>
+</view>
+
+<!-- 设备详情浮层 -->
+<view class="detail-overlay {{showDetail ? 'show' : ''}}" wx:if="{{showDetail}}">
+  <view class="detail-header">
+    <view class="detail-back" bindtap="onCloseDetail">‹</view>
+    <text>{{detailDevice.name}}</text>
+  </view>
+  <view class="detail-body">
+    <!-- 设备基本信息 -->
+    <view class="detail-card">
+      <view class="detail-device-name">{{detailDevice.name}}</view>
+      <view class="detail-device-meta">位置：{{detailDevice.meta}}</view>
+      <view class="detail-device-meta">
+        状态：<text class="{{detailDevice.status === 'online' ? 'text-green' : 'text-red'}}">{{detailInfo.status}}</text>
+      </view>
+    </view>
+
+    <!-- 24小时趋势图表占位 -->
+    <view class="detail-card">
+      <view class="detail-card-title">24小时趋势</view>
+      <view class="detail-chart">
+        <view class="dbar" style="height:40%"></view>
+        <view class="dbar" style="height:55%"></view>
+        <view class="dbar" style="height:50%"></view>
+        <view class="dbar" style="height:65%"></view>
+        <view class="dbar" style="height:60%"></view>
+        <view class="dbar" style="height:70%"></view>
+        <view class="dbar" style="height:55%"></view>
+        <view class="dbar" style="height:45%"></view>
+        <view class="dbar" style="height:50%"></view>
+        <view class="dbar" style="height:60%"></view>
+        <view class="dbar" style="height:65%"></view>
+        <view class="dbar" style="height:58%"></view>
+      </view>
+    </view>
+
+    <!-- 信息网格 -->
+    <view class="detail-info-grid">
+      <view class="detail-info-item">
+        <view class="detail-info-val">{{detailInfo.currentValue}}</view>
+        <view class="detail-info-label">当前值</view>
+      </view>
+      <view class="detail-info-item">
+        <view class="detail-info-val">{{detailInfo.status}}</view>
+        <view class="detail-info-label">运行状态</view>
+      </view>
+      <view class="detail-info-item">
+        <view class="detail-info-val">{{detailInfo.onlineRate}}</view>
+        <view class="detail-info-label">在线率(30天)</view>
+      </view>
+      <view class="detail-info-item">
+        <view class="detail-info-val">{{detailInfo.lastReport}}</view>
+        <view class="detail-info-label">最后上报</view>
+      </view>
+    </view>
   </view>
 </view>

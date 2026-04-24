@@ -1,13 +1,210 @@
-.filter-bar { display: flex; gap: 16rpx; margin-bottom: 20rpx; }
-.filter-item { padding: 12rpx 32rpx; background: #fff; border-radius: 32rpx; font-size: 26rpx; color: #666; }
-.filter-item.active { background: #07c160; color: #fff; }
+.page-container {
+  padding-bottom: 32rpx;
+}
+.page-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  padding: 32rpx 32rpx 16rpx;
+}
 
-.device-card { padding: 24rpx; }
-.device-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
-.device-name { font-size: 32rpx; font-weight: 600; }
-.device-info { display: flex; justify-content: space-between; font-size: 24rpx; color: #999; margin-bottom: 8rpx; }
-.device-meta { font-size: 24rpx; color: #999; margin-bottom: 12rpx; }
-.device-meta text { margin-right: 20rpx; }
-.device-actions { display: flex; justify-content: flex-end; }
-.action-btn { padding: 8rpx 24rpx; background: #f0f9f4; color: #07c160; border-radius: 8rpx; font-size: 24rpx; }
-.empty { text-align: center; padding: 80rpx 0; color: #999; }
+/* ===== 设备汇总栏 ===== */
+.device-summary {
+  display: flex;
+  gap: 16rpx;
+  padding: 0 32rpx 24rpx;
+}
+.dev-sum-item {
+  flex: 1;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.08);
+}
+.dev-sum-val {
+  font-size: 48rpx;
+  font-weight: 700;
+}
+.dev-sum-val.online { color: #2E7D32; }
+.dev-sum-val.offline { color: #999; }
+.dev-sum-val.fault { color: #D32F2F; }
+.dev-sum-label {
+  font-size: 22rpx;
+  color: #757575;
+}
+
+/* ===== 分组标题 ===== */
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #757575;
+  padding: 24rpx 32rpx 12rpx;
+}
+
+/* ===== 设备项 ===== */
+.device-item {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 32rpx;
+  background: #fff;
+  margin: 0 32rpx 16rpx;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.08);
+}
+.dev-icon-wrap {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+  font-size: 44rpx;
+}
+.dev-icon-wrap.on {
+  background: rgba(46,125,50,0.1);
+}
+.dev-icon-wrap.off {
+  background: rgba(0,0,0,0.05);
+}
+.dev-info {
+  flex: 1;
+}
+.dev-name {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.dev-meta {
+  font-size: 24rpx;
+  color: #757575;
+  margin-top: 4rpx;
+}
+.status-dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+}
+.status-dot.online {
+  background: #2E7D32;
+  box-shadow: 0 0 12rpx rgba(46,125,50,0.5);
+}
+.status-dot.offline {
+  background: #bbb;
+}
+.status-dot.fault {
+  background: #D32F2F;
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ===== 设备详情浮层 ===== */
+.detail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #F5F5F5;
+  z-index: 150;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.detail-overlay.show {
+  display: flex;
+}
+.detail-header {
+  height: 88rpx;
+  background: #2E7D32;
+  display: flex;
+  align-items: center;
+  padding: 0 32rpx;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  gap: 20rpx;
+  flex-shrink: 0;
+}
+.detail-back {
+  font-size: 40rpx;
+  padding: 0 8rpx;
+}
+.detail-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32rpx;
+}
+.detail-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.08);
+  margin-bottom: 24rpx;
+}
+.detail-device-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-bottom: 16rpx;
+}
+.detail-device-meta {
+  font-size: 26rpx;
+  color: #757575;
+  margin-top: 8rpx;
+}
+.text-green { color: #2E7D32; }
+.text-red { color: #D32F2F; }
+.detail-card-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+/* ===== 趋势图表占位 ===== */
+.detail-chart {
+  height: 320rpx;
+  background: linear-gradient(180deg, rgba(46,125,50,0.06), transparent);
+  border-radius: 16rpx;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 12rpx 12rpx;
+  gap: 8rpx;
+}
+.dbar {
+  flex: 1;
+  background: linear-gradient(180deg, #4CAF50, #2E7D32);
+  border-radius: 6rpx 6rpx 0 0;
+  min-height: 16rpx;
+}
+
+/* ===== 信息网格 ===== */
+.detail-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+.detail-info-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.08);
+}
+.detail-info-val {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #2E7D32;
+}
+.detail-info-label {
+  font-size: 22rpx;
+  color: #757575;
+  margin-top: 4rpx;
+}
+
+.empty {
+  text-align: center;
+  padding: 160rpx 0;
+  color: #999;
+}

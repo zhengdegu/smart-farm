@@ -7,10 +7,10 @@ page {
 .container { padding: 20rpx; }
 .card {
   background: #fff;
-  border-radius: 16rpx;
+  border-radius: 24rpx;
   padding: 24rpx;
   margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.08);
 }
 .card-title {
   font-size: 30rpx;
@@ -21,18 +21,18 @@ page {
   border-bottom: 1rpx solid #f0f0f0;
 }
 .btn-primary {
-  background: linear-gradient(135deg, #07c160, #06ad56);
+  background: linear-gradient(135deg, #2E7D32, #4CAF50);
   color: #fff;
-  border-radius: 12rpx;
+  border-radius: 24rpx;
   text-align: center;
   padding: 20rpx 0;
   font-size: 30rpx;
   font-weight: 500;
 }
 .btn-danger {
-  background: linear-gradient(135deg, #fa5151, #e04040);
+  background: linear-gradient(135deg, #D32F2F, #E53935);
   color: #fff;
-  border-radius: 12rpx;
+  border-radius: 24rpx;
   text-align: center;
   padding: 20rpx 0;
   font-size: 30rpx;
@@ -44,7 +44,7 @@ page {
   border-radius: 8rpx;
   font-size: 22rpx;
 }
-.tag-success { background: #e8f8ee; color: #07c160; }
-.tag-danger { background: #fef0f0; color: #fa5151; }
-.tag-warning { background: #fdf6ec; color: #e6a23c; }
+.tag-success { background: #E8F5E9; color: #2E7D32; }
+.tag-danger { background: #fef0f0; color: #D32F2F; }
+.tag-warning { background: #fdf6ec; color: #F57C00; }
 .tag-info { background: #f0f2f5; color: #909399; }

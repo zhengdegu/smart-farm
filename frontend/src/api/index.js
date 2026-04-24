@@ -67,6 +67,9 @@ export const reportApi = {
   monthlyStats: (params) => api.get('/reports/irrigation/monthly', { params }),
   waterSaving: (params) => api.get('/reports/water-saving', { params }),
   alertStats: (params) => api.get('/reports/alerts/stats', { params }),
+  monthlyList: () => api.get('/reports/monthly'),
+  generateMonthly: () => api.post('/reports/monthly/generate'),
+  downloadMonthly: (id) => api.get(`/reports/monthly/${id}/download`, { responseType: 'blob' }),
 }
 
 // Crop
@@ -83,4 +86,29 @@ export const cropApi = {
 // Auth
 export const authApi = {
   login: (data) => api.post('/auth/login', data),
+}
+
+// Screen
+export const screenApi = {
+  getData: () => api.get('/screen/data'),
+}
+
+// User
+export const userApi = {
+  list: (params) => api.get('/users', { params }),
+  create: (data) => api.post('/users', data),
+  update: (id, data) => api.put(`/users/${id}`, data),
+  resetPassword: (id) => api.post(`/users/${id}/reset-password`),
+  toggleStatus: (id) => api.post(`/users/${id}/toggle-status`),
+  operationLogs: (params) => api.get('/operation-logs', { params }),
+}
+
+// Settings
+export const settingsApi = {
+  getBaseInfo: () => api.get('/settings/base'),
+  updateBaseInfo: (data) => api.put('/settings/base', data),
+  getNotifications: () => api.get('/settings/notifications'),
+  updateNotifications: (data) => api.put('/settings/notifications', data),
+  getMqttStatus: () => api.get('/settings/mqtt-status'),
+  reconnectMqtt: () => api.post('/settings/mqtt-reconnect'),
 }

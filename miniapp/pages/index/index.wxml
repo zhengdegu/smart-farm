@@ -1,83 +1,98 @@
-<view class="container">
-  <!-- 设备概览 -->
-  <view class="card">
-    <view class="card-title">设备概览</view>
-    <view class="stat-grid">
-      <view class="stat-item">
-        <text class="stat-num online">{{stats.onlineDevices}}</text>
-        <text class="stat-label">在线设备</text>
-      </view>
-      <view class="stat-item">
-        <text class="stat-num offline">{{stats.offlineDevices}}</text>
-        <text class="stat-label">离线设备</text>
-      </view>
-      <view class="stat-item">
-        <text class="stat-num">{{stats.totalSensors}}</text>
-        <text class="stat-label">传感器</text>
-      </view>
-      <view class="stat-item">
-        <text class="stat-num">{{stats.totalValves}}</text>
-        <text class="stat-label">阀门</text>
-      </view>
+<!-- 渐变色头部 -->
+<view class="home-header">
+  <view class="home-header-top">
+    <view>
+      <text class="base-name">🌱 {{baseName}}</text>
+    </view>
+    <view class="header-right">
+      <view class="alert-badge" wx:if="{{alertCount > 0}}">{{alertCount}}</view>
+      <view class="base-switch">切换 ▾</view>
     </view>
   </view>
-
-  <!-- 实时环境 -->
-  <view class="card">
-    <view class="card-title">实时环境</view>
-    <view class="env-grid">
-      <view class="env-item" wx:for="{{envData}}" wx:key="label">
-        <text class="env-value" style="color:{{item.color}}">{{item.value}}</text>
-        <text class="env-unit">{{item.unit}}</text>
-        <text class="env-label">{{item.label}}</text>
-      </view>
-    </view>
+  <view class="weather-row">
+    <text>☀️ {{weather.temp}}</text>
+    <text>湿度 {{weather.humidity}}</text>
+    <text>{{weather.wind}}</text>
   </view>
+</view>
 
-  <!-- 快捷操作 -->
-  <view class="card">
-    <view class="card-title">快捷操作</view>
-    <view class="action-grid">
-      <view class="action-item" bindtap="goDevice">
-        <view class="action-icon device-icon">📡</view>
-        <text>设备管理</text>
-      </view>
-      <view class="action-item" bindtap="goIrrigation">
-        <view class="action-icon water-icon">💧</view>
-        <text>灌溉控制</text>
-      </view>
-      <view class="action-item" bindtap="goAlert">
-        <view class="action-icon alert-icon">🔔</view>
-        <text>告警中心</text>
-      </view>
-      <view class="action-item" bindtap="onEmergencyStop">
-        <view class="action-icon stop-icon">🛑</view>
-        <text>紧急停止</text>
-      </view>
+<!-- 4个数据卡片 2x2 网格 -->
+<view class="data-cards">
+  <view class="data-card {{item.type}}" wx:for="{{cards}}" wx:key="label">
+    <view class="card-icon">{{item.icon}}</view>
+    <view class="card-value-row">
+      <text class="card-value">{{item.value}}</text>
+      <text class="card-unit">{{item.unit}}</text>
     </view>
+    <view class="card-label">{{item.label}}</view>
+    <view class="card-status {{item.status}}">{{item.statusText}}</view>
   </view>
+</view>
 
-  <!-- 种植进度 -->
-  <view class="card" wx:if="{{plantings.length}}">
-    <view class="card-title">种植进度</view>
-    <view class="plant-item" wx:for="{{plantings}}" wx:key="no">
-      <view class="plant-header">
-        <text class="plant-name">{{item.no}}号棚 · {{item.crop}}</text>
-        <text class="plant-stage">{{item.stage}}</text>
-      </view>
-      <view class="progress-bar">
-        <view class="progress-fill" style="width:{{item.progress}}%"></view>
-      </view>
-      <text class="progress-text">{{item.progress}}%</text>
+<!-- AI 建议横幅 -->
+<view class="advice-banner">
+  <view class="advice-icon">🌿</view>
+  <view class="advice-content">
+    <view class="advice-stage">{{advice.stage}}</view>
+    <view class="advice-text">{{advice.text}}</view>
+  </view>
+</view>
+
+<!-- 今日汇总栏 -->
+<view class="today-summary">
+  <view class="sum-item">
+    <view class="sum-val">{{summary.irrigationCount}}</view>
+    <view class="sum-label">今日灌溉(次)</view>
+  </view>
+  <view class="sum-item">
+    <view class="sum-val">{{summary.totalDuration}}</view>
+    <view class="sum-label">总时长(分钟)</view>
+  </view>
+  <view class="sum-item">
+    <view class="sum-val">{{summary.waterUsage}}</view>
+    <view class="sum-label">用水量(吨)</view>
+  </view>
+</view>
+
+<!-- 固定底部操作栏 -->
+<view class="action-bar">
+  <view class="action-btn btn-start" bindtap="onStartIrrigation">💧 开始灌溉</view>
+  <view class="action-btn btn-stop">⏹ 停止</view>
+  <view class="action-btn btn-emergency" bindtap="onEmergencyStop">🚨 急停</view>
+</view>
+
+<!-- 灌溉模态框 -->
+<view class="modal-overlay {{showIrrigationModal ? 'show' : ''}}" catchtap="onCloseIrrigationModal">
+  <view class="modal-box" catchtap="">
+    <view class="modal-title">💧 开始灌溉</view>
+    <view class="m-form-group">
+      <text class="m-form-label">选择阀门</text>
+      <picker mode="selector" range="{{valveOptions}}" bindchange="onValveChange">
+        <view class="m-form-select">{{irrigationForm.valve}}</view>
+      </picker>
     </view>
+    <view class="m-form-group">
+      <text class="m-form-label">灌溉时长（分钟）</text>
+      <input class="m-form-input" type="number" value="{{irrigationForm.duration}}" bindinput="onDurationInput" />
+    </view>
+    <view class="m-form-group">
+      <text class="m-form-label">目标湿度（%）</text>
+      <input class="m-form-input" type="number" value="{{irrigationForm.targetHumidity}}" bindinput="onHumidityInput" />
+    </view>
+    <view class="m-btn m-btn-primary" bindtap="onConfirmIrrigation">确认灌溉</view>
+    <view class="m-btn m-btn-cancel" bindtap="onCloseIrrigationModal">取消</view>
   </view>
+</view>
 
-  <!-- 最新告警 -->
-  <view class="card" wx:if="{{alerts.length}}">
-    <view class="card-title">最新告警</view>
-    <view class="alert-item" wx:for="{{alerts}}" wx:key="id">
-      <view class="tag tag-{{item.level === 'L1' ? 'danger' : item.level === 'L2' ? 'warning' : 'info'}}">{{item.level}}</view>
-      <text class="alert-title">{{item.title}}</text>
+<!-- 急停确认模态框 -->
+<view class="modal-overlay {{showEmergencyModal ? 'show' : ''}}" catchtap="onCloseEmergencyModal">
+  <view class="modal-box" catchtap="">
+    <view class="emergency-modal-content">
+      <view class="emergency-icon">🚨</view>
+      <view class="emergency-title">紧急停止</view>
+      <view class="emergency-desc">确认关闭所有灌溉阀门？此操作将立即停止所有正在进行的灌溉任务。</view>
+      <view class="m-btn m-btn-danger" bindtap="onConfirmEmergency">确认急停</view>
+      <view class="m-btn m-btn-cancel" bindtap="onCloseEmergencyModal">取消</view>
     </view>
   </view>
 </view>

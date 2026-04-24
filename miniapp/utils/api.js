@@ -46,6 +46,7 @@ module.exports = {
   getLatest: (deviceId) => request(`/telemetry/${deviceId}/latest`),
   getDashboard: () => request('/telemetry/dashboard'),
   getTrend: (params) => request('/telemetry/trend?' + qs(params)),
+  getSensorTrend: (params) => request('/telemetry/sensor-trend?' + qs(params)),
 
   // Irrigation
   getRules: () => request('/rules'),
@@ -66,6 +67,8 @@ module.exports = {
   // Crop
   getPlantings: () => request('/greenhouse-plantings'),
   getStageInfo: (id) => request(`/greenhouse-plantings/${id}/stage`),
+  getCropPlantings: () => request('/greenhouse-plantings'),
+  getCropStage: (id) => request(`/greenhouse-plantings/${id}/stage`),
 
   // Screen (public)
   getScreenData: () => request('/screen/data'),
