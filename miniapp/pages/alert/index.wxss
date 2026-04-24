@@ -213,3 +213,76 @@
   padding: 160rpx 0;
   color: #999;
 }
+
+/* ===== AI 巡检分区 ===== */
+.ai-patrol-section {
+  margin: 0 32rpx 24rpx;
+}
+.section-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #212121;
+  margin-bottom: 16rpx;
+}
+.patrol-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  margin-bottom: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+.patrol-item.patrol-warning {
+  background: #FFF8E1;
+  border-left: 6rpx solid #F57C00;
+}
+.patrol-item.patrol-critical {
+  background: #FFEBEE;
+  border-left: 6rpx solid #D32F2F;
+}
+.patrol-icon {
+  font-size: 40rpx;
+  flex-shrink: 0;
+  width: 56rpx;
+  text-align: center;
+}
+.patrol-content {
+  flex: 1;
+  min-width: 0;
+}
+.patrol-finding {
+  font-size: 26rpx;
+  color: #212121;
+  line-height: 1.5;
+  word-break: break-all;
+}
+.patrol-meta {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 8rpx;
+}
+.patrol-severity {
+  font-size: 22rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  font-weight: 600;
+}
+.patrol-severity.INFO {
+  background: #E3F2FD;
+  color: #1565C0;
+}
+.patrol-severity.WARNING {
+  background: #FFF3E0;
+  color: #E65100;
+}
+.patrol-severity.CRITICAL {
+  background: #FFEBEE;
+  color: #C62828;
+}
+.patrol-time {
+  font-size: 22rpx;
+  color: #9E9E9E;
+}

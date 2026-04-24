@@ -16,6 +16,8 @@ const routes = [
       { path: 'monthly', name: 'Monthly', component: () => import('../views/report/Monthly.vue'), meta: { title: '月度报告', icon: '📄', group: '数据分析', breadcrumb: '数据分析 / 月度报告' } },
       { path: 'users', name: 'Users', component: () => import('../views/user/Index.vue'), meta: { title: '用户管理', icon: '👥', group: '系统', breadcrumb: '系统 / 用户管理' } },
       { path: 'settings', name: 'Settings', component: () => import('../views/settings/Index.vue'), meta: { title: '系统设置', icon: '⚙️', group: '系统', breadcrumb: '系统 / 系统设置' } },
+      { path: 'ai/patrol', name: 'AiPatrol', component: () => import('../views/ai/PatrolLog.vue'), meta: { title: '巡检日志', icon: '🔍', group: 'AI 智能', breadcrumb: 'AI 智能 / 巡检日志' } },
+      { path: 'ai/suggestions', name: 'AiSuggestions', component: () => import('../views/ai/Suggestions.vue'), meta: { title: '优化建议', icon: '💡', group: 'AI 智能', breadcrumb: 'AI 智能 / 优化建议' } },
     ]
   }
 ]

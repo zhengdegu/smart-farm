@@ -6,7 +6,8 @@
     "pages/irrigation/index",
     "pages/alert/index",
     "pages/mine/index",
-    "pages/login/index"
+    "pages/login/index",
+    "pages/ai-suggestions/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#2E7D32",

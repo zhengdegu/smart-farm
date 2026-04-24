@@ -195,6 +195,20 @@
             </div>
           </div>
         </div>
+
+        <!-- AI 巡检状态 -->
+        <div class="panel ai-patrol-panel">
+          <div class="panel-head">🤖 AI 巡检状态</div>
+          <div class="ai-patrol-list">
+            <div class="ai-patrol-item" v-for="log in aiPatrolLogs" :key="log.id">
+              <span class="ai-severity-dot" :class="log.severity.toLowerCase()"></span>
+              <span class="ai-patrol-type">{{ log.typeLabel }}</span>
+              <span class="ai-patrol-finding">{{ log.findingSummary }}</span>
+              <span class="ai-patrol-time">{{ log.time }}</span>
+            </div>
+            <div v-if="aiPatrolLogs.length === 0" class="ai-patrol-empty">数据加载中...</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -321,6 +335,36 @@ const controls = ref([
   { icon: '📷', name: '摄像头2号', on: true },
 ])
 
+const aiPatrolLogs = ref([])
+
+const patrolTypeMap = { TREND_CHECK: '趋势检查', DEVICE_HEALTH: '设备健康', DAILY_SUMMARY: '每日摘要' }
+
+async function fetchAiPatrolLogs() {
+  try {
+    const { data } = await screenApi.get('/ai/patrol/logs')
+    if (data && Array.isArray(data)) {
+      aiPatrolLogs.value = data.slice(0, 3).map(log => ({
+        id: log.id,
+        severity: log.severity || 'INFO',
+        typeLabel: patrolTypeMap[log.patrolType] || log.patrolType,
+        findingSummary: (log.finding || '').length > 30 ? (log.finding || '').substring(0, 30) + '...' : (log.finding || ''),
+        time: log.createdAt ? formatPatrolTime(log.createdAt) : ''
+      }))
+    }
+  } catch (e) {
+    // Keep empty state, panel shows "数据加载中..."
+  }
+}
+
+function formatPatrolTime(dateStr) {
+  try {
+    const d = new Date(dateStr)
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+  } catch (e) {
+    return dateStr
+  }
+}
+
 const timelineEvents = ref([
   { time: '12:15', icon: '🚿', text: '灌溉事件\nA区灌溉 12min', color: '#42a5f5', pos: 10 },
   { time: '15:40', icon: '☀️', text: '光照事件\n补光灯开启', color: '#ffa726', pos: 25 },
@@ -334,6 +378,7 @@ const timelineEvents = ref([
 // === Timers ===
 let clockTimer = null
 let refreshTimer = null
+let patrolTimer = null
 let animId = null
 
 function updateClock() {
@@ -633,11 +678,14 @@ onMounted(async () => {
   initCharts()
   await fetchData()
   refreshTimer = setInterval(fetchData, 15000)
+  await fetchAiPatrolLogs()
+  patrolTimer = setInterval(fetchAiPatrolLogs, 60000)
 })
 
 onUnmounted(() => {
   clearInterval(clockTimer)
   clearInterval(refreshTimer)
+  clearInterval(patrolTimer)
   cancelAnimationFrame(animId)
   cropChart?.dispose()
   timelineChart?.dispose()
@@ -789,6 +837,20 @@ onUnmounted(() => {
 .ctrl-status { font-size:10px; padding:2px 8px; border-radius:3px; }
 .ctrl-status.on { background:rgba(76,175,80,0.15); color:#4caf50; }
 .ctrl-status.off { background:rgba(120,144,156,0.15); color:#78909c; }
+
+/* ===== AI 巡检状态面板 ===== */
+.ai-patrol-panel { flex-shrink:0; }
+.ai-patrol-list { display:flex; flex-direction:column; gap:6px; }
+.ai-patrol-item { display:flex; align-items:center; gap:6px; padding:5px 8px; border-radius:4px; font-size:11px; }
+.ai-patrol-item:hover { background:rgba(255,255,255,0.03); }
+.ai-severity-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.ai-severity-dot.info { background:#4caf50; box-shadow:0 0 4px #4caf50; }
+.ai-severity-dot.warning { background:#ffa726; box-shadow:0 0 4px #ffa726; }
+.ai-severity-dot.critical { background:#ef5350; box-shadow:0 0 4px #ef5350; }
+.ai-patrol-type { color:#81c784; font-weight:600; white-space:nowrap; flex-shrink:0; }
+.ai-patrol-finding { color:#b0bec5; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ai-patrol-time { color:#546e7a; font-size:10px; white-space:nowrap; flex-shrink:0; }
+.ai-patrol-empty { color:#546e7a; font-size:11px; text-align:center; padding:8px 0; }
 
 /* ===== 底部时间轴 ===== */
 .timeline-section { height:160px; background:rgba(8,24,48,0.9); border-top:1px solid rgba(76,175,80,0.12); padding:6px 24px 10px; flex-shrink:0; display:flex; flex-direction:column; }

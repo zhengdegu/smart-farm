@@ -72,6 +72,12 @@ module.exports = {
 
   // Screen (public)
   getScreenData: () => request('/screen/data'),
+
+  // AI
+  aiChat: (data) => request('/ai/chat', 'POST', data),
+  aiChatHistory: (sessionId) => request(`/ai/chat/history?sessionId=${sessionId}`),
+  aiPatrolLogs: () => request('/ai/patrol/logs'),
+  aiSuggestions: () => request('/ai/suggestions'),
 }
 
 function qs(obj) {

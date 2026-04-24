@@ -26,6 +26,7 @@ Page({
         items: [
           { icon: '📖', label: '操作视频教程', key: 'tutorial' },
           { icon: '❓', label: '帮助与反馈', key: 'help' },
+          { icon: '🤖', label: 'AI 建议', key: 'ai-suggestions' },
           { icon: 'ℹ️', label: '关于', key: 'about', aux: 'V1.0.0' },
         ]
       }
@@ -74,6 +75,9 @@ Page({
         break
       case 'about':
         wx.showToast({ title: '关于 V1.0.0', icon: 'none' })
+        break
+      case 'ai-suggestions':
+        wx.navigateTo({ url: '/pages/ai-suggestions/index' })
         break
     }
   },

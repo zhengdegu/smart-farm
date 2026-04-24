@@ -16,6 +16,9 @@
           <span v-if="item.path === 'alerts' && alertStore.pendingCount > 0" class="nav-badge">
             {{ alertStore.pendingCount }}
           </span>
+          <span v-if="item.path === 'ai/patrol' && aiStore.patrolUnread > 0" class="nav-badge">
+            {{ aiStore.patrolUnread }}
+          </span>
         </div>
       </template>
     </nav>
@@ -34,6 +37,8 @@
       <div class="content">
         <router-view />
       </div>
+      <FloatingButton />
+      <ChatPanel />
     </div>
   </div>
 </template>
@@ -42,10 +47,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAlertStore } from '../stores/alert'
+import { useAiStore } from '../stores/ai'
+import FloatingButton from '../components/FloatingButton.vue'
+import ChatPanel from '../components/ChatPanel.vue'
 
 const router = useRouter()
 const route = useRoute()
 const alertStore = useAlertStore()
+const aiStore = useAiStore()
 const username = ref(localStorage.getItem('username') || '管理员')
 
 const childRoutes = computed(() => router.options.routes.find(r => r.path === '/')?.children || [])
@@ -67,6 +76,7 @@ const navGroups = computed(() => {
 
 onMounted(() => {
   alertStore.fetchStats()
+  aiStore.fetchPatrolUnread()
 })
 </script>
 

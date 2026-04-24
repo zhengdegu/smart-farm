@@ -1,6 +1,21 @@
 <view class="page-container">
   <view class="page-title">告警中心</view>
 
+  <!-- AI 巡检 -->
+  <view class="ai-patrol-section" wx:if="{{patrolLogs.length > 0}}">
+    <view class="section-title">🤖 AI 巡检</view>
+    <view class="patrol-item {{item.severity === 'WARNING' ? 'patrol-warning' : item.severity === 'CRITICAL' ? 'patrol-critical' : ''}}" wx:for="{{patrolLogs}}" wx:key="id">
+      <view class="patrol-icon">{{item.typeIcon}}</view>
+      <view class="patrol-content">
+        <view class="patrol-finding">{{item.findingSummary}}</view>
+        <view class="patrol-meta">
+          <text class="patrol-severity {{item.severity}}">{{item.severityLabel}}</text>
+          <text class="patrol-time">{{item.time}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <!-- 告警统计 -->
   <view class="alert-stats">
     <text class="alert-stat">今日告警 <text class="stat-bold">{{stats.today}}</text> 条</text>

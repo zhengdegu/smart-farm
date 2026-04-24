@@ -1,0 +1,21 @@
+<view class="chat-overlay" wx:if="{{show}}" catchtouchmove="true">
+  <view class="chat-panel">
+    <view class="chat-header">
+      <text class="chat-title">小农助手 🌱</text>
+      <view class="chat-close" bindtap="onClose">✕</view>
+    </view>
+    <scroll-view class="chat-messages" scroll-y scroll-into-view="{{scrollToMsg}}" scroll-with-animation>
+      <view wx:for="{{messages}}" wx:key="id" id="msg-{{item.id}}" class="msg-row {{item.role === 'user' ? 'msg-user' : item.role === 'error' ? 'msg-error' : 'msg-ai'}}">
+        <view class="msg-bubble">{{item.content}}</view>
+        <view class="msg-time">{{item.time}}</view>
+      </view>
+      <view wx:if="{{loading}}" class="msg-row msg-ai">
+        <view class="msg-bubble msg-loading">小农正在思考... ⏳</view>
+      </view>
+    </scroll-view>
+    <view class="chat-input-area">
+      <input class="chat-input" value="{{inputText}}" bindinput="onInput" placeholder="输入消息..." maxlength="500" confirm-type="send" bindconfirm="onSend" disabled="{{loading}}" />
+      <view class="chat-send-btn {{!inputText || loading ? 'disabled' : ''}}" bindtap="onSend">发送</view>
+    </view>
+  </view>
+</view>

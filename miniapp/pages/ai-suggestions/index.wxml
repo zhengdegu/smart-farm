@@ -1,0 +1,24 @@
+<view class="page-container">
+  <view class="page-title">🤖 AI 建议</view>
+
+  <view class="suggestion-list" wx:if="{{suggestions.length > 0}}">
+    <view class="suggestion-item" wx:for="{{suggestions}}" wx:key="id">
+      <view class="suggestion-header">
+        <text class="suggestion-gh">🏠 {{item.greenhouseNo}}</text>
+        <text class="suggestion-type">{{item.typeLabel}}</text>
+      </view>
+      <view class="suggestion-reasoning">{{item.reasoningSummary}}</view>
+      <view class="suggestion-footer">
+        <text class="suggestion-status {{item.statusClass}}">{{item.statusLabel}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && suggestions.length === 0}}">
+    <text>暂无优化建议</text>
+  </view>
+
+  <view class="loading-text" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>

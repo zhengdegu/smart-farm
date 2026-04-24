@@ -294,3 +294,18 @@
   margin-bottom: 40rpx;
   line-height: 1.5;
 }
+
+/* ===== AI 浮动按钮 ===== */
+.ai-float-btn {
+  position: fixed;
+  right: 32rpx;
+  bottom: 260rpx;
+  background: linear-gradient(135deg, #2E7D32, #4CAF50);
+  color: #fff;
+  padding: 20rpx 32rpx;
+  border-radius: 48rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 8rpx 24rpx rgba(46, 125, 50, 0.4);
+  z-index: 100;
+}

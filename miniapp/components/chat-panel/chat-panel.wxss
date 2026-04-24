@@ -1,0 +1,147 @@
+/* ===== 全屏覆盖层 ===== */
+.chat-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== 对话面板 ===== */
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #F5F5F5;
+}
+
+/* ===== 顶部标题栏 ===== */
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 96rpx;
+  padding: 0 32rpx;
+  background: #2E7D32;
+  color: #fff;
+  flex-shrink: 0;
+}
+.chat-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+.chat-close {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== 消息列表区域 ===== */
+.chat-messages {
+  flex: 1;
+  padding: 24rpx 32rpx;
+  overflow-y: auto;
+}
+
+/* ===== 消息行 ===== */
+.msg-row {
+  margin-bottom: 24rpx;
+  display: flex;
+  flex-direction: column;
+}
+.msg-user {
+  align-items: flex-end;
+}
+.msg-ai {
+  align-items: flex-start;
+}
+.msg-error {
+  align-items: flex-start;
+}
+
+/* ===== 消息气泡 ===== */
+.msg-bubble {
+  max-width: 80%;
+  padding: 20rpx 28rpx;
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+  word-break: break-all;
+}
+.msg-user .msg-bubble {
+  background: #2E7D32;
+  color: #fff;
+  border-bottom-right-radius: 8rpx;
+}
+.msg-ai .msg-bubble {
+  background: #fff;
+  color: #212121;
+  border-bottom-left-radius: 8rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+.msg-error .msg-bubble {
+  background: #fff;
+  color: #D32F2F;
+  border: 2rpx solid #FFCDD2;
+  border-bottom-left-radius: 8rpx;
+}
+
+/* ===== 加载状态 ===== */
+.msg-loading {
+  color: #757575;
+  font-style: italic;
+}
+
+/* ===== 消息时间 ===== */
+.msg-time {
+  font-size: 22rpx;
+  color: #9E9E9E;
+  margin-top: 8rpx;
+  padding: 0 8rpx;
+}
+
+/* ===== 底部输入区域 ===== */
+.chat-input-area {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 20rpx 32rpx;
+  background: #fff;
+  border-top: 1rpx solid #E0E0E0;
+  flex-shrink: 0;
+}
+.chat-input {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 24rpx;
+  background: #F5F5F5;
+  border-radius: 36rpx;
+  font-size: 28rpx;
+  border: 1rpx solid #E0E0E0;
+}
+.chat-send-btn {
+  width: 120rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2E7D32;
+  color: #fff;
+  border-radius: 36rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.chat-send-btn.disabled {
+  background: #C8E6C9;
+  color: #A5D6A7;
+}

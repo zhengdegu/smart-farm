@@ -1,0 +1,81 @@
+.page-container {
+  padding-bottom: 32rpx;
+}
+.page-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  padding: 32rpx 32rpx 24rpx;
+}
+
+/* ===== 建议列表 ===== */
+.suggestion-list {
+  padding: 0 32rpx;
+}
+.suggestion-item {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 28rpx 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+.suggestion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+.suggestion-gh {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #212121;
+}
+.suggestion-type {
+  font-size: 24rpx;
+  color: #2E7D32;
+  background: #E8F5E9;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  font-weight: 600;
+}
+.suggestion-reasoning {
+  font-size: 26rpx;
+  color: #616161;
+  line-height: 1.6;
+  margin-bottom: 16rpx;
+  word-break: break-all;
+}
+.suggestion-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+.suggestion-status {
+  font-size: 22rpx;
+  padding: 6rpx 20rpx;
+  border-radius: 12rpx;
+  font-weight: 600;
+}
+.suggestion-status.pending {
+  background: #FFF8E1;
+  color: #F57C00;
+}
+.suggestion-status.accepted {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+.suggestion-status.rejected {
+  background: #F5F5F5;
+  color: #9E9E9E;
+}
+
+/* ===== 空状态 & 加载 ===== */
+.empty {
+  text-align: center;
+  padding: 160rpx 0;
+  color: #999;
+}
+.loading-text {
+  text-align: center;
+  padding: 80rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}

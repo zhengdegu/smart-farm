@@ -54,12 +54,18 @@
   </view>
 </view>
 
+<!-- AI 浮动按钮 -->
+<view class="ai-float-btn" bindtap="onOpenChat">问问小农 🤖</view>
+
 <!-- 固定底部操作栏 -->
 <view class="action-bar">
   <view class="action-btn btn-start" bindtap="onStartIrrigation">💧 开始灌溉</view>
   <view class="action-btn btn-stop">⏹ 停止</view>
   <view class="action-btn btn-emergency" bindtap="onEmergencyStop">🚨 急停</view>
 </view>
+
+<!-- AI 对话面板 -->
+<chat-panel show="{{showChat}}" bind:close="onCloseChat" />
 
 <!-- 灌溉模态框 -->
 <view class="modal-overlay {{showIrrigationModal ? 'show' : ''}}" catchtap="onCloseIrrigationModal">

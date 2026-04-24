@@ -4,6 +4,7 @@ Page({
   data: {
     stats: { today: 5, pending: 3 },
     activeFilter: 'all',
+    patrolLogs: [],
     filters: [
       { key: 'all', label: '全部' },
       { key: 'l1', label: 'L1 紧急' },
@@ -52,10 +53,11 @@ Page({
   onLoad() {
     this.applyFilter()
     this.loadAlerts()
+    this.loadPatrolLogs()
   },
 
   onPullDownRefresh() {
-    this.loadAlerts().then(() => wx.stopPullDownRefresh())
+    Promise.all([this.loadAlerts(), this.loadPatrolLogs()]).then(() => wx.stopPullDownRefresh())
   },
 
   async loadAlerts() {
@@ -90,6 +92,36 @@ Page({
       }
     } catch (e) {
       console.error('Failed to load alerts:', e)
+    }
+  },
+
+  async loadPatrolLogs() {
+    try {
+      const logs = await api.aiPatrolLogs()
+      if (logs && Array.isArray(logs)) {
+        const typeIconMap = { TREND_CHECK: '📈', DEVICE_HEALTH: '🔧', DAILY_SUMMARY: '📋' }
+        const severityLabelMap = { INFO: '信息', WARNING: '警告', CRITICAL: '严重' }
+        const patrolLogs = logs.slice(0, 5).map(log => ({
+          id: log.id,
+          severity: log.severity || 'INFO',
+          typeIcon: typeIconMap[log.patrolType] || '📋',
+          findingSummary: (log.finding || '').length > 50 ? (log.finding || '').substring(0, 50) + '...' : (log.finding || ''),
+          severityLabel: severityLabelMap[log.severity] || '信息',
+          time: log.createdAt ? this._formatPatrolTime(log.createdAt) : ''
+        }))
+        this.setData({ patrolLogs })
+      }
+    } catch (e) {
+      console.error('Failed to load patrol logs:', e)
+    }
+  },
+
+  _formatPatrolTime(dateStr) {
+    try {
+      const d = new Date(dateStr)
+      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+    } catch (e) {
+      return dateStr
     }
   },
 

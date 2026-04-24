@@ -112,3 +112,14 @@ export const settingsApi = {
   getMqttStatus: () => api.get('/settings/mqtt-status'),
   reconnectMqtt: () => api.post('/settings/mqtt-reconnect'),
 }
+
+// AI
+export const aiApi = {
+  chat: (data) => api.post('/ai/chat', data),
+  chatHistory: (sessionId) => api.get('/ai/chat/history', { params: { sessionId } }),
+  patrolLogs: () => api.get('/ai/patrol/logs'),
+  triggerPatrol: (type) => api.post('/ai/patrol/trigger', null, { params: { type } }),
+  suggestions: (params) => api.get('/ai/suggestions', { params }),
+  acceptSuggestion: (id) => api.post(`/ai/suggestions/${id}/accept`),
+  rejectSuggestion: (id) => api.post(`/ai/suggestions/${id}/reject`),
+}

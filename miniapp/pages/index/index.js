@@ -15,6 +15,7 @@ Page({
     summary: { irrigationCount: 5, totalDuration: 120, waterUsage: 2.4 },
     showIrrigationModal: false,
     showEmergencyModal: false,
+    showChat: false,
     irrigationForm: { valve: '阀门 A1 (1号棚A区)', duration: 25, targetHumidity: 65 },
     valveOptions: ['阀门 A1 (1号棚A区)', '阀门 A2 (1号棚B区)', '阀门 B1 (2号棚A区)', '全部阀门'],
   },
@@ -36,6 +37,14 @@ Page({
 
   onStartIrrigation() {
     this.setData({ showIrrigationModal: true })
+  },
+
+  onOpenChat() {
+    this.setData({ showChat: true })
+  },
+
+  onCloseChat() {
+    this.setData({ showChat: false })
   },
 
   onCloseIrrigationModal() {
