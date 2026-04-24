@@ -7,15 +7,30 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--primary:#2E7D32;--pl:#4CAF50;--pd:#1B5E20;--bg:#F5F5F5;--card:#fff;--text:#212121;--ts:#757575;--border:#E0E0E0;--l1:#D32F2F;--l2:#F57C00;--l3:#FBC02D;--shadow:0 2px 8px rgba(0,0,0,.08);--radius:12px}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:16px;color:var(--text);background:#1a1a2e;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px;gap:20px;flex-wrap:wrap}
-.phone-frame{width:375px;height:812px;background:var(--bg);border-radius:40px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3);border:8px solid #1a1a1a;flex-shrink:0}
-.phone-label{text-align:center;color:#888;font-size:13px;margin-bottom:8px;font-weight:600}
-.page{height:calc(812px - 56px - 44px);overflow-y:auto;padding-bottom:16px}
-.status-bar{height:44px;background:var(--primary);display:flex;align-items:center;justify-content:space-between;padding:0 20px;color:#fff;font-size:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:16px;color:var(--text);background:#1a1a2e;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.phone-frame{width:375px;height:812px;background:var(--bg);border-radius:40px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3);border:8px solid #1a1a1a}
+.status-bar{height:44px;background:var(--primary);display:flex;align-items:center;justify-content:space-between;padding:0 20px;color:#fff;font-size:12px;flex-shrink:0}
 .tab-bar{position:absolute;bottom:0;left:0;right:0;height:56px;background:#fff;display:flex;border-top:1px solid var(--border);z-index:100}
-.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#999;gap:2px}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#999;gap:2px;cursor:pointer;transition:color .15s;user-select:none}
 .tab-item.active{color:var(--primary)}
 .tab-icon{font-size:22px}
+.page{height:calc(812px - 56px - 44px);overflow-y:auto;padding-bottom:16px;position:absolute;top:44px;left:0;right:0;opacity:0;pointer-events:none;transition:opacity .2s ease}
+.page.active{opacity:1;pointer-events:auto;position:relative}
+
+/* Modal / Overlay */
+.modal-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:320px;max-height:80%;overflow-y:auto;animation:modalIn .2s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:16px}
+.modal-close{position:absolute;top:12px;right:16px;font-size:24px;cursor:pointer;color:#999;z-index:10}
+
+/* Detail overlay (slides up) */
+.detail-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:150;display:none;flex-direction:column;overflow:hidden}
+.detail-overlay.show{display:flex}
+.detail-header{height:44px;background:var(--primary);display:flex;align-items:center;padding:0 16px;color:#fff;font-size:15px;font-weight:600;gap:10px;flex-shrink:0}
+.detail-back{cursor:pointer;font-size:20px}
+.detail-body{flex:1;overflow-y:auto;padding:16px}
 
 /* ===== 首页 ===== */
 .home-header{background:linear-gradient(135deg,var(--primary),var(--pl));color:#fff;padding:16px;border-radius:0 0 20px 20px}
@@ -24,13 +39,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .base-switch{font-size:12px;opacity:.8;border:1px solid rgba(255,255,255,.4);padding:2px 8px;border-radius:12px}
 .weather-row{display:flex;align-items:center;gap:8px;font-size:13px;opacity:.9}
 .alert-badge{background:var(--l1);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700}
-
 .data-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
 .data-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);text-align:center;position:relative;overflow:hidden}
 .data-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
 .data-card.normal::before{background:var(--pl)}
 .data-card.warn::before{background:var(--l2)}
-.data-card.danger::before{background:var(--l1)}
 .card-icon{font-size:28px;margin-bottom:4px}
 .card-value{font-size:36px;font-weight:800;color:var(--text);line-height:1}
 .card-unit{font-size:14px;color:var(--ts);margin-left:2px}
@@ -38,18 +51,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .card-status{font-size:11px;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px}
 .card-status.ok{background:#E8F5E9;color:var(--primary)}
 .card-status.low{background:#FFF3E0;color:var(--l2)}
-.card-status.bad{background:#FFEBEE;color:var(--l1)}
-
 .advice-banner{margin:0 16px;background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:flex-start;gap:10px}
 .advice-icon{font-size:24px;flex-shrink:0}
 .advice-text{font-size:14px;color:var(--pd);line-height:1.5}
 .advice-stage{font-size:12px;color:var(--pl);font-weight:600}
-
 .today-summary{margin:12px 16px;background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);display:flex;justify-content:space-around;text-align:center}
 .sum-item .sum-val{font-size:22px;font-weight:700;color:var(--primary)}
 .sum-item .sum-label{font-size:11px;color:var(--ts)}
-
-.action-bar{position:sticky;bottom:56px;left:0;right:0;padding:12px 16px;background:rgba(245,245,245,.95);backdrop-filter:blur(10px);display:flex;gap:10px;z-index:50}
+.action-bar{position:sticky;bottom:0;left:0;right:0;padding:12px 16px;background:rgba(245,245,245,.95);backdrop-filter:blur(10px);display:flex;gap:10px;z-index:50}
 .action-btn{flex:1;height:56px;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s}
 .action-btn:active{transform:scale(.96)}
 .btn-start{background:var(--primary);color:#fff}
@@ -66,7 +75,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .dev-sum-val.fault{color:var(--l1)}
 .dev-sum-label{font-size:11px;color:var(--ts)}
 .section-title{font-size:14px;font-weight:600;color:var(--ts);padding:12px 16px 6px}
-.device-item{display:flex;align-items:center;padding:14px 16px;background:var(--card);margin:0 16px 8px;border-radius:var(--radius);box-shadow:var(--shadow)}
+.device-item{display:flex;align-items:center;padding:14px 16px;background:var(--card);margin:0 16px 8px;border-radius:var(--radius);box-shadow:var(--shadow);cursor:pointer;transition:transform .1s}
+.device-item:active{transform:scale(.98)}
 .dev-icon-wrap{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-right:12px;font-size:22px}
 .dev-icon-wrap.on{background:rgba(46,125,50,.1)}
 .dev-icon-wrap.off{background:rgba(0,0,0,.05)}
@@ -81,7 +91,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 
 /* ===== 数据页 ===== */
 .tab-switch{display:flex;margin:12px 16px;background:var(--card);border-radius:10px;padding:3px;box-shadow:var(--shadow)}
-.tab-switch-item{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:14px;color:var(--ts);cursor:pointer}
+.tab-switch-item{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:14px;color:var(--ts);cursor:pointer;transition:all .15s;user-select:none}
 .tab-switch-item.active{background:var(--primary);color:#fff;font-weight:600}
 .chart-card{margin:12px 16px;background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
 .chart-title{font-size:14px;font-weight:600;margin-bottom:12px}
@@ -93,8 +103,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .ws-value{font-size:48px;font-weight:800}
 .ws-label{font-size:14px;opacity:.9;margin-top:4px}
 .ws-sub{font-size:12px;opacity:.7;margin-top:8px}
-
-/* 作物管理 */
 .crop-card{margin:12px 16px;background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
 .crop-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .crop-name{font-size:16px;font-weight:700}
@@ -112,12 +120,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 
 /* ===== 告警页 ===== */
 .alert-filter{display:flex;gap:6px;padding:12px 16px;overflow-x:auto}
-.filter-chip{padding:6px 14px;border-radius:20px;font-size:13px;white-space:nowrap;background:var(--card);color:var(--ts);border:1px solid var(--border)}
+.filter-chip{padding:6px 14px;border-radius:20px;font-size:13px;white-space:nowrap;background:var(--card);color:var(--ts);border:1px solid var(--border);cursor:pointer;user-select:none;transition:all .15s}
 .filter-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 .alert-stats{display:flex;gap:12px;padding:0 16px 12px}
 .alert-stat{font-size:13px;color:var(--ts)}
 .alert-stat strong{color:var(--text)}
-.alert-item{display:flex;align-items:flex-start;padding:14px 16px;background:var(--card);margin:0 16px 8px;border-radius:var(--radius);box-shadow:var(--shadow);gap:12px}
+.alert-item{display:flex;align-items:flex-start;padding:14px 16px;background:var(--card);margin:0 16px 8px;border-radius:var(--radius);box-shadow:var(--shadow);gap:12px;cursor:pointer;transition:transform .1s}
+.alert-item:active{transform:scale(.98)}
 .alert-level-badge{min-width:32px;height:20px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
 .alert-level-badge.l1{background:var(--l1)}
 .alert-level-badge.l2{background:var(--l2)}
@@ -135,20 +144,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .profile-role{font-size:13px;opacity:.8;margin-top:4px}
 .profile-base{font-size:12px;opacity:.7;margin-top:2px}
 .menu-group{margin:12px 16px;background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
-.menu-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--bg);gap:12px;font-size:15px}
+.menu-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--bg);gap:12px;font-size:15px;cursor:pointer;transition:background .1s;user-select:none}
+.menu-item:active{background:#f5f5f5}
 .menu-item:last-child{border-bottom:none}
 .menu-icon{font-size:20px;width:28px;text-align:center}
 .menu-arrow{margin-left:auto;color:#ccc;font-size:14px}
+
+/* Form elements for modals */
+.m-form-group{margin-bottom:14px}
+.m-form-label{font-size:13px;color:var(--ts);margin-bottom:4px;display:block}
+.m-form-select,.m-form-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;background:#fff;-webkit-appearance:none}
+.m-form-select:focus,.m-form-input:focus{border-color:var(--pl)}
+.m-btn{width:100%;padding:14px;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;margin-top:8px}
+.m-btn-primary{background:var(--primary);color:#fff}
+.m-btn-danger{background:var(--l1);color:#fff}
+.m-btn-cancel{background:#eee;color:#666;margin-top:8px}
+
+/* Toggle for settings */
+.m-toggle{width:44px;height:24px;border-radius:12px;background:#ccc;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.m-toggle.on{background:var(--primary)}
+.m-toggle::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.m-toggle.on::after{transform:translateX(20px)}
+.m-setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0}
+.m-setting-row:last-child{border-bottom:none}
+.m-setting-name{font-size:14px}
+.m-setting-desc{font-size:11px;color:var(--ts);margin-top:2px}
+
+/* Detail chart placeholder */
+.detail-chart{height:160px;background:linear-gradient(180deg,rgba(46,125,50,.06),transparent);border-radius:8px;margin:12px 0;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:0 6px 6px;gap:4px}
+.detail-chart .dbar{flex:1;background:linear-gradient(180deg,var(--pl),var(--primary));border-radius:3px 3px 0 0;min-height:8px}
+.detail-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.detail-info-item{background:var(--bg);border-radius:8px;padding:12px;text-align:center}
+.detail-info-val{font-size:20px;font-weight:700;color:var(--primary)}
+.detail-info-label{font-size:11px;color:var(--ts);margin-top:2px}
 </style>
 </head>
 <body>
 
-<!-- ==================== 首页 ==================== -->
-<div>
-<div class="phone-label">Tab 1: 首页（Dashboard）</div>
-<div class="phone-frame">
+<div class="phone-frame" id="phoneFrame">
   <div class="status-bar"><span>10:24</span><span>📶 WiFi</span><span>🔋 85%</span></div>
-  <div class="page">
+
+  <!-- ===== Tab 1: 首页 ===== -->
+  <div class="page active" id="page-home">
     <div class="home-header">
       <div class="home-header-top">
         <div><div class="base-name">🌱 示范基地</div></div>
@@ -157,74 +194,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
           <span class="base-switch">切换 ▾</span>
         </div>
       </div>
-      <div class="weather-row">
-        <span>☀️ 28°C</span><span>湿度 65%</span><span>东南风 2级</span>
-      </div>
+      <div class="weather-row"><span>☀️ 28°C</span><span>湿度 65%</span><span>东南风 2级</span></div>
     </div>
-
     <div class="data-cards">
-      <div class="data-card warn">
-        <div class="card-icon">💧</div>
-        <div class="card-value">32.5<span class="card-unit">%</span></div>
-        <div class="card-label">土壤湿度</div>
-        <span class="card-status low">⚠ 偏低</span>
-      </div>
-      <div class="data-card normal">
-        <div class="card-icon">🌡</div>
-        <div class="card-value">24.1<span class="card-unit">°C</span></div>
-        <div class="card-label">土壤温度</div>
-        <span class="card-status ok">✓ 正常</span>
-      </div>
-      <div class="data-card normal">
-        <div class="card-icon">🌤</div>
-        <div class="card-value">28.6<span class="card-unit">°C</span></div>
-        <div class="card-label">空气温度</div>
-        <span class="card-status ok">✓ 正常</span>
-      </div>
-      <div class="data-card normal">
-        <div class="card-icon">💨</div>
-        <div class="card-value">68.3<span class="card-unit">%</span></div>
-        <div class="card-label">空气湿度</div>
-        <span class="card-status ok">✓ 正常</span>
-      </div>
+      <div class="data-card warn"><div class="card-icon">💧</div><div class="card-value">32.5<span class="card-unit">%</span></div><div class="card-label">土壤湿度</div><span class="card-status low">⚠ 偏低</span></div>
+      <div class="data-card normal"><div class="card-icon">🌡</div><div class="card-value">24.1<span class="card-unit">°C</span></div><div class="card-label">土壤温度</div><span class="card-status ok">✓ 正常</span></div>
+      <div class="data-card normal"><div class="card-icon">🌤</div><div class="card-value">28.6<span class="card-unit">°C</span></div><div class="card-label">空气温度</div><span class="card-status ok">✓ 正常</span></div>
+      <div class="data-card normal"><div class="card-icon">💨</div><div class="card-value">68.3<span class="card-unit">%</span></div><div class="card-label">空气湿度</div><span class="card-status ok">✓ 正常</span></div>
     </div>
-
-    <div class="advice-banner">
-      <div class="advice-icon">🌿</div>
-      <div>
-        <div class="advice-stage">番茄 · 开花坐果期 第58天</div>
-        <div class="advice-text">土壤湿度偏低（32.5%），建议灌溉 <strong>25分钟</strong>，目标湿度 65%</div>
-      </div>
-    </div>
-
+    <div class="advice-banner"><div class="advice-icon">🌿</div><div><div class="advice-stage">番茄 · 开花坐果期 第58天</div><div class="advice-text">土壤湿度偏低（32.5%），建议灌溉 <strong>25分钟</strong>，目标湿度 65%</div></div></div>
     <div class="today-summary">
       <div class="sum-item"><div class="sum-val">5</div><div class="sum-label">今日灌溉(次)</div></div>
       <div class="sum-item"><div class="sum-val">120</div><div class="sum-label">总时长(分钟)</div></div>
       <div class="sum-item"><div class="sum-val">2.4</div><div class="sum-label">用水量(吨)</div></div>
     </div>
-
     <div class="action-bar">
-      <button class="action-btn btn-start">💧 开始灌溉</button>
+      <button class="action-btn btn-start" id="btnStartIrrigation">💧 开始灌溉</button>
       <button class="action-btn btn-stop">⏹ 停止</button>
-      <button class="action-btn btn-emergency">🚨 急停</button>
+      <button class="action-btn btn-emergency" id="btnEmergency">🚨 急停</button>
     </div>
   </div>
-  <div class="tab-bar">
-    <div class="tab-item active"><span class="tab-icon">🏠</span>首页</div>
-    <div class="tab-item"><span class="tab-icon">📡</span>设备</div>
-    <div class="tab-item"><span class="tab-icon">📊</span>数据</div>
-    <div class="tab-item"><span class="tab-icon">🔔</span>告警</div>
-    <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
-  </div>
-</div>
-</div>
 
-<!-- ==================== 设备页 ==================== -->
-<div>
-<div class="phone-label">Tab 2: 设备</div>
-<div class="phone-frame">
-  <div class="status-bar"><span>10:24</span><span>📶 WiFi</span><span>🔋 85%</span></div>
-  <div class="page">
+  <!-- ===== Tab 2: 设备 ===== -->
+  <div class="page" id="page-device">
     <div class="page-title">设备管理</div>
     <div class="device-summary">
       <div class="dev-sum-item"><div class="dev-sum-val online">12</div><div class="dev-sum-label">在线</div></div>
@@ -232,181 +224,106 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
       <div class="dev-sum-item"><div class="dev-sum-val fault">1</div><div class="dev-sum-label">故障</div></div>
     </div>
     <div class="section-title">传感器 (8)</div>
-    <div class="device-item"><div class="dev-icon-wrap on">🌡</div><div class="dev-info"><div class="dev-name">1号温湿度传感器</div><div class="dev-meta">1号棚 · 28.5°C / 65%</div></div><div class="status-dot online"></div></div>
-    <div class="device-item"><div class="dev-icon-wrap on">🌡</div><div class="dev-info"><div class="dev-name">2号温湿度传感器</div><div class="dev-meta">1号棚 · 27.8°C / 62%</div></div><div class="status-dot online"></div></div>
-    <div class="device-item"><div class="dev-icon-wrap off">🌡</div><div class="dev-info"><div class="dev-name">3号温湿度传感器</div><div class="dev-meta">2号棚 · 离线 2小时</div></div><div class="status-dot fault"></div></div>
-    <div class="device-item"><div class="dev-icon-wrap on">💧</div><div class="dev-info"><div class="dev-name">土壤湿度传感器</div><div class="dev-meta">1号棚 · 32.5%</div></div><div class="status-dot online"></div></div>
-    <div class="device-item"><div class="dev-icon-wrap on">☀️</div><div class="dev-info"><div class="dev-name">光照传感器</div><div class="dev-meta">1号棚 · 452 μmol/m²/s</div></div><div class="status-dot online"></div></div>
+    <div class="device-item" data-dev="1号温湿度传感器" data-val="28.5°C / 65%" data-loc="1号棚" data-status="在线"><div class="dev-icon-wrap on">🌡</div><div class="dev-info"><div class="dev-name">1号温湿度传感器</div><div class="dev-meta">1号棚 · 28.5°C / 65%</div></div><div class="status-dot online"></div></div>
+    <div class="device-item" data-dev="2号温湿度传感器" data-val="27.8°C / 62%" data-loc="1号棚" data-status="在线"><div class="dev-icon-wrap on">🌡</div><div class="dev-info"><div class="dev-name">2号温湿度传感器</div><div class="dev-meta">1号棚 · 27.8°C / 62%</div></div><div class="status-dot online"></div></div>
+    <div class="device-item" data-dev="3号温湿度传感器" data-val="—" data-loc="2号棚" data-status="故障"><div class="dev-icon-wrap off">🌡</div><div class="dev-info"><div class="dev-name">3号温湿度传感器</div><div class="dev-meta">2号棚 · 离线 2小时</div></div><div class="status-dot fault"></div></div>
+    <div class="device-item" data-dev="土壤湿度传感器" data-val="32.5%" data-loc="1号棚" data-status="在线"><div class="dev-icon-wrap on">💧</div><div class="dev-info"><div class="dev-name">土壤湿度传感器</div><div class="dev-meta">1号棚 · 32.5%</div></div><div class="status-dot online"></div></div>
+    <div class="device-item" data-dev="光照传感器" data-val="452 μmol/m²/s" data-loc="1号棚" data-status="在线"><div class="dev-icon-wrap on">☀️</div><div class="dev-info"><div class="dev-name">光照传感器</div><div class="dev-meta">1号棚 · 452 μmol/m²/s</div></div><div class="status-dot online"></div></div>
     <div class="section-title">阀门 (4)</div>
-    <div class="device-item"><div class="dev-icon-wrap on">🚿</div><div class="dev-info"><div class="dev-name">灌溉阀门 A1</div><div class="dev-meta">1号棚A区 · 关闭</div></div><div class="status-dot online"></div></div>
-    <div class="device-item"><div class="dev-icon-wrap on">🚿</div><div class="dev-info"><div class="dev-name">灌溉阀门 A2</div><div class="dev-meta">1号棚B区 · 开启中 (剩余12min)</div></div><div class="status-dot online"></div></div>
+    <div class="device-item" data-dev="灌溉阀门 A1" data-val="关闭" data-loc="1号棚A区" data-status="在线"><div class="dev-icon-wrap on">🚿</div><div class="dev-info"><div class="dev-name">灌溉阀门 A1</div><div class="dev-meta">1号棚A区 · 关闭</div></div><div class="status-dot online"></div></div>
+    <div class="device-item" data-dev="灌溉阀门 A2" data-val="开启中 (剩余12min)" data-loc="1号棚B区" data-status="在线"><div class="dev-icon-wrap on">🚿</div><div class="dev-info"><div class="dev-name">灌溉阀门 A2</div><div class="dev-meta">1号棚B区 · 开启中 (剩余12min)</div></div><div class="status-dot online"></div></div>
     <div class="section-title">网关 (1)</div>
-    <div class="device-item"><div class="dev-icon-wrap on">📡</div><div class="dev-info"><div class="dev-name">主网关 GW-01</div><div class="dev-meta">管理 13 台设备 · 在线</div></div><div class="status-dot online"></div></div>
+    <div class="device-item" data-dev="主网关 GW-01" data-val="管理 13 台设备" data-loc="—" data-status="在线"><div class="dev-icon-wrap on">📡</div><div class="dev-info"><div class="dev-name">主网关 GW-01</div><div class="dev-meta">管理 13 台设备 · 在线</div></div><div class="status-dot online"></div></div>
   </div>
-  <div class="tab-bar">
-    <div class="tab-item"><span class="tab-icon">🏠</span>首页</div>
-    <div class="tab-item active"><span class="tab-icon">📡</span>设备</div>
-    <div class="tab-item"><span class="tab-icon">📊</span>数据</div>
-    <div class="tab-item"><span class="tab-icon">🔔</span>告警</div>
-    <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
-  </div>
-</div>
-</div>
 
-<!-- ==================== 数据页 ==================== -->
-<div>
-<div class="phone-label">Tab 3: 数据</div>
-<div class="phone-frame">
-  <div class="status-bar"><span>10:24</span><span>📶 WiFi</span><span>🔋 85%</span></div>
-  <div class="page">
+  <!-- ===== Tab 3: 数据 ===== -->
+  <div class="page" id="page-data">
     <div class="page-title">数据中心</div>
-    <div class="tab-switch">
-      <div class="tab-switch-item active">灌溉统计</div>
-      <div class="tab-switch-item">节水率</div>
-      <div class="tab-switch-item">传感器</div>
-      <div class="tab-switch-item">作物</div>
+    <div class="tab-switch" id="dataTabSwitch">
+      <div class="tab-switch-item active" data-dtab="irrigation">灌溉统计</div>
+      <div class="tab-switch-item" data-dtab="water">节水率</div>
+      <div class="tab-switch-item" data-dtab="sensor">传感器</div>
+      <div class="tab-switch-item" data-dtab="crop">作物</div>
     </div>
-
-    <div class="water-save-card">
-      <div class="ws-value">32%</div>
-      <div class="ws-label">本月节水率</div>
-      <div class="ws-sub">累计节水 12.8 吨 · 较上月 +8.3%</div>
+    <div class="data-sub active" id="dsub-irrigation">
+      <div class="chart-card"><div class="chart-title">灌溉次数（近7天）</div><div class="chart-placeholder"><div class="chart-bar" style="height:45%"></div><div class="chart-bar" style="height:60%"></div><div class="chart-bar" style="height:35%"></div><div class="chart-bar" style="height:80%"></div><div class="chart-bar" style="height:55%"></div><div class="chart-bar" style="height:70%"></div><div class="chart-bar" style="height:50%"></div></div></div>
+      <div class="chart-card"><div class="chart-title">用水量趋势</div><div class="chart-line"></div></div>
     </div>
-
-    <div class="chart-card">
-      <div class="chart-title">灌溉次数（近7天）</div>
-      <div class="chart-placeholder">
-        <div class="chart-bar" style="height:45%"></div>
-        <div class="chart-bar" style="height:60%"></div>
-        <div class="chart-bar" style="height:35%"></div>
-        <div class="chart-bar" style="height:80%"></div>
-        <div class="chart-bar" style="height:55%"></div>
-        <div class="chart-bar" style="height:70%"></div>
-        <div class="chart-bar" style="height:50%"></div>
-      </div>
+    <div class="data-sub" id="dsub-water" style="display:none">
+      <div class="water-save-card"><div class="ws-value">32%</div><div class="ws-label">本月节水率</div><div class="ws-sub">累计节水 12.8 吨 · 较上月 +8.3%</div></div>
+      <div class="chart-card"><div class="chart-title">月度节水率趋势</div><div class="chart-placeholder"><div class="chart-bar" style="height:30%"></div><div class="chart-bar" style="height:35%"></div><div class="chart-bar" style="height:28%"></div><div class="chart-bar" style="height:40%"></div><div class="chart-bar" style="height:38%"></div><div class="chart-bar" style="height:32%"></div></div></div>
     </div>
-
-    <div class="chart-card">
-      <div class="chart-title">用水量趋势</div>
-      <div class="chart-line"></div>
+    <div class="data-sub" id="dsub-sensor" style="display:none">
+      <div class="chart-card"><div class="chart-title">🌡 温度趋势（24h）</div><div class="chart-placeholder" style="height:120px"><div class="chart-bar" style="height:50%"></div><div class="chart-bar" style="height:55%"></div><div class="chart-bar" style="height:60%"></div><div class="chart-bar" style="height:65%"></div><div class="chart-bar" style="height:70%"></div><div class="chart-bar" style="height:68%"></div><div class="chart-bar" style="height:62%"></div><div class="chart-bar" style="height:58%"></div></div></div>
+      <div class="chart-card"><div class="chart-title">💧 湿度趋势（24h）</div><div class="chart-placeholder" style="height:120px"><div class="chart-bar" style="height:70%"></div><div class="chart-bar" style="height:65%"></div><div class="chart-bar" style="height:55%"></div><div class="chart-bar" style="height:45%"></div><div class="chart-bar" style="height:40%"></div><div class="chart-bar" style="height:38%"></div><div class="chart-bar" style="height:35%"></div><div class="chart-bar" style="height:33%"></div></div></div>
+      <div class="chart-card"><div class="chart-title">☀️ 光照趋势（24h）</div><div class="chart-line"></div></div>
     </div>
-
-    <!-- 作物管理卡片 -->
-    <div class="crop-card">
-      <div class="crop-header">
-        <div class="crop-name">🍅 番茄</div>
-        <span class="crop-stage-badge">开花坐果期</span>
+    <div class="data-sub" id="dsub-crop" style="display:none">
+      <div class="crop-card">
+        <div class="crop-header"><div class="crop-name">🍅 番茄</div><span class="crop-stage-badge">开花坐果期</span></div>
+        <div style="font-size:13px;color:var(--ts)">种植日期: 2026-03-01 · 第58天</div>
+        <div class="stage-progress"><div class="stage-step done"></div><div class="stage-step done"></div><div class="stage-step current"></div><div class="stage-step"></div><div class="stage-step"></div></div>
+        <div class="stage-labels"><span>苗期</span><span>生长期</span><span>开花期</span><span>果期</span><span>采收期</span></div>
+        <div class="crop-params">
+          <div class="param-item"><div class="param-val">50-75%</div><div class="param-label">湿度范围</div></div>
+          <div class="param-item"><div class="param-val">25min</div><div class="param-label">建议灌溉时长</div></div>
+          <div class="param-item"><div class="param-val">20-28°C</div><div class="param-label">最佳温度</div></div>
+          <div class="param-item"><div class="param-val">2次/天</div><div class="param-label">灌溉频次</div></div>
+        </div>
       </div>
-      <div style="font-size:13px;color:var(--ts)">种植日期: 2026-03-01 · 第58天</div>
-      <div class="stage-progress">
-        <div class="stage-step done"></div>
-        <div class="stage-step done"></div>
-        <div class="stage-step current"></div>
-        <div class="stage-step"></div>
-        <div class="stage-step"></div>
-      </div>
-      <div class="stage-labels">
-        <span>苗期</span><span>生长期</span><span>开花期</span><span>果期</span><span>采收期</span>
-      </div>
-      <div class="crop-params">
-        <div class="param-item"><div class="param-val">50-75%</div><div class="param-label">湿度范围</div></div>
-        <div class="param-item"><div class="param-val">25min</div><div class="param-label">建议灌溉时长</div></div>
-        <div class="param-item"><div class="param-val">20-28°C</div><div class="param-label">最佳温度</div></div>
-        <div class="param-item"><div class="param-val">2次/天</div><div class="param-label">灌溉频次</div></div>
+      <div class="crop-card">
+        <div class="crop-header"><div class="crop-name">🥒 黄瓜</div><span class="crop-stage-badge">生长期</span></div>
+        <div style="font-size:13px;color:var(--ts)">种植日期: 2026-03-15 · 第44天</div>
+        <div class="stage-progress"><div class="stage-step done"></div><div class="stage-step current"></div><div class="stage-step"></div><div class="stage-step"></div><div class="stage-step"></div></div>
+        <div class="stage-labels"><span>苗期</span><span>生长期</span><span>开花期</span><span>果期</span><span>采收期</span></div>
+        <div class="crop-params">
+          <div class="param-item"><div class="param-val">60-80%</div><div class="param-label">湿度范围</div></div>
+          <div class="param-item"><div class="param-val">15min</div><div class="param-label">建议灌溉时长</div></div>
+          <div class="param-item"><div class="param-val">22-30°C</div><div class="param-label">最佳温度</div></div>
+          <div class="param-item"><div class="param-val">3次/天</div><div class="param-label">灌溉频次</div></div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="tab-bar">
-    <div class="tab-item"><span class="tab-icon">🏠</span>首页</div>
-    <div class="tab-item"><span class="tab-icon">📡</span>设备</div>
-    <div class="tab-item active"><span class="tab-icon">📊</span>数据</div>
-    <div class="tab-item"><span class="tab-icon">🔔</span>告警</div>
-    <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
-  </div>
-</div>
-</div>
 
-<!-- ==================== 告警页 ==================== -->
-<div>
-<div class="phone-label">Tab 4: 告警</div>
-<div class="phone-frame">
-  <div class="status-bar"><span>10:24</span><span>📶 WiFi</span><span>🔋 85%</span></div>
-  <div class="page">
+  <!-- ===== Tab 4: 告警 ===== -->
+  <div class="page" id="page-alert">
     <div class="page-title">告警中心</div>
-    <div class="alert-stats">
-      <span class="alert-stat">今日告警 <strong>5</strong> 条</span>
-      <span class="alert-stat">待处理 <strong style="color:var(--l1)">3</strong> 条</span>
+    <div class="alert-stats"><span class="alert-stat">今日告警 <strong>5</strong> 条</span><span class="alert-stat">待处理 <strong style="color:var(--l1)">3</strong> 条</span></div>
+    <div class="alert-filter" id="mobileAlertFilter">
+      <span class="filter-chip active" data-mf="all">全部</span>
+      <span class="filter-chip" data-mf="l1">L1 紧急</span>
+      <span class="filter-chip" data-mf="l2">L2 重要</span>
+      <span class="filter-chip" data-mf="l3">L3 一般</span>
+      <span class="filter-chip" data-mf="pending">未处理</span>
+      <span class="filter-chip" data-mf="resolved">已处理</span>
     </div>
-    <div class="alert-filter">
-      <span class="filter-chip active">全部</span>
-      <span class="filter-chip" style="border-color:var(--l1);color:var(--l1)">L1 紧急</span>
-      <span class="filter-chip" style="border-color:var(--l2);color:var(--l2)">L2 重要</span>
-      <span class="filter-chip">L3 一般</span>
-      <span class="filter-chip">未处理</span>
-      <span class="filter-chip">已处理</span>
-    </div>
-    <div class="alert-item">
-      <span class="alert-level-badge l1">L1</span>
-      <div class="alert-content">
-        <div class="alert-title">灌溉指令执行失败</div>
-        <div class="alert-device">阀门 A2 · 1号棚B区</div>
-        <div class="alert-time">10:15 · 15分钟前</div>
-        <div class="alert-action">点击处理 →</div>
+    <div id="mobileAlertList">
+      <div class="alert-item" data-al="l1" data-as="pending" data-atitle="灌溉指令执行失败" data-adev="阀门 A2 · 1号棚B区" data-atime="10:15 · 15分钟前" data-adesc="阀门A2执行灌溉指令时通信超时，请检查设备连接状态和网关信号。">
+        <span class="alert-level-badge l1">L1</span>
+        <div class="alert-content"><div class="alert-title">灌溉指令执行失败</div><div class="alert-device">阀门 A2 · 1号棚B区</div><div class="alert-time">10:15 · 15分钟前</div><div class="alert-action">点击处理 →</div></div>
       </div>
-    </div>
-    <div class="alert-item">
-      <span class="alert-level-badge l2">L2</span>
-      <div class="alert-content">
-        <div class="alert-title">土壤湿度低于阈值</div>
-        <div class="alert-device">土壤湿度传感器 · 1号棚 · 当前 32.5%</div>
-        <div class="alert-time">10:10 · 20分钟前</div>
-        <div class="alert-action">点击处理 →</div>
+      <div class="alert-item" data-al="l2" data-as="pending" data-atitle="土壤湿度低于阈值" data-adev="土壤湿度传感器 · 1号棚" data-atime="10:10 · 20分钟前" data-adesc="当前土壤湿度32.5%，低于设定阈值35%。建议立即灌溉25分钟。">
+        <span class="alert-level-badge l2">L2</span>
+        <div class="alert-content"><div class="alert-title">土壤湿度低于阈值</div><div class="alert-device">土壤湿度传感器 · 1号棚 · 当前 32.5%</div><div class="alert-time">10:10 · 20分钟前</div><div class="alert-action">点击处理 →</div></div>
       </div>
-    </div>
-    <div class="alert-item">
-      <span class="alert-level-badge l2">L2</span>
-      <div class="alert-content">
-        <div class="alert-title">3号温湿度传感器离线</div>
-        <div class="alert-device">2号棚 · 已离线 2小时</div>
-        <div class="alert-time">08:24 · 2小时前</div>
-        <div class="alert-action">点击处理 →</div>
+      <div class="alert-item" data-al="l2" data-as="pending" data-atitle="3号温湿度传感器离线" data-adev="2号棚" data-atime="08:24 · 2小时前" data-adesc="传感器已离线超过2小时，可能原因：电池耗尽、信号干扰、设备损坏。">
+        <span class="alert-level-badge l2">L2</span>
+        <div class="alert-content"><div class="alert-title">3号温湿度传感器离线</div><div class="alert-device">2号棚 · 已离线 2小时</div><div class="alert-time">08:24 · 2小时前</div><div class="alert-action">点击处理 →</div></div>
       </div>
-    </div>
-    <div class="alert-item">
-      <span class="alert-level-badge l3">L3</span>
-      <div class="alert-content">
-        <div class="alert-title">定时灌溉任务完成</div>
-        <div class="alert-device">阀门 A1 · 灌溉 20分钟</div>
-        <div class="alert-time">06:20 · 今早</div>
-        <div style="font-size:12px;color:var(--pl);margin-top:4px">✓ 已自动处理</div>
+      <div class="alert-item" data-al="l3" data-as="resolved" data-atitle="定时灌溉任务完成" data-adev="阀门 A1 · 灌溉 20分钟" data-atime="06:20 · 今早" data-adesc="番茄定时灌溉规则执行完成，阀门A1灌溉20分钟，用水0.6吨。">
+        <span class="alert-level-badge l3">L3</span>
+        <div class="alert-content"><div class="alert-title">定时灌溉任务完成</div><div class="alert-device">阀门 A1 · 灌溉 20分钟</div><div class="alert-time">06:20 · 今早</div><div style="font-size:12px;color:var(--pl);margin-top:4px">✓ 已自动处理</div></div>
       </div>
-    </div>
-    <div class="alert-item">
-      <span class="alert-level-badge l3">L3</span>
-      <div class="alert-content">
-        <div class="alert-title">月度报告已生成</div>
-        <div class="alert-device">2026年3月运营报告</div>
-        <div class="alert-time">昨日 20:00</div>
-        <div style="font-size:12px;color:var(--pl);margin-top:4px">✓ 已查看</div>
+      <div class="alert-item" data-al="l3" data-as="resolved" data-atitle="月度报告已生成" data-adev="2026年3月运营报告" data-atime="昨日 20:00" data-adesc="2026年3月运营报告已自动生成，包含灌溉统计、节水分析、设备运行报告。">
+        <span class="alert-level-badge l3">L3</span>
+        <div class="alert-content"><div class="alert-title">月度报告已生成</div><div class="alert-device">2026年3月运营报告</div><div class="alert-time">昨日 20:00</div><div style="font-size:12px;color:var(--pl);margin-top:4px">✓ 已查看</div></div>
       </div>
     </div>
   </div>
-  <div class="tab-bar">
-    <div class="tab-item"><span class="tab-icon">🏠</span>首页</div>
-    <div class="tab-item"><span class="tab-icon">📡</span>设备</div>
-    <div class="tab-item"><span class="tab-icon">📊</span>数据</div>
-    <div class="tab-item active"><span class="tab-icon">🔔</span>告警</div>
-    <div class="tab-item"><span class="tab-icon">👤</span>我的</div>
-  </div>
-</div>
-</div>
 
-<!-- ==================== 我的页 ==================== -->
-<div>
-<div class="phone-label">Tab 5: 我的</div>
-<div class="phone-frame">
-  <div class="status-bar"><span>10:24</span><span>📶 WiFi</span><span>🔋 85%</span></div>
-  <div class="page">
+  <!-- ===== Tab 5: 我的 ===== -->
+  <div class="page" id="page-mine">
     <div class="profile-header">
       <div class="avatar">👨‍🌾</div>
       <div class="profile-name">张三</div>
@@ -414,28 +331,220 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
       <div class="profile-base">📍 示范基地</div>
     </div>
     <div class="menu-group">
-      <div class="menu-item"><span class="menu-icon">🏠</span>基地管理<span class="menu-arrow">›</span></div>
-      <div class="menu-item"><span class="menu-icon">🔔</span>通知设置<span class="menu-arrow">›</span></div>
-      <div class="menu-item"><span class="menu-icon">🌙</span>免打扰时段<span style="margin-left:auto;font-size:13px;color:var(--ts)">22:00-06:00</span><span class="menu-arrow" style="margin-left:8px">›</span></div>
+      <div class="menu-item" data-menu="base"><span class="menu-icon">🏠</span>基地管理<span class="menu-arrow">›</span></div>
+      <div class="menu-item" data-menu="notif"><span class="menu-icon">🔔</span>通知设置<span class="menu-arrow">›</span></div>
+      <div class="menu-item" data-menu="dnd"><span class="menu-icon">🌙</span>免打扰时段<span style="margin-left:auto;font-size:13px;color:var(--ts)">22:00-06:00</span><span class="menu-arrow" style="margin-left:8px">›</span></div>
     </div>
     <div class="menu-group">
-      <div class="menu-item"><span class="menu-icon">👥</span>操作员管理<span style="margin-left:auto;font-size:13px;color:var(--ts)">3人</span><span class="menu-arrow" style="margin-left:8px">›</span></div>
-      <div class="menu-item"><span class="menu-icon">📋</span>操作日志<span class="menu-arrow">›</span></div>
+      <div class="menu-item" data-menu="operators"><span class="menu-icon">👥</span>操作员管理<span style="margin-left:auto;font-size:13px;color:var(--ts)">3人</span><span class="menu-arrow" style="margin-left:8px">›</span></div>
+      <div class="menu-item" data-menu="logs"><span class="menu-icon">📋</span>操作日志<span class="menu-arrow">›</span></div>
     </div>
     <div class="menu-group">
-      <div class="menu-item"><span class="menu-icon">📖</span>操作视频教程<span class="menu-arrow">›</span></div>
-      <div class="menu-item"><span class="menu-icon">❓</span>帮助与反馈<span class="menu-arrow">›</span></div>
-      <div class="menu-item"><span class="menu-icon">ℹ️</span>关于<span style="margin-left:auto;font-size:13px;color:var(--ts)">V1.0.0</span><span class="menu-arrow" style="margin-left:8px">›</span></div>
+      <div class="menu-item" data-menu="tutorial"><span class="menu-icon">📖</span>操作视频教程<span class="menu-arrow">›</span></div>
+      <div class="menu-item" data-menu="help"><span class="menu-icon">❓</span>帮助与反馈<span class="menu-arrow">›</span></div>
+      <div class="menu-item" data-menu="about"><span class="menu-icon">ℹ️</span>关于<span style="margin-left:auto;font-size:13px;color:var(--ts)">V1.0.0</span><span class="menu-arrow" style="margin-left:8px">›</span></div>
     </div>
   </div>
-  <div class="tab-bar">
-    <div class="tab-item"><span class="tab-icon">🏠</span>首页</div>
-    <div class="tab-item"><span class="tab-icon">📡</span>设备</div>
-    <div class="tab-item"><span class="tab-icon">📊</span>数据</div>
-    <div class="tab-item"><span class="tab-icon">🔔</span>告警</div>
-    <div class="tab-item active"><span class="tab-icon">👤</span>我的</div>
+
+  <!-- Modal overlay -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box" id="modalBox"></div>
   </div>
-</div>
+
+  <!-- Device detail overlay -->
+  <div class="detail-overlay" id="deviceDetail">
+    <div class="detail-header"><span class="detail-back" id="deviceDetailBack">‹</span><span id="deviceDetailTitle">设备详情</span></div>
+    <div class="detail-body" id="deviceDetailBody"></div>
+  </div>
+
+  <!-- Alert detail overlay -->
+  <div class="detail-overlay" id="alertDetail">
+    <div class="detail-header"><span class="detail-back" id="alertDetailBack">‹</span><span>告警详情</span></div>
+    <div class="detail-body" id="alertDetailBody"></div>
+  </div>
+
+  <!-- Mine sub-page overlay -->
+  <div class="detail-overlay" id="mineDetail">
+    <div class="detail-header"><span class="detail-back" id="mineDetailBack">‹</span><span id="mineDetailTitle">设置</span></div>
+    <div class="detail-body" id="mineDetailBody"></div>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar" id="tabBar">
+    <div class="tab-item active" data-tab="home"><span class="tab-icon">🏠</span>首页</div>
+    <div class="tab-item" data-tab="device"><span class="tab-icon">📡</span>设备</div>
+    <div class="tab-item" data-tab="data"><span class="tab-icon">📊</span>数据</div>
+    <div class="tab-item" data-tab="alert"><span class="tab-icon">🔔</span>告警</div>
+    <div class="tab-item" data-tab="mine"><span class="tab-icon">👤</span>我的</div>
+  </div>
 </div>
 
+<script>
+// Tab switching
+document.querySelectorAll('#tabBar .tab-item').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#tabBar .tab-item').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// === Irrigation modal ===
+document.getElementById('btnStartIrrigation').addEventListener('click', () => {
+  showModal(`
+    <div class="modal-title">💧 开始灌溉</div>
+    <div class="m-form-group"><label class="m-form-label">选择阀门</label><select class="m-form-select"><option>阀门 A1 (1号棚A区)</option><option>阀门 A2 (1号棚B区)</option><option>阀门 B1 (2号棚A区)</option><option>全部阀门</option></select></div>
+    <div class="m-form-group"><label class="m-form-label">灌溉时长（分钟）</label><input class="m-form-input" type="number" value="25" min="1" max="120"></div>
+    <div class="m-form-group"><label class="m-form-label">目标湿度（%）</label><input class="m-form-input" type="number" value="65" min="30" max="90"></div>
+    <button class="m-btn m-btn-primary" onclick="hideModal();showToast('灌溉指令已发送')">确认灌溉</button>
+    <button class="m-btn m-btn-cancel" onclick="hideModal()">取消</button>
+  `);
+});
+
+// === Emergency stop ===
+document.getElementById('btnEmergency').addEventListener('click', () => {
+  showModal(`
+    <div style="text-align:center;padding:10px 0">
+      <div style="font-size:48px;margin-bottom:12px">🚨</div>
+      <div style="font-size:18px;font-weight:700;color:var(--l1);margin-bottom:8px">紧急停止</div>
+      <div style="font-size:14px;color:var(--ts);margin-bottom:20px">确认关闭所有灌溉阀门？<br>此操作将立即停止所有正在进行的灌溉任务。</div>
+      <button class="m-btn m-btn-danger" onclick="hideModal();showToast('已紧急停止所有灌溉')">确认急停</button>
+      <button class="m-btn m-btn-cancel" onclick="hideModal()">取消</button>
+    </div>
+  `);
+});
+
+// === Device detail ===
+document.querySelectorAll('.device-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const name = item.dataset.dev;
+    const val = item.dataset.val;
+    const loc = item.dataset.loc;
+    const status = item.dataset.status;
+    document.getElementById('deviceDetailTitle').textContent = name;
+    document.getElementById('deviceDetailBody').innerHTML = `
+      <div style="background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px">
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px">${name}</div>
+        <div style="font-size:13px;color:var(--ts)">位置：${loc}</div>
+        <div style="font-size:13px;color:var(--ts);margin-top:4px">状态：<span style="color:${status==='在线'?'var(--primary)':'var(--l1)'}">${status}</span></div>
+        <div style="font-size:13px;color:var(--ts);margin-top:4px">当前数据：${val}</div>
+      </div>
+      <div style="background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:8px">24小时趋势</div>
+        <div class="detail-chart">
+          <div class="dbar" style="height:40%"></div><div class="dbar" style="height:55%"></div><div class="dbar" style="height:50%"></div>
+          <div class="dbar" style="height:65%"></div><div class="dbar" style="height:60%"></div><div class="dbar" style="height:70%"></div>
+          <div class="dbar" style="height:55%"></div><div class="dbar" style="height:45%"></div><div class="dbar" style="height:50%"></div>
+          <div class="dbar" style="height:60%"></div><div class="dbar" style="height:65%"></div><div class="dbar" style="height:58%"></div>
+        </div>
+      </div>
+      <div class="detail-info-grid">
+        <div class="detail-info-item"><div class="detail-info-val">${val || '—'}</div><div class="detail-info-label">当前值</div></div>
+        <div class="detail-info-item"><div class="detail-info-val">${status}</div><div class="detail-info-label">运行状态</div></div>
+        <div class="detail-info-item"><div class="detail-info-val">98.5%</div><div class="detail-info-label">在线率(30天)</div></div>
+        <div class="detail-info-item"><div class="detail-info-val">刚刚</div><div class="detail-info-label">最后上报</div></div>
+      </div>
+    `;
+    document.getElementById('deviceDetail').classList.add('show');
+  });
+});
+document.getElementById('deviceDetailBack').addEventListener('click', () => {
+  document.getElementById('deviceDetail').classList.remove('show');
+});
+
+// === Data sub-tabs ===
+document.querySelectorAll('#dataTabSwitch .tab-switch-item').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#dataTabSwitch .tab-switch-item').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.data-sub').forEach(s => s.style.display = 'none');
+    document.getElementById('dsub-' + tab.dataset.dtab).style.display = 'block';
+  });
+});
+
+// === Alert filter chips ===
+document.querySelectorAll('#mobileAlertFilter .filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#mobileAlertFilter .filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const f = chip.dataset.mf;
+    document.querySelectorAll('#mobileAlertList .alert-item').forEach(item => {
+      if (f === 'all') { item.style.display = ''; }
+      else if (f === 'pending' || f === 'resolved') { item.style.display = item.dataset.as === f ? '' : 'none'; }
+      else { item.style.display = item.dataset.al === f ? '' : 'none'; }
+    });
+  });
+});
+
+// === Alert detail ===
+document.querySelectorAll('#mobileAlertList .alert-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const isPending = item.dataset.as === 'pending';
+    document.getElementById('alertDetailBody').innerHTML = `
+      <div style="background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span class="alert-level-badge ${item.dataset.al}" style="display:inline-flex">${item.dataset.al.toUpperCase()}</span>
+          <span style="font-size:16px;font-weight:700">${item.dataset.atitle}</span>
+        </div>
+        <div style="font-size:13px;color:var(--ts);margin-bottom:4px">📍 ${item.dataset.adev}</div>
+        <div style="font-size:13px;color:var(--ts);margin-bottom:12px">🕐 ${item.dataset.atime}</div>
+        <div style="font-size:14px;line-height:1.6;color:var(--text)">${item.dataset.adesc}</div>
+      </div>
+      ${isPending ? `<button class="m-btn m-btn-primary" onclick="this.textContent='✓ 已确认处理';this.style.background='var(--ts)';this.disabled=true">确认处理</button>` : '<div style="text-align:center;color:var(--pl);font-size:14px;padding:12px">✓ 此告警已处理</div>'}
+    `;
+    document.getElementById('alertDetail').classList.add('show');
+  });
+});
+document.getElementById('alertDetailBack').addEventListener('click', () => {
+  document.getElementById('alertDetail').classList.remove('show');
+});
+
+// === Mine menu items ===
+const minePages = {
+  base: { title: '基地管理', content: `<div style="background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)"><div style="font-size:15px;font-weight:600;margin-bottom:12px">基地信息</div><div class="m-setting-row"><div><div class="m-setting-name">基地名称</div><div class="m-setting-desc">示范基地</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">基地编号</div><div class="m-setting-desc">BASE-001</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">联系人</div><div class="m-setting-desc">张三 · 138****1234</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">地址</div><div class="m-setting-desc">XX省XX市XX区XX路XX号</div></div></div></div>` },
+  notif: { title: '通知设置', content: `<div style="background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)"><div class="m-setting-row"><div><div class="m-setting-name">L1 紧急告警</div><div class="m-setting-desc">短信 + 微信推送</div></div><span class="m-toggle on" onclick="this.classList.toggle('on')"></span></div><div class="m-setting-row"><div><div class="m-setting-name">L2 重要告警</div><div class="m-setting-desc">微信推送</div></div><span class="m-toggle on" onclick="this.classList.toggle('on')"></span></div><div class="m-setting-row"><div><div class="m-setting-name">L3 一般通知</div><div class="m-setting-desc">站内消息</div></div><span class="m-toggle on" onclick="this.classList.toggle('on')"></span></div><div class="m-setting-row"><div><div class="m-setting-name">灌溉完成通知</div><div class="m-setting-desc">每次灌溉完成后推送</div></div><span class="m-toggle" onclick="this.classList.toggle('on')"></span></div><div class="m-setting-row"><div><div class="m-setting-name">每日摘要</div><div class="m-setting-desc">每日08:00发送运营摘要</div></div><span class="m-toggle on" onclick="this.classList.toggle('on')"></span></div></div>` },
+  dnd: { title: '免打扰时段', content: `<div style="background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)"><div class="m-setting-row"><div><div class="m-setting-name">开启免打扰</div><div class="m-setting-desc">免打扰期间不发送非紧急通知</div></div><span class="m-toggle on" onclick="this.classList.toggle('on')"></span></div><div class="m-setting-row"><div><div class="m-setting-name">开始时间</div><div class="m-setting-desc">22:00</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">结束时间</div><div class="m-setting-desc">06:00</div></div></div><div style="font-size:12px;color:var(--ts);margin-top:12px">💡 L1紧急告警不受免打扰限制</div></div>` },
+  operators: { title: '操作员管理', content: `<div style="background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)"><div style="font-size:15px;font-weight:600;margin-bottom:12px">操作员列表</div><div class="m-setting-row"><div><div class="m-setting-name">李四</div><div class="m-setting-desc">操作员 · 139****5678</div></div><span style="font-size:12px;color:var(--primary)">在线</span></div><div class="m-setting-row"><div><div class="m-setting-name">王五</div><div class="m-setting-desc">操作员 · 137****9012</div></div><span style="font-size:12px;color:var(--ts)">离线</span></div><div class="m-setting-row"><div><div class="m-setting-name">赵六</div><div class="m-setting-desc">只读 · 136****3456</div></div><span style="font-size:12px;color:var(--ts)">离线</span></div></div>` },
+  logs: { title: '操作日志', content: `<div style="background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)"><div style="font-size:15px;font-weight:600;margin-bottom:12px">最近操作</div><div class="m-setting-row"><div><div class="m-setting-name">手动开启阀门A2</div><div class="m-setting-desc">张三 · 今日 10:15 · 失败</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">登录系统</div><div class="m-setting-desc">李四 · 今日 09:15 · 成功</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">重启3号传感器</div><div class="m-setting-desc">王五 · 昨日 16:30 · 成功</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">修改灌溉规则</div><div class="m-setting-desc">张三 · 昨日 14:00 · 成功</div></div></div></div>` },
+  tutorial: { title: '操作视频教程', content: `<div style="background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)"><div style="font-size:15px;font-weight:600;margin-bottom:12px">教程列表</div><div class="m-setting-row"><div><div class="m-setting-name">📹 快速入门指南</div><div class="m-setting-desc">5分钟了解系统基本操作</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">📹 设备管理教程</div><div class="m-setting-desc">如何添加和管理设备</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">📹 灌溉规则配置</div><div class="m-setting-desc">设置自动灌溉规则</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">📹 告警处理流程</div><div class="m-setting-desc">告警确认与处理步骤</div></div></div></div>` },
+  help: { title: '帮助与反馈', content: `<div style="background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)"><div style="font-size:15px;font-weight:600;margin-bottom:12px">常见问题</div><div class="m-setting-row"><div><div class="m-setting-name">设备离线怎么办？</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">如何修改灌溉规则？</div></div></div><div class="m-setting-row"><div><div class="m-setting-name">数据异常如何排查？</div></div></div></div><div style="background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-top:12px;text-align:center"><div style="font-size:14px;color:var(--ts)">客服热线</div><div style="font-size:18px;font-weight:700;color:var(--primary);margin-top:4px">400-XXX-XXXX</div></div>` },
+  about: { title: '关于', content: `<div style="text-align:center;padding:30px 0"><div style="font-size:48px;margin-bottom:12px">🌱</div><div style="font-size:18px;font-weight:700">智慧农业平台</div><div style="font-size:13px;color:var(--ts);margin-top:4px">版本 V1.0.0</div><div style="font-size:12px;color:var(--ts);margin-top:20px">© 2026 SmartFarm</div></div>` }
+};
+
+document.querySelectorAll('.menu-item[data-menu]').forEach(item => {
+  item.addEventListener('click', () => {
+    const page = minePages[item.dataset.menu];
+    if (page) {
+      document.getElementById('mineDetailTitle').textContent = page.title;
+      document.getElementById('mineDetailBody').innerHTML = page.content;
+      document.getElementById('mineDetail').classList.add('show');
+    }
+  });
+});
+document.getElementById('mineDetailBack').addEventListener('click', () => {
+  document.getElementById('mineDetail').classList.remove('show');
+});
+
+// === Modal helpers ===
+function showModal(html) {
+  document.getElementById('modalBox').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function hideModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modalOverlay')) hideModal();
+});
+
+// === Toast ===
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:absolute;top:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;z-index:300;animation:fadeIn .2s ease';
+  document.getElementById('phoneFrame').appendChild(t);
+  setTimeout(() => t.remove(), 2000);
+}
+</script>
 </body></html>

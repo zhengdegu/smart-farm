@@ -8,18 +8,14 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--primary:#2E7D32;--pl:#4CAF50;--pd:#1B5E20;--bg:#F0F2F5;--card:#FFF;--text:#212121;--ts:#757575;--border:#E0E0E0;--l1:#D32F2F;--l2:#F57C00;--l3:#FBC02D;--blue:#1976D2;--sidebar-w:220px}
 body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden}
-
-/* Sidebar */
 .sidebar{width:var(--sidebar-w);background:#1B2A1E;color:#fff;display:flex;flex-direction:column;flex-shrink:0}
 .sidebar-logo{padding:20px;font-size:18px;font-weight:700;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px}
 .nav-group-label{padding:16px 20px 6px;font-size:11px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px}
-.nav-item{padding:11px 20px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.7);transition:all .15s}
+.nav-item{padding:11px 20px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.7);transition:all .15s;user-select:none}
 .nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
 .nav-item.active{background:var(--primary);color:#fff;font-weight:600}
 .nav-icon{font-size:16px;width:20px;text-align:center}
 .nav-badge{margin-left:auto;background:var(--l1);color:#fff;border-radius:10px;padding:1px 7px;font-size:11px}
-
-/* Main */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .topbar{height:56px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
 .topbar-left{display:flex;align-items:center;gap:12px}
@@ -29,12 +25,13 @@ body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;backgr
 .topbar-right .badge{background:var(--l1);color:#fff;border-radius:10px;padding:2px 8px;font-size:11px}
 .topbar-search{border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:13px;width:200px;outline:none}
 .topbar-search:focus{border-color:var(--pl)}
-
 .content{flex:1;overflow-y:auto;padding:20px 24px}
-
-/* Stats Cards */
+.page-section{display:none;animation:fadeIn .25s ease}
+.page-section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
-.stat-card{background:var(--card);border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);display:flex;align-items:center;gap:16px}
+.stat-card{background:var(--card);border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);display:flex;align-items:center;gap:16px;transition:box-shadow .2s}
+.stat-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
 .stat-icon-box{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
 .stat-icon-box.green{background:rgba(46,125,50,.1)}
 .stat-icon-box.blue{background:rgba(25,118,210,.1)}
@@ -45,8 +42,6 @@ body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;backgr
 .stat-info .trend{font-size:12px;margin-top:4px}
 .trend-up{color:var(--pl)}
 .trend-down{color:var(--l1)}
-
-/* Charts */
 .charts-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px}
 .chart-card{background:var(--card);border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
 .chart-card .title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
@@ -57,18 +52,18 @@ body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;backgr
 .gauge-circle{width:140px;height:140px;border-radius:50%;border:12px solid #E8F5E9;border-top-color:var(--primary);border-right-color:var(--primary);border-bottom-color:var(--pl);display:flex;align-items:center;justify-content:center;flex-direction:column}
 .gauge-val{font-size:32px;font-weight:800;color:var(--primary)}
 .gauge-label{font-size:13px;color:var(--ts);margin-top:8px}
-
-/* Table */
 .table-card{background:var(--card);border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);margin-bottom:20px}
 .table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .table-header .title{font-size:15px;font-weight:600}
 .table-actions{display:flex;gap:8px}
-.btn{padding:7px 16px;border:none;border-radius:6px;font-size:13px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:4px}
+.btn{padding:7px 16px;border:none;border-radius:6px;font-size:13px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:4px;transition:all .15s}
 .btn-primary{background:var(--primary);color:#fff}
 .btn-primary:hover{background:var(--pd)}
 .btn-outline{background:#fff;color:var(--text);border:1px solid var(--border)}
 .btn-outline:hover{border-color:var(--pl);color:var(--primary)}
 .btn-sm{padding:4px 10px;font-size:12px}
+.btn-danger{background:var(--l1);color:#fff}
+.btn-danger:hover{background:#b71c1c}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th{text-align:left;padding:10px 12px;color:var(--ts);font-weight:500;border-bottom:2px solid var(--border);font-size:13px}
 td{padding:12px;border-bottom:1px solid #f5f5f5;vertical-align:middle}
@@ -77,7 +72,6 @@ tr:hover td{background:rgba(46,125,50,.02)}
 .status-tag.online{background:#E8F5E9;color:var(--primary)}
 .status-tag.offline{background:#F5F5F5;color:#999}
 .status-tag.fault{background:#FFEBEE;color:var(--l1)}
-.status-tag.alarm{background:#FFF3E0;color:var(--l2)}
 .status-tag.pending{background:#FFF3E0;color:var(--l2)}
 .status-tag.resolved{background:#E8F5E9;color:var(--primary)}
 .level-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;color:#fff}
@@ -87,6 +81,61 @@ tr:hover td{background:rgba(46,125,50,.02)}
 .pagination{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:16px;font-size:13px;color:var(--ts)}
 .page-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff}
 .page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.filter-bar{display:flex;gap:10px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.filter-select{padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;background:#fff;cursor:pointer}
+.filter-select:focus{border-color:var(--pl)}
+.filter-chip{padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--ts);transition:all .15s;user-select:none;display:inline-block}
+.filter-chip:hover{border-color:var(--pl);color:var(--primary)}
+.filter-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.sub-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--border)}
+.sub-tab{padding:10px 20px;font-size:14px;cursor:pointer;color:var(--ts);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;user-select:none}
+.sub-tab:hover{color:var(--primary)}
+.sub-tab.active{color:var(--primary);font-weight:600;border-bottom-color:var(--primary)}
+.toggle{width:40px;height:22px;border-radius:11px;background:#ccc;position:relative;cursor:pointer;transition:background .2s;display:inline-block;vertical-align:middle}
+.toggle.on{background:var(--primary)}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on::after{transform:translateX(18px)}
+.crop-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.crop-tpl-card{background:var(--card);border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:all .2s}
+.crop-tpl-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);transform:translateY(-2px)}
+.crop-tpl-icon{font-size:36px;margin-bottom:8px}
+.crop-tpl-name{font-size:16px;font-weight:600;margin-bottom:4px}
+.crop-tpl-desc{font-size:13px;color:var(--ts);line-height:1.5}
+.crop-tpl-params{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;font-size:12px}
+.crop-tpl-params .p-item{background:var(--bg);border-radius:6px;padding:6px 8px;text-align:center}
+.crop-tpl-params .p-val{font-weight:600;color:var(--primary)}
+.progress-bar{height:8px;background:#E0E0E0;border-radius:4px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--primary),var(--pl));transition:width .3s}
+.form-group{margin-bottom:16px}
+.form-label{font-size:13px;font-weight:500;color:var(--ts);margin-bottom:6px;display:block}
+.form-input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--pl)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-section{background:var(--card);border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);margin-bottom:20px}
+.form-section-title{font-size:15px;font-weight:600;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.role-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:500}
+.role-badge.admin{background:rgba(25,118,210,.1);color:var(--blue)}
+.role-badge.operator{background:rgba(46,125,50,.1);color:var(--primary)}
+.role-badge.readonly{background:#F5F5F5;color:#999}
+.mqtt-indicator{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:6px;font-size:13px}
+.mqtt-indicator.connected{background:#E8F5E9;color:var(--primary)}
+.mqtt-dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--primary);box-shadow:0 0 6px rgba(46,125,50,.5);animation:mqttPulse 2s infinite}
+@keyframes mqttPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.time-range{display:flex;gap:0;background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.time-range-item{padding:6px 16px;font-size:13px;cursor:pointer;color:var(--ts);transition:all .15s;user-select:none}
+.time-range-item:hover{background:rgba(46,125,50,.05)}
+.time-range-item.active{background:var(--primary);color:#fff}
+.report-item{display:flex;align-items:center;padding:14px 0;border-bottom:1px solid #f5f5f5;gap:12px}
+.report-item:last-child{border-bottom:none}
+.report-icon{font-size:28px}
+.report-info{flex:1}
+.report-name{font-size:14px;font-weight:500}
+.report-meta{font-size:12px;color:var(--ts);margin-top:2px}
+.notif-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f5f5f5}
+.notif-row:last-child{border-bottom:none}
+.notif-info{flex:1}
+.notif-name{font-size:14px;font-weight:500}
+.notif-desc{font-size:12px;color:var(--ts);margin-top:2px}
 </style>
 </head>
 <body>
@@ -94,25 +143,25 @@ tr:hover td{background:rgba(46,125,50,.02)}
 <nav class="sidebar">
   <div class="sidebar-logo">🌱 智慧农业平台</div>
   <div class="nav-group-label">概览</div>
-  <div class="nav-item active"><span class="nav-icon">📊</span>总览仪表盘</div>
+  <div class="nav-item active" data-page="dashboard"><span class="nav-icon">📊</span>总览仪表盘</div>
   <div class="nav-group-label">业务管理</div>
-  <div class="nav-item"><span class="nav-icon">📡</span>设备管理</div>
-  <div class="nav-item"><span class="nav-icon">💧</span>灌溉管理</div>
-  <div class="nav-item"><span class="nav-icon">🔔</span>告警中心<span class="nav-badge">3</span></div>
-  <div class="nav-item"><span class="nav-icon">🌿</span>种植管理</div>
+  <div class="nav-item" data-page="devices"><span class="nav-icon">📡</span>设备管理</div>
+  <div class="nav-item" data-page="irrigation"><span class="nav-icon">💧</span>灌溉管理</div>
+  <div class="nav-item" data-page="alerts"><span class="nav-icon">🔔</span>告警中心<span class="nav-badge">3</span></div>
+  <div class="nav-item" data-page="crops"><span class="nav-icon">🌿</span>种植管理</div>
   <div class="nav-group-label">数据分析</div>
-  <div class="nav-item"><span class="nav-icon">📈</span>数据报表</div>
-  <div class="nav-item"><span class="nav-icon">📄</span>月度报告</div>
+  <div class="nav-item" data-page="reports"><span class="nav-icon">📈</span>数据报表</div>
+  <div class="nav-item" data-page="monthly"><span class="nav-icon">📄</span>月度报告</div>
   <div class="nav-group-label">系统</div>
-  <div class="nav-item"><span class="nav-icon">👥</span>用户管理</div>
-  <div class="nav-item"><span class="nav-icon">⚙️</span>系统设置</div>
+  <div class="nav-item" data-page="users"><span class="nav-icon">👥</span>用户管理</div>
+  <div class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span>系统设置</div>
 </nav>
 
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-title">总览仪表盘</span>
-      <span class="topbar-breadcrumb">示范基地 · 1号温室</span>
+      <span class="topbar-title" id="topbarTitle">总览仪表盘</span>
+      <span class="topbar-breadcrumb" id="topbarBreadcrumb">首页 / 总览仪表盘</span>
     </div>
     <div class="topbar-right">
       <input class="topbar-search" placeholder="🔍 搜索设备、告警...">
@@ -121,78 +170,23 @@ tr:hover td{background:rgba(46,125,50,.02)}
     </div>
   </div>
 
-  <div class="content">
-    <!-- 统计卡片 -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-icon-box green">📡</div>
-        <div class="stat-info">
-          <div class="label">设备在线率</div>
-          <div class="value">96.8%</div>
-          <div class="trend trend-up">↑ 1.2% 较昨日</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon-box blue">💧</div>
-        <div class="stat-info">
-          <div class="label">今日灌溉</div>
-          <div class="value">5 次</div>
-          <div class="trend trend-up">总时长 120 分钟</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon-box orange">⚠️</div>
-        <div class="stat-info">
-          <div class="label">待处理告警</div>
-          <div class="value" style="color:var(--l2)">3</div>
-          <div class="trend trend-down">↑ 2 较昨日</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon-box green">🌊</div>
-        <div class="stat-info">
-          <div class="label">本月节水率</div>
-          <div class="value" style="color:var(--primary)">32%</div>
-          <div class="trend trend-up">↑ 8.3% 较上月</div>
-        </div>
-      </div>
-    </div>
+  <div class="content" id="contentArea">
 
-    <!-- 图表行 -->
-    <div class="charts-row">
-      <div class="chart-card">
-        <div class="title">传感器数据趋势（24h）<span class="sub">土壤湿度 · 土壤温度 · 空气温度</span></div>
-        <div class="chart-placeholder">
-          <div class="bar" style="height:40%"></div><div class="bar" style="height:55%"></div>
-          <div class="bar" style="height:45%"></div><div class="bar" style="height:65%"></div>
-          <div class="bar" style="height:50%"></div><div class="bar" style="height:70%"></div>
-          <div class="bar" style="height:60%"></div><div class="bar" style="height:55%"></div>
-          <div class="bar" style="height:45%"></div><div class="bar" style="height:50%"></div>
-          <div class="bar" style="height:65%"></div><div class="bar" style="height:75%"></div>
-        </div>
+    <!-- ========== 总览仪表盘 ========== -->
+    <div class="page-section active" data-page="dashboard">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-icon-box green">📡</div><div class="stat-info"><div class="label">设备在线率</div><div class="value">96.8%</div><div class="trend trend-up">↑ 1.2% 较昨日</div></div></div>
+        <div class="stat-card"><div class="stat-icon-box blue">💧</div><div class="stat-info"><div class="label">今日灌溉</div><div class="value">5 次</div><div class="trend trend-up">总时长 120 分钟</div></div></div>
+        <div class="stat-card"><div class="stat-icon-box orange">⚠️</div><div class="stat-info"><div class="label">待处理告警</div><div class="value" style="color:var(--l2)">3</div><div class="trend trend-down">↑ 2 较昨日</div></div></div>
+        <div class="stat-card"><div class="stat-icon-box green">🌊</div><div class="stat-info"><div class="label">本月节水率</div><div class="value" style="color:var(--primary)">32%</div><div class="trend trend-up">↑ 8.3% 较上月</div></div></div>
       </div>
-      <div class="chart-card">
-        <div class="title">节水率</div>
-        <div class="gauge-placeholder">
-          <div class="gauge-circle">
-            <div class="gauge-val">32%</div>
-          </div>
-          <div class="gauge-label">累计节水 12.8 吨</div>
-        </div>
+      <div class="charts-row">
+        <div class="chart-card"><div class="title">传感器数据趋势（24h）<span class="sub">土壤湿度 · 土壤温度 · 空气温度</span></div><div class="chart-placeholder"><div class="bar" style="height:40%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:45%"></div><div class="bar" style="height:65%"></div><div class="bar" style="height:50%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:45%"></div><div class="bar" style="height:50%"></div><div class="bar" style="height:65%"></div><div class="bar" style="height:75%"></div></div></div>
+        <div class="chart-card"><div class="title">节水率</div><div class="gauge-placeholder"><div class="gauge-circle"><div class="gauge-val">32%</div></div><div class="gauge-label">累计节水 12.8 吨</div></div></div>
       </div>
-    </div>
-
-    <!-- 设备表格 -->
-    <div class="table-card">
-      <div class="table-header">
-        <span class="title">设备列表</span>
-        <div class="table-actions">
-          <button class="btn btn-outline">📥 导出</button>
-          <button class="btn btn-primary">+ 注册设备</button>
-        </div>
-      </div>
-      <table>
-        <thead><tr><th>设备名称</th><th>类型</th><th>棚号</th><th>最新数据</th><th>状态</th><th>最后在线</th><th>操作</th></tr></thead>
+      <div class="table-card">
+        <div class="table-header"><span class="title">设备列表</span><div class="table-actions"><button class="btn btn-outline">📥 导出</button><button class="btn btn-primary">+ 注册设备</button></div></div>
+        <table><thead><tr><th>设备名称</th><th>类型</th><th>棚号</th><th>最新数据</th><th>状态</th><th>最后在线</th><th>操作</th></tr></thead>
         <tbody>
           <tr><td>1号温湿度传感器</td><td>传感器</td><td>1号棚</td><td>28.5°C / 65%</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
           <tr><td>2号温湿度传感器</td><td>传感器</td><td>1号棚</td><td>27.8°C / 62%</td><td><span class="status-tag online">在线</span></td><td>1分钟前</td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
@@ -201,36 +195,426 @@ tr:hover td{background:rgba(46,125,50,.02)}
           <tr><td>灌溉阀门 A1</td><td>阀门</td><td>1号棚A区</td><td>关闭</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">控制</button></td></tr>
           <tr><td>灌溉阀门 A2</td><td>阀门</td><td>1号棚B区</td><td>开启中(12min)</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">控制</button></td></tr>
           <tr><td>主网关 GW-01</td><td>网关</td><td>—</td><td>13台设备</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
-        </tbody>
-      </table>
-      <div class="pagination">
-        <span>共 14 条</span>
-        <div class="page-btn">‹</div>
-        <div class="page-btn active">1</div>
-        <div class="page-btn">2</div>
-        <div class="page-btn">›</div>
+        </tbody></table>
+        <div class="pagination"><span>共 14 条</span><div class="page-btn">‹</div><div class="page-btn active">1</div><div class="page-btn">2</div><div class="page-btn">›</div></div>
       </div>
-    </div>
-
-    <!-- 告警表格 -->
-    <div class="table-card">
-      <div class="table-header">
-        <span class="title">最近告警</span>
-        <div class="table-actions">
-          <button class="btn btn-outline">全部告警 →</button>
-        </div>
-      </div>
-      <table>
-        <thead><tr><th>级别</th><th>告警内容</th><th>设备</th><th>时间</th><th>状态</th><th>操作</th></tr></thead>
+      <div class="table-card">
+        <div class="table-header"><span class="title">最近告警</span><div class="table-actions"><button class="btn btn-outline" onclick="navigateTo('alerts')">全部告警 →</button></div></div>
+        <table><thead><tr><th>级别</th><th>告警内容</th><th>设备</th><th>时间</th><th>状态</th><th>操作</th></tr></thead>
         <tbody>
           <tr><td><span class="level-badge l1">L1</span></td><td>灌溉指令执行失败</td><td>阀门 A2</td><td>10:15</td><td><span class="status-tag pending">待处理</span></td><td><button class="btn btn-primary btn-sm">处理</button></td></tr>
           <tr><td><span class="level-badge l2">L2</span></td><td>土壤湿度低于阈值 (32.5%)</td><td>土壤湿度传感器</td><td>10:10</td><td><span class="status-tag pending">待处理</span></td><td><button class="btn btn-primary btn-sm">处理</button></td></tr>
           <tr><td><span class="level-badge l2">L2</span></td><td>传感器离线超过30分钟</td><td>3号温湿度传感器</td><td>08:24</td><td><span class="status-tag pending">待处理</span></td><td><button class="btn btn-primary btn-sm">处理</button></td></tr>
           <tr><td><span class="level-badge l3">L3</span></td><td>定时灌溉任务完成</td><td>阀门 A1</td><td>06:20</td><td><span class="status-tag resolved">已处理</span></td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
-        </tbody>
-      </table>
+        </tbody></table>
+      </div>
     </div>
-  </div>
-</div>
 
+    <!-- ========== 设备管理 ========== -->
+    <div class="page-section" data-page="devices">
+      <div class="filter-bar">
+        <select class="filter-select" id="deviceTypeFilter"><option value="">全部类型</option><option value="sensor">传感器</option><option value="valve">阀门</option><option value="gateway">网关</option></select>
+        <select class="filter-select" id="deviceStatusFilter"><option value="">全部状态</option><option value="online">在线</option><option value="offline">离线</option><option value="fault">故障</option></select>
+        <div style="flex:1"></div>
+        <button class="btn btn-outline">📥 导出</button>
+        <button class="btn btn-primary">+ 注册设备</button>
+      </div>
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-card"><div class="stat-icon-box green">✅</div><div class="stat-info"><div class="label">在线设备</div><div class="value" style="color:var(--primary)">12</div></div></div>
+        <div class="stat-card"><div class="stat-icon-box orange">⚡</div><div class="stat-info"><div class="label">离线设备</div><div class="value" style="color:var(--ts)">1</div></div></div>
+        <div class="stat-card"><div class="stat-icon-box red">🔧</div><div class="stat-info"><div class="label">故障设备</div><div class="value" style="color:var(--l1)">1</div></div></div>
+      </div>
+      <div class="table-card">
+        <div class="table-header"><span class="title">设备列表</span><span style="font-size:13px;color:var(--ts)">共 14 台设备</span></div>
+        <table><thead><tr><th>设备名称</th><th>设备ID</th><th>类型</th><th>棚号</th><th>最新数据</th><th>状态</th><th>最后在线</th><th>操作</th></tr></thead>
+        <tbody id="deviceTableBody">
+          <tr data-type="sensor" data-status="online"><td>1号温湿度传感器</td><td>TH-001</td><td>传感器</td><td>1号棚</td><td>28.5°C / 65%</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">详情</button> <button class="btn btn-outline btn-sm">编辑</button></td></tr>
+          <tr data-type="sensor" data-status="online"><td>2号温湿度传感器</td><td>TH-002</td><td>传感器</td><td>1号棚</td><td>27.8°C / 62%</td><td><span class="status-tag online">在线</span></td><td>1分钟前</td><td><button class="btn btn-outline btn-sm">详情</button> <button class="btn btn-outline btn-sm">编辑</button></td></tr>
+          <tr data-type="sensor" data-status="fault"><td>3号温湿度传感器</td><td>TH-003</td><td>传感器</td><td>2号棚</td><td>—</td><td><span class="status-tag fault">故障</span></td><td>2小时前</td><td><button class="btn btn-outline btn-sm">详情</button> <button class="btn btn-outline btn-sm">重启</button></td></tr>
+          <tr data-type="sensor" data-status="online"><td>土壤湿度传感器</td><td>SM-001</td><td>传感器</td><td>1号棚</td><td>32.5%</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">详情</button> <button class="btn btn-outline btn-sm">编辑</button></td></tr>
+          <tr data-type="sensor" data-status="online"><td>光照传感器</td><td>LX-001</td><td>传感器</td><td>1号棚</td><td>452 μmol/m²/s</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">详情</button> <button class="btn btn-outline btn-sm">编辑</button></td></tr>
+          <tr data-type="sensor" data-status="online"><td>CO₂传感器</td><td>CO2-001</td><td>传感器</td><td>1号棚</td><td>620 ppm</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">详情</button> <button class="btn btn-outline btn-sm">编辑</button></td></tr>
+          <tr data-type="valve" data-status="online"><td>灌溉阀门 A1</td><td>VLV-A1</td><td>阀门</td><td>1号棚A区</td><td>关闭</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">控制</button> <button class="btn btn-outline btn-sm">编辑</button></td></tr>
+          <tr data-type="valve" data-status="online"><td>灌溉阀门 A2</td><td>VLV-A2</td><td>阀门</td><td>1号棚B区</td><td>开启中(12min)</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">控制</button> <button class="btn btn-outline btn-sm">编辑</button></td></tr>
+          <tr data-type="valve" data-status="online"><td>灌溉阀门 B1</td><td>VLV-B1</td><td>阀门</td><td>2号棚A区</td><td>关闭</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">控制</button> <button class="btn btn-outline btn-sm">编辑</button></td></tr>
+          <tr data-type="gateway" data-status="online"><td>主网关 GW-01</td><td>GW-001</td><td>网关</td><td>—</td><td>13台设备</td><td><span class="status-tag online">在线</span></td><td>刚刚</td><td><button class="btn btn-outline btn-sm">详情</button> <button class="btn btn-outline btn-sm">编辑</button></td></tr>
+        </tbody></table>
+        <div class="pagination"><span>共 14 条</span><div class="page-btn">‹</div><div class="page-btn active">1</div><div class="page-btn">2</div><div class="page-btn">›</div></div>
+      </div>
+    </div>
+
+    <!-- ========== 灌溉管理 ========== -->
+    <div class="page-section" data-page="irrigation">
+      <div class="sub-tabs">
+        <div class="sub-tab active" data-subtab="rules">灌溉规则</div>
+        <div class="sub-tab" data-subtab="history">执行记录</div>
+      </div>
+      <div class="sub-content" data-subtab="rules">
+        <div class="filter-bar"><div style="flex:1"></div><button class="btn btn-primary">+ 新建规则</button></div>
+        <div class="table-card" style="margin-bottom:0">
+          <table><thead><tr><th>规则名称</th><th>触发条件</th><th>目标阀门</th><th>灌溉时长</th><th>状态</th><th>上次执行</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td>番茄定时灌溉</td><td>每日 06:00 / 18:00</td><td>阀门 A1, A2</td><td>20 分钟</td><td><span class="toggle on" onclick="this.classList.toggle('on')"></span></td><td>今日 06:20</td><td><button class="btn btn-outline btn-sm">编辑</button> <button class="btn btn-outline btn-sm">删除</button></td></tr>
+            <tr><td>湿度联动灌溉</td><td>土壤湿度 &lt; 35%</td><td>阀门 A1</td><td>25 分钟</td><td><span class="toggle on" onclick="this.classList.toggle('on')"></span></td><td>今日 10:10</td><td><button class="btn btn-outline btn-sm">编辑</button> <button class="btn btn-outline btn-sm">删除</button></td></tr>
+            <tr><td>高温应急灌溉</td><td>温度 &gt; 35°C</td><td>全部阀门</td><td>15 分钟</td><td><span class="toggle on" onclick="this.classList.toggle('on')"></span></td><td>昨日 14:30</td><td><button class="btn btn-outline btn-sm">编辑</button> <button class="btn btn-outline btn-sm">删除</button></td></tr>
+            <tr><td>黄瓜夜间灌溉</td><td>每日 22:00</td><td>阀门 B1</td><td>15 分钟</td><td><span class="toggle" onclick="this.classList.toggle('on')"></span></td><td>—</td><td><button class="btn btn-outline btn-sm">编辑</button> <button class="btn btn-outline btn-sm">删除</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div class="sub-content" data-subtab="history" style="display:none">
+        <div class="table-card" style="margin-bottom:0">
+          <div class="table-header"><span class="title">执行记录</span><span style="font-size:13px;color:var(--ts)">近7天共 35 次灌溉</span></div>
+          <table><thead><tr><th>时间</th><th>触发规则</th><th>阀门</th><th>时长</th><th>用水量</th><th>触发方式</th><th>结果</th></tr></thead>
+          <tbody>
+            <tr><td>今日 10:15</td><td>湿度联动灌溉</td><td>阀门 A1</td><td>25 分钟</td><td>0.8 吨</td><td>自动</td><td><span class="status-tag fault">失败</span></td></tr>
+            <tr><td>今日 06:20</td><td>番茄定时灌溉</td><td>阀门 A1, A2</td><td>20 分钟</td><td>1.2 吨</td><td>自动</td><td><span class="status-tag online">成功</span></td></tr>
+            <tr><td>昨日 18:00</td><td>番茄定时灌溉</td><td>阀门 A1, A2</td><td>20 分钟</td><td>1.1 吨</td><td>自动</td><td><span class="status-tag online">成功</span></td></tr>
+            <tr><td>昨日 14:30</td><td>高温应急灌溉</td><td>全部阀门</td><td>15 分钟</td><td>2.0 吨</td><td>自动</td><td><span class="status-tag online">成功</span></td></tr>
+            <tr><td>昨日 06:00</td><td>番茄定时灌溉</td><td>阀门 A1, A2</td><td>20 分钟</td><td>1.2 吨</td><td>自动</td><td><span class="status-tag online">成功</span></td></tr>
+            <tr><td>前日 18:00</td><td>番茄定时灌溉</td><td>阀门 A1, A2</td><td>20 分钟</td><td>1.0 吨</td><td>自动</td><td><span class="status-tag online">成功</span></td></tr>
+            <tr><td>前日 09:45</td><td>—</td><td>阀门 A2</td><td>10 分钟</td><td>0.5 吨</td><td>手动</td><td><span class="status-tag online">成功</span></td></tr>
+          </tbody></table>
+          <div class="pagination"><span>共 35 条</span><div class="page-btn">‹</div><div class="page-btn active">1</div><div class="page-btn">2</div><div class="page-btn">3</div><div class="page-btn">4</div><div class="page-btn">›</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 告警中心 ========== -->
+    <div class="page-section" data-page="alerts">
+      <div class="filter-bar">
+        <span class="filter-chip active" data-alert-filter="all">全部</span>
+        <span class="filter-chip" data-alert-filter="l1" style="border-color:var(--l1);color:var(--l1)">L1 紧急</span>
+        <span class="filter-chip" data-alert-filter="l2" style="border-color:var(--l2);color:var(--l2)">L2 重要</span>
+        <span class="filter-chip" data-alert-filter="l3">L3 一般</span>
+        <div style="flex:1"></div>
+        <button class="btn btn-primary" id="batchConfirmBtn">✓ 批量确认</button>
+        <button class="btn btn-outline">📥 导出</button>
+      </div>
+      <div class="table-card">
+        <div class="table-header"><span class="title">告警列表</span><span style="font-size:13px;color:var(--ts)">待处理 <strong style="color:var(--l1)">3</strong> 条 · 今日共 5 条</span></div>
+        <table><thead><tr><th><input type="checkbox" id="alertCheckAll"></th><th>级别</th><th>告警内容</th><th>设备</th><th>区域</th><th>时间</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody id="alertTableBody">
+          <tr data-level="l1"><td><input type="checkbox" class="alert-check"></td><td><span class="level-badge l1">L1</span></td><td>灌溉指令执行失败</td><td>阀门 A2</td><td>1号棚B区</td><td>10:15</td><td><span class="status-tag pending">待处理</span></td><td><button class="btn btn-primary btn-sm">处理</button></td></tr>
+          <tr data-level="l2"><td><input type="checkbox" class="alert-check"></td><td><span class="level-badge l2">L2</span></td><td>土壤湿度低于阈值 (32.5%)</td><td>土壤湿度传感器</td><td>1号棚</td><td>10:10</td><td><span class="status-tag pending">待处理</span></td><td><button class="btn btn-primary btn-sm">处理</button></td></tr>
+          <tr data-level="l2"><td><input type="checkbox" class="alert-check"></td><td><span class="level-badge l2">L2</span></td><td>传感器离线超过30分钟</td><td>3号温湿度传感器</td><td>2号棚</td><td>08:24</td><td><span class="status-tag pending">待处理</span></td><td><button class="btn btn-primary btn-sm">处理</button></td></tr>
+          <tr data-level="l3"><td><input type="checkbox" class="alert-check"></td><td><span class="level-badge l3">L3</span></td><td>定时灌溉任务完成</td><td>阀门 A1</td><td>1号棚A区</td><td>06:20</td><td><span class="status-tag resolved">已处理</span></td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
+          <tr data-level="l3"><td><input type="checkbox" class="alert-check"></td><td><span class="level-badge l3">L3</span></td><td>月度报告已生成</td><td>系统</td><td>—</td><td>昨日 20:00</td><td><span class="status-tag resolved">已处理</span></td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
+        </tbody></table>
+        <div class="pagination"><span>共 5 条</span><div class="page-btn">‹</div><div class="page-btn active">1</div><div class="page-btn">›</div></div>
+      </div>
+    </div>
+
+    <!-- ========== 种植管理 ========== -->
+    <div class="page-section" data-page="crops">
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:16px">作物模板</h3>
+      <div class="crop-cards">
+        <div class="crop-tpl-card">
+          <div class="crop-tpl-icon">🍅</div>
+          <div class="crop-tpl-name">番茄</div>
+          <div class="crop-tpl-desc">适合温室种植，生长周期约120天</div>
+          <div class="crop-tpl-params">
+            <div class="p-item"><div class="p-val">20-28°C</div><div>最佳温度</div></div>
+            <div class="p-item"><div class="p-val">50-75%</div><div>湿度范围</div></div>
+            <div class="p-item"><div class="p-val">2次/天</div><div>灌溉频次</div></div>
+            <div class="p-item"><div class="p-val">25min</div><div>单次时长</div></div>
+          </div>
+        </div>
+        <div class="crop-tpl-card">
+          <div class="crop-tpl-icon">🥒</div>
+          <div class="crop-tpl-name">黄瓜</div>
+          <div class="crop-tpl-desc">喜温喜湿，生长周期约90天</div>
+          <div class="crop-tpl-params">
+            <div class="p-item"><div class="p-val">22-30°C</div><div>最佳温度</div></div>
+            <div class="p-item"><div class="p-val">60-80%</div><div>湿度范围</div></div>
+            <div class="p-item"><div class="p-val">3次/天</div><div>灌溉频次</div></div>
+            <div class="p-item"><div class="p-val">15min</div><div>单次时长</div></div>
+          </div>
+        </div>
+        <div class="crop-tpl-card">
+          <div class="crop-tpl-icon">🥬</div>
+          <div class="crop-tpl-name">叶菜</div>
+          <div class="crop-tpl-desc">生长快速，周期约45天</div>
+          <div class="crop-tpl-params">
+            <div class="p-item"><div class="p-val">15-25°C</div><div>最佳温度</div></div>
+            <div class="p-item"><div class="p-val">55-70%</div><div>湿度范围</div></div>
+            <div class="p-item"><div class="p-val">2次/天</div><div>灌溉频次</div></div>
+            <div class="p-item"><div class="p-val">10min</div><div>单次时长</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-header"><span class="title">种植记录</span><div class="table-actions"><button class="btn btn-primary">+ 新建种植</button></div></div>
+        <table><thead><tr><th>作物</th><th>棚号</th><th>种植日期</th><th>当前阶段</th><th>生长进度</th><th>天数</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td>🍅 番茄</td><td>1号棚</td><td>2026-03-01</td><td><span class="status-tag online">开花坐果期</span></td><td><div class="progress-bar" style="width:200px"><div class="progress-fill" style="width:58%"></div></div></td><td>第58天 / 120天</td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
+          <tr><td>🥒 黄瓜</td><td>2号棚</td><td>2026-03-15</td><td><span class="status-tag online">生长期</span></td><td><div class="progress-bar" style="width:200px"><div class="progress-fill" style="width:35%"></div></div></td><td>第44天 / 90天</td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
+          <tr><td>🥬 叶菜</td><td>3号棚</td><td>2026-04-10</td><td><span class="status-tag pending">苗期</span></td><td><div class="progress-bar" style="width:200px"><div class="progress-fill" style="width:18%"></div></div></td><td>第18天 / 45天</td><td><button class="btn btn-outline btn-sm">详情</button></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- ========== 数据报表 ========== -->
+    <div class="page-section" data-page="reports">
+      <div class="filter-bar">
+        <div class="time-range">
+          <div class="time-range-item active" data-range="day">日</div>
+          <div class="time-range-item" data-range="week">周</div>
+          <div class="time-range-item" data-range="month">月</div>
+        </div>
+        <input type="date" class="filter-select" value="2026-04-28">
+        <div style="flex:1"></div>
+        <button class="btn btn-outline">📥 CSV</button>
+        <button class="btn btn-outline">📊 Excel</button>
+        <button class="btn btn-primary">📄 PDF</button>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="title">灌溉统计<span class="sub">灌溉次数 · 用水量 · 灌溉时长</span></div>
+          <div class="chart-placeholder"><div class="bar" style="height:45%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:35%"></div><div class="bar" style="height:80%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:50%"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="title">节水率趋势</div>
+          <div class="gauge-placeholder"><div class="gauge-circle"><div class="gauge-val">32%</div></div><div class="gauge-label">本月节水 12.8 吨</div></div>
+        </div>
+      </div>
+      <div class="charts-row" style="grid-template-columns:1fr 1fr">
+        <div class="chart-card">
+          <div class="title">传感器数据趋势<span class="sub">温度 · 湿度 · 光照</span></div>
+          <div class="chart-placeholder" style="height:180px"><div class="bar" style="height:50%"></div><div class="bar" style="height:65%"></div><div class="bar" style="height:40%"></div><div class="bar" style="height:75%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:45%"></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="title">告警统计<span class="sub">按级别分布</span></div>
+          <div class="chart-placeholder" style="height:180px"><div class="bar" style="height:30%;background:linear-gradient(180deg,var(--l1),#b71c1c)"></div><div class="bar" style="height:50%;background:linear-gradient(180deg,var(--l2),#e65100)"></div><div class="bar" style="height:70%;background:linear-gradient(180deg,var(--l3),#f9a825)"></div></div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-header"><span class="title">数据汇总</span></div>
+        <table><thead><tr><th>指标</th><th>今日</th><th>昨日</th><th>本周</th><th>本月</th><th>环比</th></tr></thead>
+        <tbody>
+          <tr><td>灌溉次数</td><td>5</td><td>6</td><td>38</td><td>152</td><td class="trend-up">↑ 12%</td></tr>
+          <tr><td>用水量(吨)</td><td>2.4</td><td>2.8</td><td>18.5</td><td>72.3</td><td class="trend-up">↓ 8%（节水）</td></tr>
+          <tr><td>节水率</td><td>32%</td><td>30%</td><td>31%</td><td>32%</td><td class="trend-up">↑ 8.3%</td></tr>
+          <tr><td>告警数</td><td>3</td><td>1</td><td>8</td><td>23</td><td class="trend-down">↑ 15%</td></tr>
+          <tr><td>设备在线率</td><td>96.8%</td><td>95.6%</td><td>96.2%</td><td>97.1%</td><td class="trend-up">↑ 1.2%</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- ========== 月度报告 ========== -->
+    <div class="page-section" data-page="monthly">
+      <div class="filter-bar"><div style="flex:1"></div><button class="btn btn-primary">📄 生成本月报告</button></div>
+      <div class="table-card">
+        <div class="table-header"><span class="title">报告列表</span></div>
+        <div class="report-item"><div class="report-icon">📄</div><div class="report-info"><div class="report-name">2026年4月运营报告</div><div class="report-meta">生成中... · 预计 2026-04-30</div></div><div class="report-actions"><span class="status-tag pending">生成中</span></div></div>
+        <div class="report-item"><div class="report-icon">📄</div><div class="report-info"><div class="report-name">2026年3月运营报告</div><div class="report-meta">2026-03-31 生成 · 12页 · 2.4MB</div></div><div class="report-actions"><button class="btn btn-outline btn-sm">📥 下载PDF</button><button class="btn btn-outline btn-sm">👁 预览</button></div></div>
+        <div class="report-item"><div class="report-icon">📄</div><div class="report-info"><div class="report-name">2026年2月运营报告</div><div class="report-meta">2026-02-28 生成 · 10页 · 2.1MB</div></div><div class="report-actions"><button class="btn btn-outline btn-sm">📥 下载PDF</button><button class="btn btn-outline btn-sm">👁 预览</button></div></div>
+        <div class="report-item"><div class="report-icon">📄</div><div class="report-info"><div class="report-name">2026年1月运营报告</div><div class="report-meta">2026-01-31 生成 · 11页 · 2.3MB</div></div><div class="report-actions"><button class="btn btn-outline btn-sm">📥 下载PDF</button><button class="btn btn-outline btn-sm">👁 预览</button></div></div>
+        <div class="report-item"><div class="report-icon">📄</div><div class="report-info"><div class="report-name">2025年12月运营报告</div><div class="report-meta">2025-12-31 生成 · 14页 · 2.8MB</div></div><div class="report-actions"><button class="btn btn-outline btn-sm">📥 下载PDF</button><button class="btn btn-outline btn-sm">👁 预览</button></div></div>
+      </div>
+    </div>
+
+    <!-- ========== 用户管理 ========== -->
+    <div class="page-section" data-page="users">
+      <div class="sub-tabs">
+        <div class="sub-tab active" data-subtab="userlist">用户列表</div>
+        <div class="sub-tab" data-subtab="oplog">操作日志</div>
+      </div>
+      <div class="sub-content" data-subtab="userlist">
+        <div class="filter-bar"><div style="flex:1"></div><button class="btn btn-primary">+ 添加用户</button></div>
+        <div class="table-card" style="margin-bottom:0">
+          <table><thead><tr><th>用户名</th><th>姓名</th><th>角色</th><th>手机号</th><th>所属基地</th><th>最后登录</th><th>状态</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td>admin</td><td>张三</td><td><span class="role-badge admin">管理员</span></td><td>138****1234</td><td>示范基地</td><td>今日 10:20</td><td><span class="status-tag online">正常</span></td><td><button class="btn btn-outline btn-sm">编辑</button></td></tr>
+            <tr><td>operator1</td><td>李四</td><td><span class="role-badge operator">操作员</span></td><td>139****5678</td><td>示范基地</td><td>今日 09:15</td><td><span class="status-tag online">正常</span></td><td><button class="btn btn-outline btn-sm">编辑</button> <button class="btn btn-outline btn-sm">重置密码</button></td></tr>
+            <tr><td>operator2</td><td>王五</td><td><span class="role-badge operator">操作员</span></td><td>137****9012</td><td>示范基地</td><td>昨日 16:30</td><td><span class="status-tag online">正常</span></td><td><button class="btn btn-outline btn-sm">编辑</button> <button class="btn btn-outline btn-sm">重置密码</button></td></tr>
+            <tr><td>viewer1</td><td>赵六</td><td><span class="role-badge readonly">只读</span></td><td>136****3456</td><td>示范基地</td><td>3天前</td><td><span class="status-tag online">正常</span></td><td><button class="btn btn-outline btn-sm">编辑</button> <button class="btn btn-outline btn-sm">重置密码</button></td></tr>
+            <tr><td>viewer2</td><td>钱七</td><td><span class="role-badge readonly">只读</span></td><td>135****7890</td><td>示范基地</td><td>7天前</td><td><span class="status-tag offline">禁用</span></td><td><button class="btn btn-outline btn-sm">编辑</button> <button class="btn btn-outline btn-sm">启用</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div class="sub-content" data-subtab="oplog" style="display:none">
+        <div class="table-card" style="margin-bottom:0">
+          <div class="table-header"><span class="title">操作日志</span><span style="font-size:13px;color:var(--ts)">近7天操作记录</span></div>
+          <table><thead><tr><th>时间</th><th>用户</th><th>操作类型</th><th>操作内容</th><th>IP地址</th><th>结果</th></tr></thead>
+          <tbody>
+            <tr><td>今日 10:20</td><td>张三</td><td>登录</td><td>PC端登录</td><td>192.168.1.100</td><td><span class="status-tag online">成功</span></td></tr>
+            <tr><td>今日 10:15</td><td>张三</td><td>灌溉操作</td><td>手动开启阀门A2，时长25分钟</td><td>192.168.1.100</td><td><span class="status-tag fault">失败</span></td></tr>
+            <tr><td>今日 09:15</td><td>李四</td><td>登录</td><td>小程序登录</td><td>10.0.0.52</td><td><span class="status-tag online">成功</span></td></tr>
+            <tr><td>昨日 16:30</td><td>王五</td><td>设备操作</td><td>重启3号温湿度传感器</td><td>192.168.1.102</td><td><span class="status-tag online">成功</span></td></tr>
+            <tr><td>昨日 14:00</td><td>张三</td><td>规则修改</td><td>修改"番茄定时灌溉"规则时间</td><td>192.168.1.100</td><td><span class="status-tag online">成功</span></td></tr>
+            <tr><td>昨日 10:00</td><td>张三</td><td>用户管理</td><td>禁用用户 viewer2</td><td>192.168.1.100</td><td><span class="status-tag online">成功</span></td></tr>
+          </tbody></table>
+          <div class="pagination"><span>共 48 条</span><div class="page-btn">‹</div><div class="page-btn active">1</div><div class="page-btn">2</div><div class="page-btn">3</div><div class="page-btn">›</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 系统设置 ========== -->
+    <div class="page-section" data-page="settings">
+      <div class="form-section">
+        <div class="form-section-title">基地信息</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">基地名称</label><input class="form-input" value="示范基地"></div>
+          <div class="form-group"><label class="form-label">基地编号</label><input class="form-input" value="BASE-001" disabled style="background:#f5f5f5"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">联系人</label><input class="form-input" value="张三"></div>
+          <div class="form-group"><label class="form-label">联系电话</label><input class="form-input" value="138****1234"></div>
+        </div>
+        <div class="form-group"><label class="form-label">基地地址</label><input class="form-input" value="XX省XX市XX区XX路XX号"></div>
+        <button class="btn btn-primary">💾 保存修改</button>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">通知配置</div>
+        <div class="notif-row"><div class="notif-info"><div class="notif-name">L1 紧急告警通知</div><div class="notif-desc">设备故障、灌溉失败等紧急告警，通过短信+微信推送</div></div><span class="toggle on" onclick="this.classList.toggle('on')"></span></div>
+        <div class="notif-row"><div class="notif-info"><div class="notif-name">L2 重要告警通知</div><div class="notif-desc">传感器异常、阈值告警等，通过微信推送</div></div><span class="toggle on" onclick="this.classList.toggle('on')"></span></div>
+        <div class="notif-row"><div class="notif-info"><div class="notif-name">L3 一般通知</div><div class="notif-desc">任务完成、报告生成等，仅站内消息</div></div><span class="toggle on" onclick="this.classList.toggle('on')"></span></div>
+        <div class="notif-row"><div class="notif-info"><div class="notif-name">免打扰时段</div><div class="notif-desc">22:00 - 06:00 期间不发送非紧急通知</div></div><span class="toggle on" onclick="this.classList.toggle('on')"></span></div>
+        <div class="notif-row"><div class="notif-info"><div class="notif-name">每日摘要</div><div class="notif-desc">每日 08:00 发送前一天运营摘要</div></div><span class="toggle" onclick="this.classList.toggle('on')"></span></div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">MQTT 连接状态</div>
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+          <div class="mqtt-indicator connected"><span class="mqtt-dot"></span> 已连接</div>
+          <span style="font-size:13px;color:var(--ts)">Broker: mqtt.smartfarm.local:1883</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Broker 地址</label><input class="form-input" value="mqtt.smartfarm.local"></div>
+          <div class="form-group"><label class="form-label">端口</label><input class="form-input" value="1883"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">客户端ID</label><input class="form-input" value="smartfarm-server-01" disabled style="background:#f5f5f5"></div>
+          <div class="form-group"><label class="form-label">上次重连</label><input class="form-input" value="2026-04-28 08:00:00" disabled style="background:#f5f5f5"></div>
+        </div>
+        <button class="btn btn-outline">🔄 重新连接</button>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// Page name mapping
+const pageNames = {
+  dashboard: '总览仪表盘',
+  devices: '设备管理',
+  irrigation: '灌溉管理',
+  alerts: '告警中心',
+  crops: '种植管理',
+  reports: '数据报表',
+  monthly: '月度报告',
+  users: '用户管理',
+  settings: '系统设置'
+};
+const pageBreadcrumbs = {
+  dashboard: '首页 / 总览仪表盘',
+  devices: '业务管理 / 设备管理',
+  irrigation: '业务管理 / 灌溉管理',
+  alerts: '业务管理 / 告警中心',
+  crops: '业务管理 / 种植管理',
+  reports: '数据分析 / 数据报表',
+  monthly: '数据分析 / 月度报告',
+  users: '系统 / 用户管理',
+  settings: '系统 / 系统设置'
+};
+
+// Navigate to page
+function navigateTo(page) {
+  // Update sidebar
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const target = document.querySelector('.nav-item[data-page="'+page+'"]');
+  if (target) target.classList.add('active');
+  // Update topbar
+  document.getElementById('topbarTitle').textContent = pageNames[page] || page;
+  document.getElementById('topbarBreadcrumb').textContent = pageBreadcrumbs[page] || '';
+  // Show page section
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const section = document.querySelector('.page-section[data-page="'+page+'"]');
+  if (section) section.classList.add('active');
+  // Scroll to top
+  document.querySelector('.content').scrollTop = 0;
+}
+
+// Sidebar navigation
+document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+  item.addEventListener('click', () => navigateTo(item.dataset.page));
+});
+
+// Sub-tabs (irrigation, users)
+document.querySelectorAll('.sub-tabs').forEach(tabBar => {
+  tabBar.querySelectorAll('.sub-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const parent = tab.closest('.page-section');
+      parent.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const tabName = tab.dataset.subtab;
+      parent.querySelectorAll('.sub-content').forEach(c => {
+        c.style.display = c.dataset.subtab === tabName ? 'block' : 'none';
+      });
+    });
+  });
+});
+
+// Device filters
+document.getElementById('deviceTypeFilter').addEventListener('change', filterDevices);
+document.getElementById('deviceStatusFilter').addEventListener('change', filterDevices);
+function filterDevices() {
+  const type = document.getElementById('deviceTypeFilter').value;
+  const status = document.getElementById('deviceStatusFilter').value;
+  document.querySelectorAll('#deviceTableBody tr').forEach(row => {
+    const matchType = !type || row.dataset.type === type;
+    const matchStatus = !status || row.dataset.status === status;
+    row.style.display = (matchType && matchStatus) ? '' : 'none';
+  });
+}
+
+// Alert filter chips
+document.querySelectorAll('[data-alert-filter]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('[data-alert-filter]').forEach(c => {
+      c.classList.remove('active');
+      c.style.background = '';
+      c.style.color = '';
+      c.style.borderColor = '';
+    });
+    chip.classList.add('active');
+    const level = chip.dataset.alertFilter;
+    document.querySelectorAll('#alertTableBody tr').forEach(row => {
+      if (level === 'all') { row.style.display = ''; }
+      else { row.style.display = row.dataset.level === level ? '' : 'none'; }
+    });
+  });
+});
+
+// Alert check all
+document.getElementById('alertCheckAll').addEventListener('change', function() {
+  document.querySelectorAll('.alert-check').forEach(cb => cb.checked = this.checked);
+});
+
+// Batch confirm
+document.getElementById('batchConfirmBtn').addEventListener('click', () => {
+  const checked = document.querySelectorAll('.alert-check:checked');
+  if (checked.length === 0) { alert('请先选择要确认的告警'); return; }
+  if (confirm('确认处理选中的 ' + checked.length + ' 条告警？')) {
+    checked.forEach(cb => {
+      const row = cb.closest('tr');
+      const statusCell = row.querySelector('.status-tag');
+      if (statusCell && statusCell.classList.contains('pending')) {
+        statusCell.className = 'status-tag resolved';
+        statusCell.textContent = '已处理';
+      }
+      cb.checked = false;
+    });
+    document.getElementById('alertCheckAll').checked = false;
+  }
+});
+
+// Time range selector
+document.querySelectorAll('.time-range-item').forEach(item => {
+  item.addEventListener('click', () => {
+    item.parentElement.querySelectorAll('.time-range-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+</script>
 </body></html>

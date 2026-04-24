@@ -13,13 +13,17 @@ body{font-family:'Microsoft YaHei',sans-serif;background:#060e1a;color:#c8d8e8;w
 .main-title{font-size:24px;font-weight:700;letter-spacing:6px;background:linear-gradient(90deg,#4caf50,#81c784,#4caf50);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .sub-title{font-size:11px;color:#546e7a;letter-spacing:3px;text-align:center}
 .top-right{display:flex;gap:12px;font-size:12px;color:#78909c}
-.icon-btn{background:rgba(255,255,255,.06);border:1px solid rgba(76,175,80,.2);color:#81c784;padding:4px 12px;border-radius:4px;font-size:12px}
+.icon-btn{background:rgba(255,255,255,.06);border:1px solid rgba(76,175,80,.2);color:#81c784;padding:4px 12px;border-radius:4px;font-size:12px;cursor:pointer;transition:all .2s}
+.icon-btn:hover{background:rgba(76,175,80,.15);border-color:rgba(76,175,80,.5)}
 .alert-banner{height:32px;background:linear-gradient(90deg,rgba(244,67,54,.15),rgba(244,67,54,.25),rgba(244,67,54,.15));display:flex;align-items:center;justify-content:center;gap:12px;font-size:13px;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.85}}
 .banner-level{color:#ef5350;font-weight:bold}
 .banner-text{color:#ffcdd2}
+.banner-action{color:#ef5350;font-size:11px;border:1px solid rgba(244,67,54,.4);padding:1px 8px;border-radius:3px;cursor:pointer;transition:all .2s}
+.banner-action:hover{background:rgba(244,67,54,.2)}
 .stats-row{height:72px;display:flex;gap:12px;padding:8px 24px}
-.stat-card{flex:1;background:rgba(10,30,50,.7);border:1px solid rgba(76,175,80,.15);border-radius:8px;display:flex;align-items:center;gap:12px;padding:0 16px}
+.stat-card{flex:1;background:rgba(10,30,50,.7);border:1px solid rgba(76,175,80,.15);border-radius:8px;display:flex;align-items:center;gap:12px;padding:0 16px;transition:all .3s;cursor:default}
+.stat-card:hover{border-color:rgba(76,175,80,.4);background:rgba(10,30,50,.9);transform:translateY(-2px);box-shadow:0 4px 20px rgba(76,175,80,.15)}
 .stat-icon{font-size:28px}
 .stat-label{font-size:11px;color:#78909c}
 .stat-value{font-size:22px;font-weight:700}
@@ -35,34 +39,43 @@ body{font-family:'Microsoft YaHei',sans-serif;background:#060e1a;color:#c8d8e8;w
 .env-label{color:#90a4ae}
 .env-val{font-weight:600}
 .heatmap-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
-.heatmap-cell{border-radius:4px;padding:6px;text-align:center;font-size:10px;border:1px solid rgba(255,255,255,.05)}
+.heatmap-cell{border-radius:4px;padding:6px;text-align:center;font-size:10px;border:1px solid rgba(255,255,255,.05);cursor:pointer;transition:all .2s}
+.heatmap-cell:hover{border-color:rgba(76,175,80,.4);transform:scale(1.05)}
 .zone-vals{font-size:11px;display:flex;justify-content:center;gap:6px;margin-top:2px}
 .legend-bar{height:6px;border-radius:3px;background:linear-gradient(90deg,#1565c0,#4caf50,#ff9800,#f44336);margin:4px 0}
 .legend-labels{display:flex;justify-content:space-between;font-size:10px;color:#546e7a}
 .scene-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;color:#546e7a;position:relative}
 .scene-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:rgba(255,255,255,.3)}
-.sensor-tag{position:absolute;background:rgba(0,0,0,.7);border:1px solid rgba(76,175,80,.4);border-radius:6px;padding:4px 8px;font-size:10px}
+.sensor-tag{position:absolute;background:rgba(0,0,0,.7);border:1px solid rgba(76,175,80,.4);border-radius:6px;padding:4px 8px;font-size:10px;cursor:pointer;transition:all .2s;z-index:10}
+.sensor-tag:hover{border-color:rgba(76,175,80,.8);background:rgba(0,0,0,.85);transform:scale(1.08)}
 .sensor-tag.alarm{border-color:#ef5350;background:rgba(60,0,0,.8);animation:alarmPulse 1s infinite}
+.sensor-tag.alarm:hover{border-color:#ff5252}
 @keyframes alarmPulse{0%,100%{box-shadow:0 0 8px rgba(244,67,54,.5)}50%{box-shadow:0 0 20px rgba(244,67,54,.8)}}
 .tag-name{color:#90a4ae;font-size:9px}
 .tag-val{color:#e0e0e0;font-size:13px;font-weight:600}
-.l1-card{position:absolute;bottom:20px;right:20px;width:280px;background:rgba(40,0,0,.92);border:2px solid #ef5350;border-radius:12px;padding:20px;display:flex;gap:14px;animation:l1Glow 1.5s infinite}
+.l1-card{position:absolute;bottom:20px;right:20px;width:280px;background:rgba(40,0,0,.92);border:2px solid #ef5350;border-radius:12px;padding:20px;display:flex;gap:14px;animation:l1Glow 1.5s infinite;transition:all .4s;z-index:20}
 @keyframes l1Glow{0%,100%{box-shadow:0 0 15px rgba(244,67,54,.4)}50%{box-shadow:0 0 30px rgba(244,67,54,.7)}}
+.l1-card.dismissed{opacity:0;transform:translateX(300px);pointer-events:none}
 .l1-icon{font-size:36px}
 .l1-title{font-size:18px;font-weight:bold;color:#ef5350}
 .l1-desc{font-size:13px;color:#ffcdd2;margin:6px 0}
-.l1-btn{background:#ef5350;color:#fff;border:none;border-radius:6px;padding:6px 20px;font-size:13px;font-weight:600}
-.device-row{display:flex;align-items:center;gap:8px;padding:5px 8px;font-size:12px;border-radius:4px}
-.device-row:hover{background:rgba(255,255,255,.03)}
+.l1-btn{background:#ef5350;color:#fff;border:none;border-radius:6px;padding:6px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.l1-btn:hover{background:#f44336;box-shadow:0 0 12px rgba(244,67,54,.5)}
+.device-row{display:flex;align-items:center;gap:8px;padding:5px 8px;font-size:12px;border-radius:4px;cursor:pointer;transition:all .15s}
+.device-row:hover{background:rgba(255,255,255,.06)}
 .dev-dot{width:6px;height:6px;border-radius:50%}
 .dev-dot.on{background:#4caf50;box-shadow:0 0 4px #4caf50}
 .dev-dot.alarm{background:#ef5350;animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .dev-name{flex:1;color:#b0bec5}
 .dev-status{font-size:10px;color:#78909c}
-.ctrl-row{display:flex;justify-content:space-between;padding:5px 8px;font-size:12px}
-.ctrl-on{color:#4caf50;font-size:10px;background:rgba(76,175,80,.15);padding:2px 8px;border-radius:3px}
-.ctrl-off{color:#78909c;font-size:10px;background:rgba(120,144,156,.15);padding:2px 8px;border-radius:3px}
+.ctrl-row{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;font-size:12px;cursor:pointer;border-radius:4px;transition:all .15s}
+.ctrl-row:hover{background:rgba(255,255,255,.04)}
+.ctrl-toggle{font-size:10px;padding:2px 8px;border-radius:3px;cursor:pointer;transition:all .2s;border:none}
+.ctrl-on{color:#4caf50;background:rgba(76,175,80,.15)}
+.ctrl-on:hover{background:rgba(76,175,80,.25)}
+.ctrl-off{color:#78909c;background:rgba(120,144,156,.15)}
+.ctrl-off:hover{background:rgba(120,144,156,.25)}
 .timeline{height:160px;background:rgba(8,24,48,.9);border-top:1px solid rgba(76,175,80,.12);padding:8px 24px}
 .tl-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .tl-title{font-size:13px;color:#81c784;font-weight:600}
@@ -71,7 +84,8 @@ body{font-family:'Microsoft YaHei',sans-serif;background:#060e1a;color:#c8d8e8;w
 .tl-chart{height:80px;background:linear-gradient(180deg,rgba(76,175,80,.04),transparent);border-radius:4px;position:relative;margin-bottom:4px}
 .tl-line{position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(76,175,80,.15)}
 .tl-events{display:flex;justify-content:space-between;padding:0 20px}
-.tl-event{text-align:center;font-size:9px}
+.tl-event{text-align:center;font-size:9px;cursor:pointer;transition:all .2s;padding:4px;border-radius:4px}
+.tl-event:hover{background:rgba(76,175,80,.1);transform:translateY(-2px)}
 .ev-dot{width:8px;height:8px;border-radius:50%;margin:0 auto 2px}
 .ev-time{color:#546e7a}
 .ev-text{color:#78909c}
@@ -80,15 +94,33 @@ body{font-family:'Microsoft YaHei',sans-serif;background:#060e1a;color:#c8d8e8;w
 .crop-metrics{display:flex;flex-direction:column;gap:4px}
 .metric-label{font-size:10px;color:#78909c}
 .metric-val{font-size:14px;font-weight:700;color:#4caf50}
+
+/* Popup styles */
+.popup-overlay{position:fixed;top:0;left:0;width:1920px;height:1080px;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center}
+.popup-overlay.show{display:flex}
+.popup-box{background:linear-gradient(180deg,rgba(12,30,55,.98),rgba(8,20,40,.98));border:1px solid rgba(76,175,80,.3);border-radius:12px;padding:24px;min-width:400px;max-width:500px;animation:popIn .2s ease;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+@keyframes popIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.popup-title{font-size:16px;font-weight:700;color:#81c784;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.popup-close{cursor:pointer;color:#78909c;font-size:20px;transition:color .2s}
+.popup-close:hover{color:#fff}
+.popup-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(76,175,80,.08)}
+.popup-row:last-child{border-bottom:none}
+.popup-label{color:#78909c}
+.popup-val{color:#e0e0e0;font-weight:500}
+.popup-chart{height:120px;background:linear-gradient(180deg,rgba(76,175,80,.06),transparent);border-radius:6px;margin:12px 0;display:flex;align-items:flex-end;padding:0 8px 8px;gap:4px}
+.popup-chart .pbar{flex:1;background:linear-gradient(180deg,#81c784,#2e7d32);border-radius:3px 3px 0 0;min-height:6px}
 </style>
 </head>
 <body>
 <div class="top-bar">
-  <div class="top-left"><span class="clock">10:24:35</span><span>🌤 26°C 多云 18~28°C</span></div>
+  <div class="top-left"><span class="clock" id="liveClock">10:24:35</span><span>🌤 26°C 多云 18~28°C</span></div>
   <div style="text-align:center"><div class="main-title">智慧温室数字孪生监控平台</div><div class="sub-title">3D场景可视化 · 实时监测 · 智能灌溉 · 告警联动 · 历史回放</div></div>
   <div class="top-right"><span class="icon-btn">🔊 声音开启</span><span class="icon-btn">⛶ 全屏</span><span>👤 管理员</span></div>
 </div>
-<div class="alert-banner"><span>🔔</span><span class="banner-level">L2 告警：</span><span class="banner-text">土壤湿度偏低，请及时处理!</span><span style="color:#78909c;font-size:11px">10:24:10</span><span style="color:#ef5350;font-size:11px;border:1px solid rgba(244,67,54,.4);padding:1px 8px;border-radius:3px">查看详情</span></div>
+<div class="alert-banner" id="alertBanner">
+  <span>🔔</span><span class="banner-level">L2 告警：</span><span class="banner-text">土壤湿度偏低，请及时处理!</span><span style="color:#78909c;font-size:11px">10:24:10</span>
+  <span class="banner-action" id="bannerDetailBtn">查看详情</span>
+</div>
 <div class="stats-row">
   <div class="stat-card"><div class="stat-icon">💧</div><div><div class="stat-label">今日灌溉量</div><div class="stat-value">1280 <small>L</small></div><div class="stat-trend">较昨日 +12.5%</div></div></div>
   <div class="stat-card"><div class="stat-icon">🌊</div><div><div class="stat-label">累计节水率</div><div class="stat-value">32<small>%</small></div><div class="stat-trend">较上月 +8.3%</div></div></div>
@@ -133,41 +165,41 @@ body{font-family:'Microsoft YaHei',sans-serif;background:#060e1a;color:#c8d8e8;w
   <div class="center-col">
     <div class="scene-placeholder">
       <div class="scene-text"><div style="font-size:48px;margin-bottom:12px">🏗️</div><div style="font-size:16px">3D 温室数字孪生场景</div><div style="font-size:12px;margin-top:8px">Three.js 实时渲染 · 传感器点位 · 热力图叠加 · 灌溉水流动画</div></div>
-      <div class="sensor-tag" style="left:18%;top:25%"><div class="tag-name">🌡 1号温湿度传感器</div><div class="tag-val">28.5°C</div><div style="color:#4caf50;font-size:9px">运行中</div></div>
-      <div class="sensor-tag" style="left:55%;top:18%"><div class="tag-name">☀️ 光照传感器</div><div class="tag-val">452 μmol/m²/s</div></div>
-      <div class="sensor-tag" style="left:70%;top:28%"><div class="tag-name">🫧 CO₂传感器</div><div class="tag-val">620 ppm</div></div>
-      <div class="sensor-tag" style="left:35%;top:52%"><div class="tag-name">🌿 土壤湿度传感器</div><div class="tag-val">32.5%</div></div>
-      <div class="sensor-tag alarm" style="left:45%;top:38%"><div class="tag-name">🔴 3号区域</div><div class="tag-val" style="color:#ef5350">32.8°C</div></div>
-      <div class="sensor-tag" style="left:25%;top:68%"><div class="tag-name">🚿 灌溉阀门A3</div><div style="color:#4caf50;font-size:10px">开启中</div></div>
+      <div class="sensor-tag" style="left:18%;top:25%" data-sensor="1号温湿度传感器" data-sval="28.5°C / 65%" data-sloc="1号棚A区" data-sstatus="运行中"><div class="tag-name">🌡 1号温湿度传感器</div><div class="tag-val">28.5°C</div><div style="color:#4caf50;font-size:9px">运行中</div></div>
+      <div class="sensor-tag" style="left:55%;top:18%" data-sensor="光照传感器" data-sval="452 μmol/m²/s" data-sloc="1号棚" data-sstatus="运行中"><div class="tag-name">☀️ 光照传感器</div><div class="tag-val">452 μmol/m²/s</div></div>
+      <div class="sensor-tag" style="left:70%;top:28%" data-sensor="CO₂传感器" data-sval="620 ppm" data-sloc="1号棚" data-sstatus="运行中"><div class="tag-name">🫧 CO₂传感器</div><div class="tag-val">620 ppm</div></div>
+      <div class="sensor-tag" style="left:35%;top:52%" data-sensor="土壤湿度传感器" data-sval="32.5%" data-sloc="1号棚" data-sstatus="运行中"><div class="tag-name">🌿 土壤湿度传感器</div><div class="tag-val">32.5%</div></div>
+      <div class="sensor-tag alarm" style="left:45%;top:38%" data-sensor="3号区域温度传感器" data-sval="32.8°C" data-sloc="3号区" data-sstatus="告警"><div class="tag-name">🔴 3号区域</div><div class="tag-val" style="color:#ef5350">32.8°C</div></div>
+      <div class="sensor-tag" style="left:25%;top:68%" data-sensor="灌溉阀门A3" data-sval="开启中" data-sloc="1号棚C区" data-sstatus="运行中"><div class="tag-name">🚿 灌溉阀门A3</div><div style="color:#4caf50;font-size:10px">开启中</div></div>
     </div>
-    <div class="l1-card">
+    <div class="l1-card" id="l1Card">
       <div class="l1-icon">⚠️</div>
-      <div><div class="l1-title">L1 告警</div><div class="l1-desc">3号区域温度异常升高</div><div style="font-size:11px;color:#ef9a9a">当前温度: 32.8°C 阈值: 30.0°C<br>请立即检查通风及降温系统!</div><button class="l1-btn" style="margin-top:8px">立即处理</button></div>
+      <div><div class="l1-title">L1 告警</div><div class="l1-desc">3号区域温度异常升高</div><div style="font-size:11px;color:#ef9a9a">当前温度: 32.8°C 阈值: 30.0°C<br>请立即检查通风及降温系统!</div><button class="l1-btn" id="l1DismissBtn" style="margin-top:8px">立即处理</button></div>
     </div>
   </div>
   <div class="right-col">
     <div class="panel" style="flex:1">
       <div class="panel-head">设备状态 <span style="font-size:10px;color:#546e7a;margin-left:auto">全部(32) 在线(27) 告警(3) 故障(2)</span></div>
-      <div class="device-row"><span>📡</span><span class="dev-name">1号温湿度传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
-      <div class="device-row"><span>📡</span><span class="dev-name">2号温湿度传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
-      <div class="device-row" style="color:#ef5350"><span>📡</span><span class="dev-name" style="color:#ef5350">3号温湿度传感器</span><span class="dev-dot alarm"></span><span class="dev-status" style="color:#ef5350">告警</span></div>
-      <div class="device-row"><span>📡</span><span class="dev-name">4号温湿度传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
-      <div class="device-row"><span>📡</span><span class="dev-name">5号温湿度传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
-      <div class="device-row"><span>🫧</span><span class="dev-name">CO₂传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
-      <div class="device-row"><span>☀️</span><span class="dev-name">光照传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
-      <div class="device-row"><span>🚿</span><span class="dev-name">灌溉阀门A1</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
-      <div class="device-row"><span>🚿</span><span class="dev-name">灌溉阀门A2</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
-      <div class="device-row"><span>🚿</span><span class="dev-name">灌溉阀门A3</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
-      <div class="device-row"><span>🚿</span><span class="dev-name">灌溉阀门B1</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
-      <div style="text-align:center;font-size:11px;color:#546e7a;padding:6px">查看更多设备</div>
+      <div class="device-row" data-dname="1号温湿度传感器" data-dtype="传感器" data-dloc="1号棚A区" data-dval="28.5°C / 65%" data-dstatus="在线"><span>📡</span><span class="dev-name">1号温湿度传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
+      <div class="device-row" data-dname="2号温湿度传感器" data-dtype="传感器" data-dloc="1号棚B区" data-dval="27.8°C / 62%" data-dstatus="在线"><span>📡</span><span class="dev-name">2号温湿度传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
+      <div class="device-row" style="color:#ef5350" data-dname="3号温湿度传感器" data-dtype="传感器" data-dloc="2号棚" data-dval="32.8°C" data-dstatus="告警"><span>📡</span><span class="dev-name" style="color:#ef5350">3号温湿度传感器</span><span class="dev-dot alarm"></span><span class="dev-status" style="color:#ef5350">告警</span></div>
+      <div class="device-row" data-dname="4号温湿度传感器" data-dtype="传感器" data-dloc="2号棚B区" data-dval="26.4°C / 58%" data-dstatus="在线"><span>📡</span><span class="dev-name">4号温湿度传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
+      <div class="device-row" data-dname="5号温湿度传感器" data-dtype="传感器" data-dloc="3号棚" data-dval="25.1°C / 63%" data-dstatus="在线"><span>📡</span><span class="dev-name">5号温湿度传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
+      <div class="device-row" data-dname="CO₂传感器" data-dtype="传感器" data-dloc="1号棚" data-dval="620 ppm" data-dstatus="在线"><span>🫧</span><span class="dev-name">CO₂传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
+      <div class="device-row" data-dname="光照传感器" data-dtype="传感器" data-dloc="1号棚" data-dval="452 μmol/m²/s" data-dstatus="在线"><span>☀️</span><span class="dev-name">光照传感器</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
+      <div class="device-row" data-dname="灌溉阀门A1" data-dtype="阀门" data-dloc="1号棚A区" data-dval="关闭" data-dstatus="在线"><span>🚿</span><span class="dev-name">灌溉阀门A1</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
+      <div class="device-row" data-dname="灌溉阀门A2" data-dtype="阀门" data-dloc="1号棚B区" data-dval="开启中(12min)" data-dstatus="在线"><span>🚿</span><span class="dev-name">灌溉阀门A2</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
+      <div class="device-row" data-dname="灌溉阀门A3" data-dtype="阀门" data-dloc="1号棚C区" data-dval="开启中" data-dstatus="在线"><span>🚿</span><span class="dev-name">灌溉阀门A3</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
+      <div class="device-row" data-dname="灌溉阀门B1" data-dtype="阀门" data-dloc="2号棚A区" data-dval="关闭" data-dstatus="在线"><span>🚿</span><span class="dev-name">灌溉阀门B1</span><span class="dev-dot on"></span><span class="dev-status">在线</span></div>
+      <div style="text-align:center;font-size:11px;color:#546e7a;padding:6px;cursor:pointer" onmouseover="this.style.color='#81c784'" onmouseout="this.style.color='#546e7a'">查看更多设备</div>
     </div>
     <div class="panel">
       <div class="panel-head">环境控制器</div>
-      <div class="ctrl-row"><span>🌀 循环风机</span><span class="ctrl-on">在线</span></div>
-      <div class="ctrl-row"><span>💡 补光灯</span><span class="ctrl-on">在线</span></div>
-      <div class="ctrl-row"><span>🔦 杀虫灯</span><span class="ctrl-off">离线</span></div>
-      <div class="ctrl-row"><span>📷 摄像头1号</span><span class="ctrl-on">在线</span></div>
-      <div class="ctrl-row"><span>📷 摄像头2号</span><span class="ctrl-on">在线</span></div>
+      <div class="ctrl-row"><span>🌀 循环风机</span><button class="ctrl-toggle ctrl-on" onclick="toggleCtrl(this)">运行中</button></div>
+      <div class="ctrl-row"><span>💡 补光灯</span><button class="ctrl-toggle ctrl-on" onclick="toggleCtrl(this)">运行中</button></div>
+      <div class="ctrl-row"><span>🔦 杀虫灯</span><button class="ctrl-toggle ctrl-off" onclick="toggleCtrl(this)">已关闭</button></div>
+      <div class="ctrl-row"><span>📷 摄像头1号</span><button class="ctrl-toggle ctrl-on" onclick="toggleCtrl(this)">运行中</button></div>
+      <div class="ctrl-row"><span>📷 摄像头2号</span><button class="ctrl-toggle ctrl-on" onclick="toggleCtrl(this)">运行中</button></div>
     </div>
   </div>
 </div>
@@ -183,14 +215,144 @@ body{font-family:'Microsoft YaHei',sans-serif;background:#060e1a;color:#c8d8e8;w
   </div>
   <div class="tl-chart"><div class="tl-line"></div></div>
   <div class="tl-events">
-    <div class="tl-event"><div class="ev-dot" style="background:#42a5f5"></div><div class="ev-time">12:15</div><div class="ev-text">🚿 灌溉 12min</div></div>
-    <div class="tl-event"><div class="ev-dot" style="background:#ffa726"></div><div class="ev-time">15:40</div><div class="ev-text">☀️ 补光灯开启</div></div>
-    <div class="tl-event"><div class="ev-dot" style="background:#ef5350"></div><div class="ev-time">19:32</div><div class="ev-text">⚠️ 湿度偏低</div></div>
-    <div class="tl-event"><div class="ev-dot" style="background:#42a5f5"></div><div class="ev-time">22:10</div><div class="ev-text">🚿 灌溉 8min</div></div>
-    <div class="tl-event"><div class="ev-dot" style="background:#78909c"></div><div class="ev-time">03:45</div><div class="ev-text">📡 风机开启</div></div>
-    <div class="tl-event"><div class="ev-dot" style="background:#ef5350"></div><div class="ev-time">07:20</div><div class="ev-text">⚠️ 温度异常</div></div>
-    <div class="tl-event"><div class="ev-dot" style="background:#42a5f5"></div><div class="ev-time">09:55</div><div class="ev-text">🚿 灌溉 11min</div></div>
+    <div class="tl-event" data-etime="12:15" data-etext="灌溉阀门A2开启，灌溉12分钟，用水0.4吨" data-etype="灌溉"><div class="ev-dot" style="background:#42a5f5"></div><div class="ev-time">12:15</div><div class="ev-text">🚿 灌溉 12min</div></div>
+    <div class="tl-event" data-etime="15:40" data-etext="光照不足，自动开启补光灯，持续2小时" data-etype="设备控制"><div class="ev-dot" style="background:#ffa726"></div><div class="ev-time">15:40</div><div class="ev-text">☀️ 补光灯开启</div></div>
+    <div class="tl-event" data-etime="19:32" data-etext="土壤湿度降至35%以下，触发L2告警" data-etype="告警"><div class="ev-dot" style="background:#ef5350"></div><div class="ev-time">19:32</div><div class="ev-text">⚠️ 湿度偏低</div></div>
+    <div class="tl-event" data-etime="22:10" data-etext="定时灌溉规则触发，阀门A1灌溉8分钟" data-etype="灌溉"><div class="ev-dot" style="background:#42a5f5"></div><div class="ev-time">22:10</div><div class="ev-text">🚿 灌溉 8min</div></div>
+    <div class="tl-event" data-etime="03:45" data-etext="温度升高，自动开启循环风机降温" data-etype="设备控制"><div class="ev-dot" style="background:#78909c"></div><div class="ev-time">03:45</div><div class="ev-text">📡 风机开启</div></div>
+    <div class="tl-event" data-etime="07:20" data-etext="3号区域温度升至32.8°C，超过阈值30°C，触发L1告警" data-etype="告警"><div class="ev-dot" style="background:#ef5350"></div><div class="ev-time">07:20</div><div class="ev-text">⚠️ 温度异常</div></div>
+    <div class="tl-event" data-etime="09:55" data-etext="湿度联动灌溉触发，阀门A3灌溉11分钟" data-etype="灌溉"><div class="ev-dot" style="background:#42a5f5"></div><div class="ev-time">09:55</div><div class="ev-text">🚿 灌溉 11min</div></div>
   </div>
-  <div style="display:flex;align-items:center;gap:12px;margin-top:4px"><span style="background:rgba(255,255,255,.06);border:1px solid rgba(76,175,80,.2);color:#81c784;padding:2px 10px;border-radius:3px;font-size:11px">1x ▼</span><span style="color:#4caf50;font-family:monospace;font-size:12px">10:24:35</span><span style="font-size:10px;color:#4caf50;background:rgba(76,175,80,.15);padding:1px 6px;border-radius:3px">实时</span></div>
+  <div style="display:flex;align-items:center;gap:12px;margin-top:4px"><span style="background:rgba(255,255,255,.06);border:1px solid rgba(76,175,80,.2);color:#81c784;padding:2px 10px;border-radius:3px;font-size:11px">1x ▼</span><span class="clock" style="color:#4caf50;font-family:monospace;font-size:12px" id="timelineClock">10:24:35</span><span style="font-size:10px;color:#4caf50;background:rgba(76,175,80,.15);padding:1px 6px;border-radius:3px">实时</span></div>
 </div>
+
+<!-- Popup overlay -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-box" id="popupBox"></div>
+</div>
+
+<script>
+// === Live clock ===
+function updateClock() {
+  const now = new Date();
+  const t = now.toTimeString().slice(0, 8);
+  document.getElementById('liveClock').textContent = t;
+  document.getElementById('timelineClock').textContent = t;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// === Popup helpers ===
+function showPopup(html) {
+  document.getElementById('popupBox').innerHTML = html;
+  document.getElementById('popupOverlay').classList.add('show');
+}
+function hidePopup() {
+  document.getElementById('popupOverlay').classList.remove('show');
+}
+document.getElementById('popupOverlay').addEventListener('click', function(e) {
+  if (e.target === this) hidePopup();
+});
+
+// === Sensor tag clicks ===
+document.querySelectorAll('.sensor-tag').forEach(tag => {
+  tag.addEventListener('click', () => {
+    const name = tag.dataset.sensor;
+    const val = tag.dataset.sval;
+    const loc = tag.dataset.sloc;
+    const status = tag.dataset.sstatus;
+    const isAlarm = status === '告警';
+    showPopup(`
+      <div class="popup-title"><span>${isAlarm ? '🔴' : '🟢'} ${name}</span><span class="popup-close" onclick="hidePopup()">✕</span></div>
+      <div class="popup-row"><span class="popup-label">当前值</span><span class="popup-val" style="${isAlarm?'color:#ef5350':''}">${val}</span></div>
+      <div class="popup-row"><span class="popup-label">位置</span><span class="popup-val">${loc}</span></div>
+      <div class="popup-row"><span class="popup-label">状态</span><span class="popup-val" style="color:${isAlarm?'#ef5350':'#4caf50'}">${status}</span></div>
+      <div class="popup-row"><span class="popup-label">在线率(30天)</span><span class="popup-val">98.5%</span></div>
+      <div class="popup-row"><span class="popup-label">最后上报</span><span class="popup-val">刚刚</span></div>
+      <div style="font-size:12px;color:#81c784;margin-top:12px;font-weight:600">24小时趋势</div>
+      <div class="popup-chart">
+        <div class="pbar" style="height:40%"></div><div class="pbar" style="height:55%"></div><div class="pbar" style="height:50%"></div>
+        <div class="pbar" style="height:65%"></div><div class="pbar" style="height:60%"></div><div class="pbar" style="height:70%"></div>
+        <div class="pbar" style="height:55%"></div><div class="pbar" style="height:45%"></div><div class="pbar" style="height:50%"></div>
+        <div class="pbar" style="height:60%"></div><div class="pbar" style="height:75%"></div><div class="pbar" style="height:68%"></div>
+      </div>
+    `);
+  });
+});
+
+// === L1 card dismiss ===
+document.getElementById('l1DismissBtn').addEventListener('click', () => {
+  document.getElementById('l1Card').classList.add('dismissed');
+});
+
+// === L2 banner detail ===
+document.getElementById('bannerDetailBtn').addEventListener('click', () => {
+  showPopup(`
+    <div class="popup-title"><span>🔔 L2 告警详情</span><span class="popup-close" onclick="hidePopup()">✕</span></div>
+    <div class="popup-row"><span class="popup-label">告警级别</span><span class="popup-val" style="color:#f57c00">L2 重要</span></div>
+    <div class="popup-row"><span class="popup-label">告警内容</span><span class="popup-val">土壤湿度低于阈值</span></div>
+    <div class="popup-row"><span class="popup-label">当前值</span><span class="popup-val" style="color:#f57c00">32.5%</span></div>
+    <div class="popup-row"><span class="popup-label">阈值</span><span class="popup-val">35%</span></div>
+    <div class="popup-row"><span class="popup-label">设备</span><span class="popup-val">土壤湿度传感器</span></div>
+    <div class="popup-row"><span class="popup-label">位置</span><span class="popup-val">1号棚</span></div>
+    <div class="popup-row"><span class="popup-label">触发时间</span><span class="popup-val">10:24:10</span></div>
+    <div style="margin-top:16px;text-align:center">
+      <button style="background:#f57c00;color:#fff;border:none;border-radius:6px;padding:8px 24px;font-size:13px;font-weight:600;cursor:pointer" onclick="hidePopup()">确认处理</button>
+    </div>
+  `);
+});
+
+// === Device list clicks ===
+document.querySelectorAll('.device-row[data-dname]').forEach(row => {
+  row.addEventListener('click', () => {
+    const name = row.dataset.dname;
+    const type = row.dataset.dtype;
+    const loc = row.dataset.dloc;
+    const val = row.dataset.dval;
+    const status = row.dataset.dstatus;
+    const isAlarm = status === '告警';
+    showPopup(`
+      <div class="popup-title"><span>${isAlarm ? '🔴' : '📡'} ${name}</span><span class="popup-close" onclick="hidePopup()">✕</span></div>
+      <div class="popup-row"><span class="popup-label">设备类型</span><span class="popup-val">${type}</span></div>
+      <div class="popup-row"><span class="popup-label">当前数据</span><span class="popup-val" style="${isAlarm?'color:#ef5350':''}">${val}</span></div>
+      <div class="popup-row"><span class="popup-label">位置</span><span class="popup-val">${loc}</span></div>
+      <div class="popup-row"><span class="popup-label">状态</span><span class="popup-val" style="color:${isAlarm?'#ef5350':'#4caf50'}">${status}</span></div>
+      <div class="popup-row"><span class="popup-label">在线率</span><span class="popup-val">98.5%</span></div>
+      <div class="popup-row"><span class="popup-label">固件版本</span><span class="popup-val">v2.1.3</span></div>
+      <div style="font-size:12px;color:#81c784;margin-top:12px;font-weight:600">24小时数据趋势</div>
+      <div class="popup-chart">
+        <div class="pbar" style="height:35%"></div><div class="pbar" style="height:50%"></div><div class="pbar" style="height:45%"></div>
+        <div class="pbar" style="height:60%"></div><div class="pbar" style="height:55%"></div><div class="pbar" style="height:65%"></div>
+        <div class="pbar" style="height:50%"></div><div class="pbar" style="height:40%"></div><div class="pbar" style="height:55%"></div>
+        <div class="pbar" style="height:60%"></div><div class="pbar" style="height:70%"></div><div class="pbar" style="height:58%"></div>
+      </div>
+    `);
+  });
+});
+
+// === Environment controller toggle ===
+function toggleCtrl(btn) {
+  if (btn.classList.contains('ctrl-on')) {
+    btn.classList.remove('ctrl-on');
+    btn.classList.add('ctrl-off');
+    btn.textContent = '已关闭';
+  } else {
+    btn.classList.remove('ctrl-off');
+    btn.classList.add('ctrl-on');
+    btn.textContent = '运行中';
+  }
+}
+
+// === Timeline event clicks ===
+document.querySelectorAll('.tl-event').forEach(ev => {
+  ev.addEventListener('click', () => {
+    showPopup(`
+      <div class="popup-title"><span>📋 事件详情</span><span class="popup-close" onclick="hidePopup()">✕</span></div>
+      <div class="popup-row"><span class="popup-label">时间</span><span class="popup-val">${ev.dataset.etime}</span></div>
+      <div class="popup-row"><span class="popup-label">类型</span><span class="popup-val">${ev.dataset.etype}</span></div>
+      <div class="popup-row"><span class="popup-label">详情</span><span class="popup-val" style="max-width:280px;text-align:right">${ev.dataset.etext}</span></div>
+    `);
+  });
+});
+</script>
 </body></html>
