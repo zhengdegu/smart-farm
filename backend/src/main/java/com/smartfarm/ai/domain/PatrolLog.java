@@ -34,10 +34,10 @@ public class PatrolLog extends BaseEntity {
 
     private Long notifiedUserId;
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "TEXT")
     private String rawContext;
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "TEXT")
     private String rawResponse;
 
     public enum Severity { INFO, WARNING, CRITICAL }

@@ -73,6 +73,10 @@ module.exports = {
   // Screen (public)
   getScreenData: () => request('/screen/data'),
 
+  // Greenhouse
+  getGreenhouses: () => request('/greenhouses'),
+  getGreenhouse: (id) => request(`/greenhouses/${id}`),
+
   // AI
   aiChat: (data) => request('/ai/chat', 'POST', data),
   aiChatHistory: (sessionId) => request(`/ai/chat/history?sessionId=${sessionId}`),

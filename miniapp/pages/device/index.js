@@ -3,6 +3,7 @@ const api = require('../../utils/api')
 Page({
   data: {
     summary: { online: 12, offline: 1, fault: 1 },
+    greenhouseMap: {},
     groups: [
       {
         title: '传感器',
@@ -47,6 +48,16 @@ Page({
 
   async loadDevices() {
     try {
+      // Load greenhouses for name mapping
+      let ghMap = {}
+      try {
+        const greenhouses = await api.getGreenhouses()
+        if (greenhouses && greenhouses.length) {
+          greenhouses.forEach(g => { ghMap[g.greenhouseNo] = g.name })
+        }
+      } catch (e) { /* ignore */ }
+      this.setData({ greenhouseMap: ghMap })
+
       const devices = await api.getDevices()
       if (devices && devices.length) {
         // Group devices by type
@@ -56,11 +67,12 @@ Page({
         let online = 0, offline = 0, fault = 0
 
         devices.forEach(d => {
+          const ghName = d.greenhouseNo ? (ghMap[d.greenhouseNo] || d.greenhouseNo + '号棚') : ''
           const item = {
             id: d.deviceId,
             name: d.name || d.deviceId,
             icon: d.deviceType === 'SENSOR' ? '🌡' : d.deviceType === 'VALVE' ? '🚿' : '📡',
-            meta: (d.greenhouseNo ? d.greenhouseNo + '号棚' : '') + (d.location ? ' · ' + d.location : ''),
+            meta: (ghName ? ghName : '') + (d.location ? ' · ' + d.location : ''),
             status: d.status === 'ONLINE' ? 'online' : d.status === 'FAULT' ? 'fault' : 'offline',
             iconBg: d.status === 'ONLINE' ? 'on' : 'off'
           }

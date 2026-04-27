@@ -23,10 +23,10 @@ public class OptimizationSuggestion extends BaseEntity {
 
     private String suggestionType; // THRESHOLD / DURATION / SCHEDULE
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "TEXT")
     private String currentValue;
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "TEXT")
     private String suggestedValue;
 
     private Double confidence;

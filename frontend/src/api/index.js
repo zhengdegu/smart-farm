@@ -113,6 +113,18 @@ export const settingsApi = {
   reconnectMqtt: () => api.post('/settings/mqtt-reconnect'),
 }
 
+// Greenhouse
+export const greenhouseApi = {
+  list: (params) => api.get('/greenhouses', { params }),
+  get: (id) => api.get(`/greenhouses/${id}`),
+  create: (data) => api.post('/greenhouses', data),
+  update: (id, data) => api.put(`/greenhouses/${id}`, data),
+  delete: (id) => api.delete(`/greenhouses/${id}`),
+  listDevices: (id) => api.get(`/greenhouses/${id}/devices`),
+  getEnvironment: (id) => api.get(`/greenhouses/${id}/environment`),
+  stats: () => api.get('/greenhouses/stats'),
+}
+
 // AI
 export const aiApi = {
   chat: (data) => api.post('/ai/chat', data),

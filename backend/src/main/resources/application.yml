@@ -60,12 +60,37 @@ wechat:
     alert: ""
   enabled: false
 
-# AI
+# AI 智能体配置
 ai:
+  # 主模型（通义千问）
   llm:
     api-url: ${AI_LLM_API_URL:https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions}
     api-key: ${AI_LLM_API_KEY:}
     model: ${AI_LLM_MODEL:qwen-plus}
+    temperature: 0.7
+    max-tokens: 1024
+    timeout-seconds: 30
+  # 降级备选模型（DeepSeek）
+  fallback:
+    enabled: ${AI_FALLBACK_ENABLED:false}
+    api-url: ${AI_FALLBACK_API_URL:https://api.deepseek.com/v1/chat/completions}
+    api-key: ${AI_FALLBACK_API_KEY:}
+    model: ${AI_FALLBACK_MODEL:deepseek-chat}
+  # 巡检 Agent 配置
+  patrol:
+    trend-check-interval-ms: 1800000    # 30分钟
+    device-health-interval-ms: 7200000  # 2小时
+    daily-summary-cron: "0 0 20 * * ?"  # 每日20:00
+  # 优化引擎配置
+  optimization:
+    schedule-cron: "0 0 3 ? * MON"      # 每周一凌晨3点
+    min-data-days: 14                    # 最少数据天数
+    analysis-window-days: 30             # 分析窗口天数
+  # 安全限制
+  security:
+    max-input-length: 500               # 最大输入字符数
+    rate-limit-per-minute: 10           # 每用户每分钟最大对话次数
+    dangerous-ops-confirm: true         # 危险操作需二次确认
 
 # Actuator
 management:

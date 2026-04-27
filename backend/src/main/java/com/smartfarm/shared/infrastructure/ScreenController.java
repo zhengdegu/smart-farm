@@ -6,6 +6,8 @@ import com.smartfarm.crop.application.GreenhousePlantingService;
 import com.smartfarm.crop.domain.GreenhousePlanting;
 import com.smartfarm.device.application.DeviceService;
 import com.smartfarm.device.domain.Device;
+import com.smartfarm.greenhouse.application.GreenhouseService;
+import com.smartfarm.greenhouse.domain.Greenhouse;
 import com.smartfarm.report.application.ReportService;
 import com.smartfarm.report.domain.IrrigationDailySummary;
 import com.smartfarm.telemetry.application.TelemetryService;
@@ -38,6 +40,7 @@ public class ScreenController {
     private final ReportService reportService;
     private final GreenhousePlantingService plantingService;
     private final WeatherService weatherService;
+    private final GreenhouseService greenhouseService;
 
     @GetMapping("/data")
     @Operation(summary = "大屏全量数据", description = "一次返回设备概览、实时环境、告警、灌溉统计、节水效果、种植进度")
@@ -155,6 +158,26 @@ public class ScreenController {
                 weatherMap.put("maxTempToday", wForecast.getMaxTempToday());
             }
             result.put("weather", weatherMap);
+        }
+
+        // 8. 温室坐标数据
+        try {
+            List<Greenhouse> greenhouses = greenhouseService.list(DEFAULT_TENANT, null);
+            List<Map<String, Object>> ghList = new ArrayList<>();
+            for (Greenhouse g : greenhouses) {
+                Map<String, Object> ghMap = new LinkedHashMap<>();
+                ghMap.put("id", g.getId());
+                ghMap.put("name", g.getName());
+                ghMap.put("greenhouseNo", g.getGreenhouseNo());
+                ghMap.put("latitude", g.getLatitude());
+                ghMap.put("longitude", g.getLongitude());
+                ghMap.put("boundaryGeojson", g.getBoundaryGeojson());
+                ghMap.put("status", g.getStatus().name());
+                ghList.add(ghMap);
+            }
+            result.put("greenhouses", ghList);
+        } catch (Exception e) {
+            result.put("greenhouses", List.of());
         }
 
         return result;

@@ -9,6 +9,12 @@
       <view class="base-switch">切换 ▾</view>
     </view>
   </view>
+  <!-- 大棚选择器 -->
+  <view class="greenhouse-picker" wx:if="{{greenhouseNames.length > 0}}">
+    <picker mode="selector" range="{{greenhouseNames}}" value="{{greenhouseIndex}}" bindchange="onGreenhouseChange">
+      <view class="picker-btn">🏠 {{greenhouseNames[greenhouseIndex] || '选择大棚'}} ▾</view>
+    </picker>
+  </view>
   <view class="weather-row">
     <text>☀️ {{weather.temp}}</text>
     <text>湿度 {{weather.humidity}}</text>

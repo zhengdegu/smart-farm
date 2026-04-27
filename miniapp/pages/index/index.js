@@ -5,6 +5,10 @@ Page({
     baseName: '示范基地',
     weather: { temp: '28°C', humidity: '65%', wind: '东南风 2级' },
     alertCount: 3,
+    greenhouses: [],
+    greenhouseNames: [],
+    greenhouseIndex: 0,
+    selectedGreenhouseNo: '',
     cards: [
       { icon: '💧', value: '32.5', unit: '%', label: '土壤湿度', status: 'low', statusText: '⚠ 偏低', type: 'warn' },
       { icon: '🌡', value: '24.1', unit: '°C', label: '土壤温度', status: 'ok', statusText: '✓ 正常', type: 'normal' },
@@ -25,6 +29,21 @@ Page({
 
   async loadData() {
     try {
+      // Load greenhouses
+      const greenhouses = await api.getGreenhouses()
+      if (greenhouses && greenhouses.length) {
+        const names = greenhouses.map(g => g.name || g.greenhouseNo)
+        this.setData({
+          greenhouses,
+          greenhouseNames: names,
+          selectedGreenhouseNo: greenhouses[0].greenhouseNo || ''
+        })
+      }
+    } catch (e) {
+      console.error('Failed to load greenhouses:', e)
+    }
+
+    try {
       const dashboard = await api.getDashboard()
       // Update data from API response if available
       if (dashboard) {
@@ -33,6 +52,16 @@ Page({
     } catch (e) {
       console.error('Failed to load dashboard:', e)
     }
+  },
+
+  onGreenhouseChange(e) {
+    const idx = parseInt(e.detail.value)
+    const greenhouse = this.data.greenhouses[idx]
+    this.setData({
+      greenhouseIndex: idx,
+      selectedGreenhouseNo: greenhouse ? greenhouse.greenhouseNo : ''
+    })
+    this.loadData()
   },
 
   onStartIrrigation() {

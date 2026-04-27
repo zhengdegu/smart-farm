@@ -9,6 +9,7 @@ const routes = [
     children: [
       { path: 'dashboard', name: 'Dashboard', component: () => import('../views/dashboard/Index.vue'), meta: { title: '总览仪表盘', icon: '📊', group: '概览', breadcrumb: '首页 / 总览仪表盘' } },
       { path: 'devices', name: 'Devices', component: () => import('../views/device/Index.vue'), meta: { title: '设备管理', icon: '📡', group: '业务管理', breadcrumb: '业务管理 / 设备管理' } },
+      { path: 'greenhouses', name: 'Greenhouses', component: () => import('../views/greenhouse/Index.vue'), meta: { title: '大棚管理', icon: '🏠', group: '业务管理', breadcrumb: '业务管理 / 大棚管理' } },
       { path: 'irrigation', name: 'Irrigation', component: () => import('../views/irrigation/Index.vue'), meta: { title: '灌溉管理', icon: '💧', group: '业务管理', breadcrumb: '业务管理 / 灌溉管理' } },
       { path: 'alerts', name: 'Alerts', component: () => import('../views/alert/Index.vue'), meta: { title: '告警中心', icon: '🔔', group: '业务管理', breadcrumb: '业务管理 / 告警中心' } },
       { path: 'crop', name: 'Crop', component: () => import('../views/crop/Index.vue'), meta: { title: '种植管理', icon: '🌿', group: '业务管理', breadcrumb: '业务管理 / 种植管理' } },
